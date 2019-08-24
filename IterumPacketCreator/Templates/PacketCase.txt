@@ -1,0 +1,15 @@
+﻿                case {1}:
+                    {
+						var packet = default({0});
+						if(DebugHeaders) Debug.Log("{0}");
+						packet.Deserialize(data);
+						try 
+						{
+							Parse{0}?.Invoke(conn, packet);
+						}
+						catch(System.Exception e) 
+						{
+							Debug.LogError("[{0}] " + e.ToString());
+						}
+					}
+					break;
