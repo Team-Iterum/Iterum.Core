@@ -25,11 +25,11 @@ namespace Magistr.Physics.PhysXImplCore
             {
                 if (!IsDestroyed)
                 {
-                    Task.Run(async () =>
-                    {
-                        await OwnerWorld.WaitEndOfFrame();
+                    //Task.Run(async () =>
+                    //{
+                    //    await OwnerWorld.WaitEndOfFrame();
                         api.setControllerFootPosition(Ref, new DVector3(value).ToApi());
-                    }).ConfigureAwait(false);
+                    //}).ConfigureAwait(false);
                 }
             }
         }
@@ -62,14 +62,14 @@ namespace Magistr.Physics.PhysXImplCore
             get => GetPosition();
             set
             {
-                if (!IsDestroyed)
-                {
-                    Task.Run(async () =>
-                {
-                    await OwnerWorld.WaitEndOfFrame();
+                //if (!IsDestroyed)
+                //{
+                //    Task.Run(async () =>
+                //{
+                //    await OwnerWorld.WaitEndOfFrame();
                     api.setControllerPosition(Ref, new DVector3(value).ToApi());
-                }).ConfigureAwait(false);
-                }
+                //}).ConfigureAwait(false);
+                //}
 
             }
         }
@@ -121,7 +121,7 @@ namespace Magistr.Physics.PhysXImplCore
 
 
             Ref = api.createCapsuleCharacter(this.scene.Ref, pos.ToApi(), up.normalized.ToApi(), height, radius, 0.05f);
-            cachePosition = api.getControllerPosition(Ref).ToVector3();
+            cachePosition = new DVector3(pos.x, pos.y, pos.z);
             api.setControllerDirection(Ref, (Vector3.zero + world.Gravity).ToApi());
         }
 

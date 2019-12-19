@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <RootNamespace>Magistr</RootNamespace>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Nito.AsyncEx" Version="5.0.0" />
+    <PackageReference Include="StrictEmit" Version="2.8.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\IterumFramework\IterumFramework.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="AdvancedDLSupport">
+      <HintPath>..\..\..\..\Dev\AdvanceDLSupport-master\AdvanceDLSupport-master\AdvancedDLSupport\bin\x64\Release\netstandard2.0\AdvancedDLSupport.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.DllMap">
+      <HintPath>..\..\..\..\Dev\AdvanceDLSupport-master\AdvanceDLSupport-master\AdvancedDLSupport\bin\x64\Release\netstandard2.0\Mono.DllMap.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy /y /d  &quot;$(ProjectDir)External\*.dll&quot; &quot;$(SolutionDir)\bin\x64\$(ConfigurationName)\netcoreapp3.0\&quot;" />
+  </Target>
+
+</Project>

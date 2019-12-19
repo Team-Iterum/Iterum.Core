@@ -20,12 +20,12 @@ namespace Magistr.Physics.PhysXImplCore
             {
                 if (!IsDestroyed)
                 {
-                    Task.Run(async () =>
-                    {
-                        await OwnerWorld.WaitEndOfFrame();
+                    //Task.Run(async () =>
+                    //{
+                    //    await OwnerWorld.WaitEndOfFrame();
                         api.setRigidStaticPosition(Ref, value.ToApi());
-                        cachePosition = value;
-                    }).ConfigureAwait(false);
+                    //    cachePosition = value;
+                    //}).ConfigureAwait(false);
                 }
             }
         }
@@ -38,12 +38,12 @@ namespace Magistr.Physics.PhysXImplCore
             {
                 if (!IsDestroyed)
                 {
-                    Task.Run(async () =>
-                    {
-                        await OwnerWorld.WaitEndOfFrame();
+                    //Task.Run(async () =>
+                    //{
+                    //    await OwnerWorld.WaitEndOfFrame();
                         api.setRigidStaticRotation(Ref, value.ToQuat());
-                        cacheRotation = value;
-                    }).ConfigureAwait(false);
+                    //    cacheRotation = value;
+                    //}).ConfigureAwait(false);
                 }
                 
             }

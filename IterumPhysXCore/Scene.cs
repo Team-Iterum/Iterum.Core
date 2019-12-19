@@ -79,8 +79,13 @@ namespace Magistr.Physics.PhysXImplCore
 
             var count = api.sceneOverlap(Ref, (long)overlapSphere.GetInternalGeometry(), pos.ToApi(), (nRef) =>
             {
+                
                 if (references.ContainsKey(nRef))
                     hits.Add(references[nRef].Thing);
+                else
+                {
+                    Debug.Log(nRef.ToString());
+                }
             });
 
             Debug.Log($"[API.sceneOverlap ({count})]={watch.ElapsedMilliseconds}ms", ConsoleColor.Yellow);

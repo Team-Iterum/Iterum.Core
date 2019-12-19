@@ -1,2 +1,0 @@
-﻿		public delegate void Parse{0}Delegate(uint con, {0} data);
-		public static event Parse{0}Delegate Parse{0};

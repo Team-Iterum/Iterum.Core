@@ -1,3 +1,0 @@
-PacketsSource=C:\Users\avsh\Desktop\Projects\GrandStrategy\Client\GrandStrategyTestClient\Packets
-OutputClient=C:\Users\avsh\Desktop\Projects\GrandStrategy\Client\GrandStrategyTestClient\Generated
-OutputServer=C:\Users\avsh\Desktop\Projects\GrandStrategy\Generated

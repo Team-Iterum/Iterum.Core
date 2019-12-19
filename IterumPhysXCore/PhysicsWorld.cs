@@ -63,7 +63,7 @@ namespace Magistr.Physics.PhysXImplCore
             {
                 var builder = new NativeLibraryBuilder(ImplementationOptions.EnableOptimizations | ImplementationOptions.UseIndirectCalls);
                 API = builder.ActivateInterface<IPhysicsAPI>("PhysXSharpNative");
-                API.initPhysics(true, Environment.ProcessorCount, (message) =>
+                API.initPhysics(false, Environment.ProcessorCount, (message) =>
                 {
                     Log.Debug.LogError(message);
                 });
@@ -108,6 +108,7 @@ namespace Magistr.Physics.PhysXImplCore
                 if (dt > 1 && firstSkip > 10)
                 {
                     API.stepPhysics(scene.Ref, (float)dtSpan.TotalSeconds);
+                    API.charactersUpdate((float)dtSpan.TotalSeconds, 0.05f);
                 }
                 var stop = stopwatch.ElapsedTicks;
                 mre.Set();
@@ -189,7 +190,7 @@ namespace Magistr.Physics.PhysXImplCore
                 var elapsed = stopwatch.ElapsedTicks;
                 var dtSpan = TimeSpan.FromTicks(elapsed - lastScene);
                 lastScene = elapsed;
-
+                
                 scene.Update((float)dtSpan.TotalSeconds);
                 var stop = stopwatch.ElapsedTicks;
 
