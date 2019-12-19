@@ -13,10 +13,10 @@ namespace Magistr.Physics
         void Start();
         void Stop();
 
-        bool IsDestoyed { get; }
+        bool IsDestroyed { get; }
         bool IsCreated { get; }
         bool IsRunning { get; }
-        int Timestamp { get; set; }
+        int Timestamp { get; }
         float SceneFrame { get; }
         float DeltaTime { get; }
 
@@ -29,11 +29,13 @@ namespace Magistr.Physics
 
         Task WaitEndOfFrame();
 
-        Task<(List<IThing>, List<IThing>)> Overlap(Vector3 pos, List<IThing> excpect, bool staticOnly);
+        Task<(List<IThing>, List<IThing>)> Overlap(Vector3 pos, List<IThing> except, bool staticOnly);
 
         IPhysicsStaticObject CreateStatic(IGeometry geometry, Vector3 pos, Quaternion rot);
         IPhysicsDynamicObject CreateDynamic(IGeometry geometry, Vector3 position, Quaternion rotation);
+        
         IPhysicsCharaceter CreateCapsuleCharacter(Vector3 pos, Vector3 up, float height, float radius);
+        
         IGeometry CreateStaticModelGeometry(IModelData modelData);
         IGeometry CreateSphereGeometry(float radius);
         IGeometry CreateBoxGeometry(Vector3 size);

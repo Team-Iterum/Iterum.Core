@@ -1,25 +1,21 @@
 ﻿using Magistr.Framework.Physics;
 using Magistr.Math;
-using Magistr.Physics.PhysXImplCore;
 using Magistr.Things;
 using System.Threading.Tasks;
-using Quat = System.Numerics.Quaternion;
-using Vec3 = System.Numerics.Vector3;
 namespace Magistr.Physics.PhysXImplCore
 {
     public class PhysXStaticObject : IPhysicsStaticObject
     {
-        public int Index => _px;
+        public long Ref { get; set; }
 
-        private IPhysicsAPI API;
+        private IPhysicsAPI api;
+        private Scene scene;
+
         #region IPhysicsObject
-        private int _px;
-        private Scene Scene;
-        internal int UserDataReference;
         private Vector3 cachePosition;
         public Vector3 Position
         {
-            get => getPosition();
+            get => GetPosition();
             set
             {
                 if (!IsDestroyed)
@@ -27,18 +23,17 @@ namespace Magistr.Physics.PhysXImplCore
                     Task.Run(async () =>
                     {
                         await OwnerWorld.WaitEndOfFrame();
-                        API.setRigidStaticPosition(_px, Scene.Index, value.ToApi());
+                        api.setRigidStaticPosition(Ref, value.ToApi());
                         cachePosition = value;
                     }).ConfigureAwait(false);
                 }
             }
         }
-        private Quaternion cacheRotation;
-        
 
+        private Quaternion cacheRotation;
         public Quaternion Rotation
         {
-            get => getRotation();
+            get => GetRotation();
             set
             {
                 if (!IsDestroyed)
@@ -46,14 +41,14 @@ namespace Magistr.Physics.PhysXImplCore
                     Task.Run(async () =>
                     {
                         await OwnerWorld.WaitEndOfFrame();
-                        API.setRigidStaticRotation(_px, Scene.Index, value.ToQuat());
+                        api.setRigidStaticRotation(Ref, value.ToQuat());
                         cacheRotation = value;
                     }).ConfigureAwait(false);
                 }
                 
             }
         }
-        public bool IsDestroyed { get; private set; } = false;
+        public bool IsDestroyed { get; private set; }
         public IPhysicsWorld OwnerWorld { get; }
         public IThing Thing { get; set; }
 
@@ -64,7 +59,7 @@ namespace Magistr.Physics.PhysXImplCore
                 Task.Run(async () =>
                 {
                     await OwnerWorld.WaitEndOfFrame();
-                    Scene.Destroy(this);
+                    scene.Destroy(this);
                 }).ConfigureAwait(false);
             }
 
@@ -72,39 +67,41 @@ namespace Magistr.Physics.PhysXImplCore
 
         }
 
-        private Vector3 getPosition()
+        private Vector3 GetPosition()
         {
             if (!IsDestroyed)
             {
                 Task.Run(async () =>
                 {
                     await OwnerWorld.WaitEndOfFrame();
-                    cachePosition = (Vector3)API.getRigidStaticPosition(_px, Scene.Index).ToVector3();
+                    cachePosition = api.getRigidStaticPosition(Ref).ToVector3();
                 }).ConfigureAwait(false);
             }
             return cachePosition;
         }
-        private Quaternion getRotation()
+        private Quaternion GetRotation()
         {
             if (!IsDestroyed)
             {
                 Task.Run(async () =>
                 {
                     await OwnerWorld.WaitEndOfFrame();
-                    cacheRotation = (Quaternion)API.getRigidStaticRotation(_px, Scene.Index).ToQuat();
+                    cacheRotation = api.getRigidStaticRotation(Ref).ToQuat();
                 }).ConfigureAwait(false);
             }
             return cacheRotation;
         }
         #endregion
 
-        internal PhysXStaticObject(IGeometry geometry, int userDataReference, Scene scene, IPhysicsWorld w, IPhysicsAPI api)
+        internal PhysXStaticObject(IGeometry geometry, Scene scene, IPhysicsWorld world, IPhysicsAPI api)
         {
-            API = api;
-            UserDataReference = userDataReference;
-            this._px = API.createRigidStatic((int)geometry.GetInternalGeometry(), userDataReference, scene.Index, Vector3.zero.ToApi(), Quaternion.identity.ToQuat());
-            this.Scene = scene;
-            this.OwnerWorld = w;
+            this.api = api;
+            OwnerWorld = world;
+            this.scene = scene;
+
+            Ref = api.createRigidStatic((long)geometry.GetInternalGeometry(), scene.Ref, Vector3.zero.ToApi(), Quaternion.identity.ToQuat());
+           
+            
         }
 
     }

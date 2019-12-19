@@ -62,7 +62,7 @@ namespace Magistr.Things
 
         public Creature(int id, Vector3 position)
         {
-            var thingType = ThingTypeManager.GetTningType(id);
+            var thingType = ThingTypeManager.GetThingType(id);
             Position = position;
             Height = thingType.Size.y/2;
             Radius = thingType.Radius;
@@ -86,7 +86,7 @@ namespace Magistr.Things
             Task.Run(async () =>
             {
                 await world.WaitEndOfFrame();
-                var thingType = ThingTypeManager.GetTningType(ThingTypeId);
+                var thingType = ThingTypeManager.GetThingType(ThingTypeId);
                 PhysicsObject = world.CreateCapsuleCharacter(Position, Vector3.up, Height, Radius);
                 PhysicsObject.Thing = this;
                 PhysicsObject.PositionChange += PhysicsObject_PositionChange;

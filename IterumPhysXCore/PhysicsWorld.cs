@@ -1,19 +1,15 @@
-﻿using AdvancedDLSupport;
-using Magistr.Framework.Physics;
-using Magistr.Log;
-using Magistr.Math;
-using Magistr.Physics.PhysXImplCore;
-using Magistr.Things;
-using Nito.AsyncEx;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Quat = System.Numerics.Quaternion;
-using Vec3 = System.Numerics.Vector3;
+using AdvancedDLSupport;
+using Magistr.Framework.Physics;
+using Magistr.Math;
+using Magistr.Things;
+using Nito.AsyncEx;
 
 [assembly: InternalsVisibleTo("AdvancedDLSupport")]
 
@@ -21,26 +17,29 @@ namespace Magistr.Physics.PhysXImplCore
 {
     public class PhysXWorld : IPhysicsWorld
     {
-        private static bool PhysXCreated = false;
+        private static bool PhysXCreated;
+
         private Scene scene;
         private Thread workerThread;
-        private long last;
-        private long lastFrame;
 
-        public bool IsDestoyed { get; private set; } = false;
-        public bool IsCreated { get; private set; } = false;
-        public bool IsRunning { get; private set; } = false;
+        private long last;
+
+        public bool IsDestroyed { get; private set; }
+        public bool IsCreated { get; private set; }
+        public bool IsRunning { get; private set; }
         public float SceneFrame { get; private set; }
         public int Timestamp { get; set; }
 
+
         public float DeltaTime { get; private set; }
-        public int TPS { get; set; }
-        public System.Guid WorldUid { get; } = System.Guid.NewGuid();
+        public int TPS { get; set; } = 1000 / 60;
+        public Guid WorldUid { get; } = Guid.NewGuid();
 
         public Vector3 Gravity => new Vector3(0, -10, 0);
 
         private SphereGeometry overlapSphere;
         private float overlapSphereRadius = 150;
+
 
         private static IPhysicsAPI API;
         public float OverlapSphereRadius
@@ -63,12 +62,18 @@ namespace Magistr.Physics.PhysXImplCore
             if (!PhysXCreated)
             {
                 var builder = new NativeLibraryBuilder(ImplementationOptions.EnableOptimizations | ImplementationOptions.UseIndirectCalls);
-                API = builder.ActivateInterface<IPhysicsAPI>("SnippetHelloWorld_64");
-                API.initPhysics();
+                API = builder.ActivateInterface<IPhysicsAPI>("PhysXSharpNative");
+                API.initPhysics(true, Environment.ProcessorCount, (message) =>
+                {
+                    Log.Debug.LogError(message);
+                });
+
+
                 PhysXCreated = true;
             }
 
         }
+
         private void InitScene()
         {
 
@@ -84,7 +89,7 @@ namespace Magistr.Physics.PhysXImplCore
         private void StepPhysics()
         {
             mre.Reset();
-            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+            var stopwatch = new Stopwatch();
             stopwatch.Start();
             last = stopwatch.ElapsedTicks;
             int firstSkip = 0;
@@ -93,22 +98,22 @@ namespace Magistr.Physics.PhysXImplCore
                 int sleep = TPS;
 
                 var elapsed = stopwatch.ElapsedTicks;
-                var dtspan = TimeSpan.FromTicks(elapsed - last);
-                var dt = (float)dtspan.TotalMilliseconds;
+                var dtSpan = TimeSpan.FromTicks(elapsed - last);
+                var dt = (float)dtSpan.TotalMilliseconds;
                 last = stopwatch.ElapsedTicks;
 
-                this.DeltaTime = dt;
-                this.Timestamp = scene.Timestamp;
+                DeltaTime = dt;
+                Timestamp = (int)scene.Timestamp;
 
                 if (dt > 1 && firstSkip > 10)
                 {
-                    API.stepPhysics(scene.Index, (float)dtspan.TotalSeconds);
+                    API.stepPhysics(scene.Ref, (float)dtSpan.TotalSeconds);
                 }
                 var stop = stopwatch.ElapsedTicks;
                 mre.Set();
                 
-                this.SceneFrame = (float)TimeSpan.FromTicks(stop - last).TotalMilliseconds;
-                sleep -= Mathf.CeilToInt(this.SceneFrame);
+                SceneFrame = (float)TimeSpan.FromTicks(stop - last).TotalMilliseconds;
+                sleep -= Mathf.CeilToInt(SceneFrame);
                 if (sleep < 0)
                 {
                     sleep = 1;
@@ -125,17 +130,16 @@ namespace Magistr.Physics.PhysXImplCore
         }
 
 
-        public async Task<(List<IThing>, List<IThing>)> Overlap(Vector3 pos, List<IThing> excpect, bool isStaticOnly)
+        public async Task<(List<IThing>, List<IThing>)> Overlap(Vector3 pos, List<IThing> except, bool isStaticOnly)
         {
-            var watch1 = System.Diagnostics.Stopwatch.StartNew();
-            List<IThing> thingsAdd = new List<IThing>();
-            List<IThing> thingsRemove = new List<IThing>();
+            var thingsAdd = new List<IThing>();
+            var thingsRemove = new List<IThing>();
             
             await WaitEndOfFrame();
             var hits = scene.Overlap(pos, overlapSphere);
 
-            var remove = excpect.Where(e => !hits.Contains(e));
-            var add = hits.Where(e => !excpect.Contains(e));
+            var remove = except.Where(e => !hits.Contains(e));
+            var add = hits.Where(e => !except.Contains(e));
 
             thingsRemove.AddRange(remove);
             thingsAdd.AddRange(add);
@@ -152,18 +156,20 @@ namespace Magistr.Physics.PhysXImplCore
 
         public void Destroy()
         {
-            IsDestoyed = true;
+            IsDestroyed = true;
             Stop();
             scene.Cleanup();
         }
 
         public void Start()
         {
-            workerThread = new Thread(new ThreadStart(StepPhysics));
-            workerThread.IsBackground = false;
-            workerThread.Priority = ThreadPriority.Highest;
+            workerThread = new Thread(StepPhysics)
+            {
+                IsBackground = false,
+                Priority = ThreadPriority.Highest
+            };
 
-            sceneThread = new Thread(new ThreadStart(StepScene));
+            sceneThread = new Thread(StepScene);
 
             IsRunning = true;
             workerThread.Start();
@@ -174,17 +180,17 @@ namespace Magistr.Physics.PhysXImplCore
 
         private void StepScene()
         {
-            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+            var stopwatch = new Stopwatch();
             stopwatch.Start();
             lastScene = stopwatch.ElapsedTicks;
             while (IsRunning)
             {
                 int sleep = 15;
                 var elapsed = stopwatch.ElapsedTicks;
-                var dtspan = TimeSpan.FromTicks(elapsed - lastScene);
+                var dtSpan = TimeSpan.FromTicks(elapsed - lastScene);
                 lastScene = elapsed;
 
-                scene.Update((float)dtspan.TotalSeconds);
+                scene.Update((float)dtSpan.TotalSeconds);
                 var stop = stopwatch.ElapsedTicks;
 
                 var sceneFrame = (float)TimeSpan.FromTicks(stop - lastScene).TotalMilliseconds;
@@ -210,27 +216,6 @@ namespace Magistr.Physics.PhysXImplCore
 
         public IGeometry CreateStaticModelGeometry(IModelData modelData)
         {
-            //var triangleMeshDesc = new TriangleMeshDesc()
-            //{
-            //    Flags = (MeshFlag)0,
-            //    Triangles = modelData.Triangles,
-            //    Points = modelData.Points
-            //};
-
-            //var cooking = scene.Physics.CreateCooking();
-
-            //var stream = new MemoryStream();
-            //_ = cooking.CookTriangleMesh(triangleMeshDesc, stream);
-
-            //stream.Position = 0;
-
-            //var triangleMesh = scene.Physics.CreateTriangleMesh(stream);
-
-            //var geometry = new TriangleMeshGeometry(triangleMesh)
-            //{
-            //    Scale = new MeshScale((Vec3)new Vector3(1f, 1f, 1f), (Quat)Quaternion.identity)
-            //};
-
             return new SphereGeometry(1, API);
         }
 
@@ -248,15 +233,13 @@ namespace Magistr.Physics.PhysXImplCore
         public IPhysicsStaticObject CreateStatic(IGeometry geometry, Vector3 pos, Quaternion rot)
         {
             var rigidActor = scene.CreateRigidStatic(geometry);
-           
-            rigidActor.Position = pos;
-            rigidActor.Rotation = rot;
 
             return rigidActor;
         }
 
         public IPhysicsDynamicObject CreateDynamic(IGeometry geometry, Vector3 pos, Quaternion rot)
         {
+            
             //var rigidActor = scene.Physics.CreateRigidDynamic();
             //RigidActorExt.CreateExclusiveShape(rigidActor, (Geometry)geometry.GetInternalGeometry(), Material);
 
@@ -270,7 +253,6 @@ namespace Magistr.Physics.PhysXImplCore
 
         public IPhysicsCharaceter CreateCapsuleCharacter(Vector3 pos, Vector3 up, float height = 4, float radius = 1)
         {
-
             var controller = scene.CreateCapsuleController(pos, up, height, radius);
             return controller;
         }
@@ -278,11 +260,6 @@ namespace Magistr.Physics.PhysXImplCore
         public Task WaitEndOfFrame()
         {
             return mre.WaitAsync();
-        }
-
-        public PhysXWorld()
-        {
-            TPS = (int)(1000 / 60f);
         }
     }
 

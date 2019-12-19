@@ -1,5 +1,6 @@
 ﻿using Magistr.Math;
-using System;
+
+// ReSharper disable InconsistentNaming
 
 namespace Magistr.Physics.PhysXImplCore
 {
@@ -23,36 +24,38 @@ namespace Magistr.Physics.PhysXImplCore
         public float w;
     }
     public delegate void OverlapCallback(int t1);
+    public delegate void ErrorCallbackFunc(string message);
     public interface IPhysicsAPI
     {
-        void setControllerDirection(int controllerIndex, int sceneIndex, APIVec3 dir);
-        int sceneOverlap(int sceneIndex, int geoIndex, APIVec3 pos, OverlapCallback callback);
-        int createSphereGeometry(float radius);
-        int createBoxGeometry(APIVec3 half);
-        void cleanupGeometry(int index);
-        int createRigidStatic(int geoIndex, int userDataReference, int sceneIndex, APIVec3 pos, APIQuat quat);
-        void destroyRigidStatic(int rigidStaticIndex, int sceneIndex);
-        APIVec3 getRigidStaticPosition(int rigidStaticIndex, int sceneIndex);
-        APIQuat getRigidStaticRotation(int rigidStaticIndex, int sceneIndex);
-        void setRigidStaticPosition(int rigidStaticIndex, int sceneIndex, APIVec3 p);
-        void setRigidStaticRotation(int rigidStaticIndex, int sceneIndex, APIQuat q);
-        int createRigidDynamic(int geoIndex, int sceneIndex, APIVec3 pos, APIQuat quat);
-        void destroyRigidDynamic(int rigidDynamicIndex, int sceneIndex);
-        int createCapsuleCharacter(int sceneIndex, int userDataIndex, APIVec3 pos, APIVec3 up, float height, float radius);
-        void destroyController(int controllerIndex, int sceneIndex);
-        APIVec3 getControllerPosition(int controllerIndex, int sceneIndex);
-        APIVec3 getControllerFootPosition(int controllerIndex, int sceneIndex);
-        void setControllerPosition(int controllerIndex, int sceneIndex, APIDoubleVec3 p);
-        void setControllerFootPosition(int controllerIndex, int sceneIndex, APIDoubleVec3 p);
-        int createScene(APIVec3 gravity);
-        void stepPhysics(int sceneIndex, float dt);
-        void cleanupScene(int sceneIndex);
-        int getSceneTimestamp(int sceneIndex);
-        void initPhysics();
+        void charactersUpdate(float elapsed, float minDist);
+        void setControllerDirection(long nRef, APIVec3 dir);
+        int sceneOverlap(long nRefScene, long nRefGeo, APIVec3 pos, OverlapCallback callback);
+        long createSphereGeometry(float radius);
+        long createBoxGeometry(APIVec3 half);
+        void cleanupGeometry(long nRef);
+        long createRigidStatic(long nRefGeo, long nRefScene, APIVec3 pos, APIQuat quat);
+        void destroyRigidStatic(long nRef);
+        APIVec3 getRigidStaticPosition(long nRef);
+        APIQuat getRigidStaticRotation(long nRef);
+        void setRigidStaticPosition(long nRef, APIVec3 p);
+        void setRigidStaticRotation(long nRef, APIQuat q);
+        long createRigidDynamic(long nRefGeo, long nRefScene, APIVec3 pos, APIQuat quat);
+        void destroyRigidDynamic(long nRef);
+        long createCapsuleCharacter(long nRefScene, APIVec3 pos, APIVec3 up, float height, float radius, float stepOffset);
+        void destroyController(long nRef);
+        APIDoubleVec3 getControllerPosition(long nRef);
+        APIDoubleVec3 getControllerFootPosition(long nRef);
+        void setControllerPosition(long nRef, APIDoubleVec3 p);
+        void setControllerFootPosition(long nRef, APIDoubleVec3 p);
+        long createScene(APIVec3 gravity);
+        void stepPhysics(long nRef, float dt);
+        void cleanupScene(long nRef);
+        long getSceneTimestamp(long nRef);
+        void initPhysics(bool isCreatePvd, int numThreads, ErrorCallbackFunc func);
         void cleanupPhysics();
     }
 
-    static class APIExt
+    internal static class APIExt
     {
         public static APIVec3 ToApi(this Vector3 v)
         {

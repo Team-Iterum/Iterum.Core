@@ -1,17 +1,14 @@
 ﻿using Magistr.Log;
-using Magistr.Math;
 using Magistr.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Magistr.Things
 {
-    
     public static class ThingTypeManager
     {
         public static int Count => ThingTypes.Count;
@@ -23,7 +20,7 @@ namespace Magistr.Things
             return ThingTypes.ContainsKey(thingTypeId);
         }
 
-        public static ThingType GetTningType(int thingTypeId)
+        public static ThingType GetThingType(int thingTypeId)
         {
             if (HasThingType(thingTypeId))
             {
@@ -49,7 +46,7 @@ namespace Magistr.Things
 
             try
             {
-                BinaryFormatter formatter = new BinaryFormatter();
+                var formatter = new BinaryFormatter();
                 thingsArchive.ThingTypes = ThingTypes.Values.ToArray();
                 formatter.Serialize(fs, thingsArchive);
             }
@@ -68,8 +65,10 @@ namespace Magistr.Things
             try
             {
                 ThingTypes = new Dictionary<int, ThingType>();
-                BinaryFormatter formatter = new BinaryFormatter();
-                formatter.Binder = new BinaryTypeBinder();
+                var formatter = new BinaryFormatter
+                {
+                    Binder = new BinaryTypeBinder()
+                };
 
                 var thingsArchive = (ThingTypeArchive)formatter.Deserialize(fs);
                 for (int i = 0; i < thingsArchive.ThingTypes.Length; i++)
@@ -92,7 +91,7 @@ namespace Magistr.Things
         }
 
         [Serializable]
-        struct ThingTypeArchive
+        private struct ThingTypeArchive
         {
             public DateTime Created;
             public int Version;

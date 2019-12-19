@@ -47,7 +47,7 @@ namespace Magistr.Physics
                     Debug.ResetBack();
                     continue;
                 }
-                if (w.IsDestoyed)
+                if (w.IsDestroyed)
                 {
                     Debug.Back(System.ConsoleColor.Black);
                     var s = $"#{worlds.IndexOf(w)} is destroyed";

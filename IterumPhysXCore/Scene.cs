@@ -3,96 +3,97 @@ using Magistr.Log;
 using Magistr.Math;
 using Magistr.Things;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace Magistr.Physics.PhysXImplCore
 {
     internal class Scene
     {
-        private IPhysicsAPI API;
-        private IPhysicsWorld World;
+        private IPhysicsAPI api;
+        private IPhysicsWorld world;
 
-        internal int Index { get; }
+        public long Ref { get; }
 
-        private int UserDataIndex = 0;
+        private Dictionary<long, PhysXCharacter> characters = new Dictionary<long, PhysXCharacter>();
+        private Dictionary<long, IPhysicsObject> references = new Dictionary<long, IPhysicsObject>();
 
-        private Dictionary<int, IPhysicsObject> UserDataReferences = new Dictionary<int, IPhysicsObject>();
-
-        private Dictionary<int, IPhysicsCharaceter> Characters = new Dictionary<int, IPhysicsCharaceter>();
-
-        public int Timestamp => API.getSceneTimestamp(Index);
+        public long Timestamp => api.getSceneTimestamp(Ref);
 
         public Scene(IPhysicsAPI api, IPhysicsWorld world)
         {
-            API = api;
-            World = world;
-            Index = API.createScene(world.Gravity.ToApi());
+            this.api = api;
+            this.world = world;
+            Ref = this.api.createScene(world.Gravity.ToApi());
             
         }
 
         public void Simulate(float step)
         {
-            API.stepPhysics(Index, step);
+            api.stepPhysics(Ref, step);
         }
 
         internal void Cleanup()
         {
-            API.cleanupScene(Index);
+            api.cleanupScene(Ref);
         }
 
         internal void Destroy(PhysXStaticObject obj)
         {
-            UserDataReferences.Remove(obj.UserDataReference);
-            API.destroyRigidStatic(obj.Index, Index);
+            references.Remove(obj.Ref);
+            api.destroyRigidStatic(obj.Ref);
 
         }
 
         internal void Destroy(PhysXCharacter obj)
         {
-            UserDataReferences.Remove(obj.UserDataReference);
-            Characters.Remove(obj.UserDataReference);
-            API.destroyController(obj.Index, Index);
+            characters.Remove(obj.Ref);
+            references.Remove(obj.Ref);
+            api.destroyController(obj.Ref);
 
         }
 
         internal PhysXStaticObject CreateRigidStatic(IGeometry geometry)
         {
 
-            var staticObj = new PhysXStaticObject(geometry, UserDataIndex, this, World, API);
-            UserDataReferences.Add(UserDataIndex, staticObj);
-            UserDataIndex++;
-            return staticObj;
+            var obj = new PhysXStaticObject(geometry, this, world, api);
+
+            references.Add(obj.Ref, obj);
+
+            return obj;
         }
 
         internal PhysXCharacter CreateCapsuleController(Vector3 pos, Vector3 up, float height, float radius)
         {
-            var obj = new PhysXCharacter(UserDataIndex, pos, up, height, radius, this, World, API);
-            UserDataReferences.Add(UserDataIndex, obj);
-            Characters.Add(UserDataIndex, obj);
-            UserDataIndex++;
+            var obj = new PhysXCharacter(pos, up, height, radius, this, world, api);
+
+            characters.Add(obj.Ref, obj);
+            references.Add(obj.Ref, obj);
+
             return obj;
         }
 
         internal List<IThing> Overlap(Vector3 pos, IGeometry overlapSphere)
         {
-            List<IThing> hits = new List<IThing>();
+            var hits = new List<IThing>();
             var watch = System.Diagnostics.Stopwatch.StartNew();
-            var count = API.sceneOverlap(Index, (int)overlapSphere.GetInternalGeometry(), pos.ToApi(), (index) =>
+
+            var count = api.sceneOverlap(Ref, (long)overlapSphere.GetInternalGeometry(), pos.ToApi(), (nRef) =>
             {
-                if (UserDataReferences.ContainsKey(index))
-                    hits.Add(UserDataReferences[index].Thing);
+                if (references.ContainsKey(nRef))
+                    hits.Add(references[nRef].Thing);
             });
+
             Debug.Log($"[API.sceneOverlap ({count})]={watch.ElapsedMilliseconds}ms", ConsoleColor.Yellow);
+
             watch.Stop();
             return hits;
         }
 
         internal void Update(float dt)
         {
-            foreach (var item in Characters)
+            foreach (var item in characters)
             {
-                ((PhysXCharacter)item.Value).Update(dt);
+                item.Value.Update(dt);
             }
         }
     }

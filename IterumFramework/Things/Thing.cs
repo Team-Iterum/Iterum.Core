@@ -35,7 +35,7 @@ namespace Magistr.Things
 
         public void Create(IPhysicsWorld world)
         {
-            var thingType = ThingTypeManager.GetTningType(ThingTypeId);
+            var thingType = ThingTypeManager.GetThingType(ThingTypeId);
             
             var geometry = thingType.CreateGeometry(world);
             if (thingType.HasAttr(ThingAttr.Static))

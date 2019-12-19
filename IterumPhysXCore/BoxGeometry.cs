@@ -5,21 +5,22 @@ namespace Magistr.Physics.PhysXImplCore
 {
     internal class BoxGeometry : IGeometry
     {
-        private int geoIndex = -1;
-        IPhysicsAPI API;
+        private long nRef;
+        private IPhysicsAPI api;
+
         public BoxGeometry(Vector3 half, IPhysicsAPI api)
         {
-            API = api;
-            geoIndex = api.createBoxGeometry(half.ToApi());
+            this.api = api;
+            nRef = api.createBoxGeometry(half.ToApi());
         }
 
         public void Destroy()
         {
-            API.cleanupGeometry(geoIndex);
+            api.cleanupGeometry(nRef);
         }
         public object GetInternalGeometry()
         {
-            return geoIndex;
+            return nRef;
         }
     }
 }

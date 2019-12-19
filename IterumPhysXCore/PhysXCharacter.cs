@@ -1,29 +1,26 @@
-﻿using Magistr.Framework.Physics;
-using Magistr.Log;
-using Magistr.Math;
+﻿using Magistr.Math;
 using Magistr.Things;
 using System;
 using System.Threading.Tasks;
-using Mat4x4 = System.Numerics.Matrix4x4;
-using Vec3 = System.Numerics.Vector3;
 
 namespace Magistr.Physics.PhysXImplCore
 {
     public class PhysXCharacter : IPhysicsCharaceter
     {
 
-        public int Index => _px;
+        public long Ref;
+
         #region IPhysicsCharacter
 
-        private Vector3 cacheDirection;
-        public Vector3 Direction { get => cacheDirection; set { cacheDirection = value; } }
+        public Vector3 Direction { get; set; }
+
         public float Speed { get; set; } = 0.1f;
 
         public float CharacterRotation { get; set; }
-        private Vector3 cacheFootPosition;
+        private DVector3 cacheFootPosition;
         public Vector3 FootPosition
         {
-            get => (Vector3)getFootPosition();
+            get => GetFootPosition();
             set
             {
                 if (!IsDestroyed)
@@ -31,7 +28,7 @@ namespace Magistr.Physics.PhysXImplCore
                     Task.Run(async () =>
                     {
                         await OwnerWorld.WaitEndOfFrame();
-                        API.setControllerFootPosition(_px, Scene.Index, new DVector3(value).ToApi());
+                        api.setControllerFootPosition(Ref, new DVector3(value).ToApi());
                     }).ConfigureAwait(false);
                 }
             }
@@ -39,13 +36,13 @@ namespace Magistr.Physics.PhysXImplCore
 
         public void Destroy()
         {
-            
+
             if (!IsDestroyed)
             {
                 Task.Run(async () =>
                 {
                     await OwnerWorld.WaitEndOfFrame();
-                    Scene.Destroy(this);
+                    scene.Destroy(this);
                 }).ConfigureAwait(false);
             }
             IsDestroyed = true;
@@ -55,14 +52,14 @@ namespace Magistr.Physics.PhysXImplCore
         #endregion
 
         #region IPhysicsObject
+        private IPhysicsAPI api;
 
-        private int _px;
-        private Scene Scene;
+        private Scene scene;
 
-        private Vector3 cachePosition;
+        private DVector3 cachePosition;
         public Vector3 Position
         {
-            get => (Vector3)getPosition();
+            get => GetPosition();
             set
             {
                 if (!IsDestroyed)
@@ -70,76 +67,77 @@ namespace Magistr.Physics.PhysXImplCore
                     Task.Run(async () =>
                 {
                     await OwnerWorld.WaitEndOfFrame();
-                    API.setControllerPosition(_px, Scene.Index, new DVector3(value).ToApi());
+                    api.setControllerPosition(Ref, new DVector3(value).ToApi());
                 }).ConfigureAwait(false);
                 }
-                
+
             }
         }
 
         private Vector3 prevPosition;
 
         public event Action<Vector3, bool> PositionChange;
-        public Quaternion Rotation { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public bool IsDestroyed { get; private set; } = false;
 
-        private IPhysicsAPI API;
-        public int UserDataReference;
+        public Quaternion Rotation { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public bool IsDestroyed { get; private set; }
 
         public IPhysicsWorld OwnerWorld { get; }
         public IThing Thing { get; set; }
 
 
-        private Vector3 getPosition()
+        private Vector3 GetPosition()
         {
             if (!IsDestroyed)
             {
                 Task.Run(async () =>
                 {
                     await OwnerWorld.WaitEndOfFrame();
-                    cachePosition = (Vector3)API.getControllerPosition(_px, Scene.Index).ToVector3();
+                    cachePosition = api.getControllerPosition(Ref).ToVector3();
                 }).ConfigureAwait(false);
             }
-            return cachePosition;
+            return new Vector3((float)cachePosition.x, (float)cachePosition.y, (float)cachePosition.z);
         }
 
-        private Vector3 getFootPosition()
+        private Vector3 GetFootPosition()
         {
             if (!IsDestroyed)
             {
                 Task.Run(async () =>
             {
                 await OwnerWorld.WaitEndOfFrame();
-                cacheFootPosition = (Vector3)API.getControllerFootPosition(_px, Scene.Index).ToVector3();
+                cacheFootPosition = api.getControllerFootPosition(Ref).ToVector3();
             }).ConfigureAwait(false);
             }
-            return cacheFootPosition;
+            return new Vector3((float)cacheFootPosition.x, (float)cacheFootPosition.y, (float)cacheFootPosition.z);
         }
         #endregion
 
-        internal PhysXCharacter(int UserDataIndex, Vector3 pos, Vector3 up, float height, float radius, Scene scene, IPhysicsWorld world, IPhysicsAPI aPI)
+        internal PhysXCharacter(Vector3 pos, Vector3 up, float height, float radius, Scene scene, IPhysicsWorld world, IPhysicsAPI api)
         {
-            UserDataReference = UserDataIndex;
-            Scene = scene;
+            this.scene = scene;
             this.OwnerWorld = world;
-            API = aPI;
-            _px = API.createCapsuleCharacter(Scene.Index, UserDataIndex, pos.ToApi(), up.ToApi(), height, radius);
-            cachePosition = (Vector3)API.getControllerPosition(_px, Scene.Index).ToVector3();
-            API.setControllerDirection(_px, Scene.Index, (Vector3.zero + world.Gravity).ToApi());
+            this.api = api;
+
+
+            Ref = api.createCapsuleCharacter(this.scene.Ref, pos.ToApi(), up.normalized.ToApi(), height, radius, 0.05f);
+            cachePosition = api.getControllerPosition(Ref).ToVector3();
+            api.setControllerDirection(Ref, (Vector3.zero + world.Gravity).ToApi());
         }
 
-        private float timeUpdate = 0;
-        const float forceUpdateSeconds = 2f;
+        private float timeUpdate;
+        private const float ForceUpdateSeconds = 2f;
         internal void Update(float dt)
         {
-            
+
             bool force = false;
             timeUpdate += dt;
-            if(timeUpdate >= forceUpdateSeconds)
+            if (timeUpdate >= ForceUpdateSeconds)
             {
                 timeUpdate = 0;
                 force = true;
             }
+
             var pos = Position;
             if ((pos - prevPosition).magnitude > 0.05f || force)
             {
@@ -152,8 +150,7 @@ namespace Magistr.Physics.PhysXImplCore
 
         public bool AutoMove(Vector3 toPosition)
         {
-            bool hasPath = false;
-            return hasPath;
+            return false;
         }
 
         public void Move(MoveDirection directions, bool clearQueue = false)
@@ -181,10 +178,11 @@ namespace Magistr.Physics.PhysXImplCore
                 moveDelta += -up;
 
 
-            Direction = (Vector3)(moveDelta.LengthSqr() == 0 ?
-                 Vector3.zero :
-                 Vector3.Normalize(moveDelta)) * Speed + OwnerWorld.Gravity;
-            API.setControllerDirection(_px, Scene.Index, Direction.ToApi());
+            Direction = (moveDelta.LengthSqr() == 0 ?
+                            Vector3.zero :
+                            Vector3.Normalize(moveDelta)) * Speed + OwnerWorld.Gravity;
+
+            api.setControllerDirection(Ref, Direction.ToApi());
 
         }
 

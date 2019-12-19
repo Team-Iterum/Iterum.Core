@@ -4,21 +4,21 @@ namespace Magistr.Physics.PhysXImplCore
 {
     internal class SphereGeometry : IGeometry
     {
-        private int geoIndex = -1;
-        IPhysicsAPI API;
+        private long nRef;
+        private IPhysicsAPI api;
         public SphereGeometry(float radius, IPhysicsAPI api)
         {
-            API = api;
-            geoIndex = api.createSphereGeometry(radius);
+            this.api = api;
+            nRef = api.createSphereGeometry(radius);
         }
 
         public void Destroy ()
         {
-            API.cleanupGeometry(geoIndex);
+            api.cleanupGeometry(nRef);
         }
         public object GetInternalGeometry()
         {
-            return geoIndex;
+            return nRef;
         }
     }
 }
