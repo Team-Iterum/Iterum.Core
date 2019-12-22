@@ -10,6 +10,7 @@ namespace Magistr.Log
             BackColor = Console.BackgroundColor;
             Console.BackgroundColor = consoleColor;
         }
+        
         public static void ResetBack()
         {
             Console.BackgroundColor = BackColor;
@@ -34,6 +35,12 @@ namespace Magistr.Log
             Console.Write("\n");
         }
 
+        #region LogError overloades
+
+        public static void LogError(object val)
+        {
+            LogError(val.ToString());
+        }
         public static void LogError(double val)
         {
             LogError(val.ToString("F2"));
@@ -46,31 +53,36 @@ namespace Magistr.Log
         {
             LogError(val.ToString());
         }
-
         public static void LogError(int val)
         {
             LogError(val.ToString());
         }
 
-        public static void Log(double val)
+        #endregion
+
+        #region Log overloades
+
+        public static void Log(object val, ConsoleColor color = ConsoleColor.White, bool timestamp = true)
         {
-            LogError(val.ToString("F2"));
+            Log(val.ToString(), color, timestamp);
         }
-        public static void Log(float val)
+        public static void Log(double val, ConsoleColor color = ConsoleColor.White, bool timestamp = true)
         {
-            Log(val.ToString("F2"));
+            Log(val.ToString("F2"), color, timestamp);
         }
-        public static void Log(long val)
+        public static void Log(float val, ConsoleColor color = ConsoleColor.White, bool timestamp = true)
         {
-            LogError(val.ToString());
+            Log(val.ToString("F2"), color, timestamp);
+        }
+        public static void Log(long val, ConsoleColor color = ConsoleColor.White, bool timestamp = true)
+        {
+            Log(val.ToString(), color, timestamp);
+        }
+        public static void Log(int val, ConsoleColor color = ConsoleColor.White, bool timestamp = true)
+        {
+            Log(val.ToString(), color, timestamp);
         }
 
-        public static void Log(int val)
-        {
-            Log(val.ToString());
-        }
-
-
-
+        #endregion
     }
 }
