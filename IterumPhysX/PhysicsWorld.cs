@@ -35,7 +35,7 @@ namespace Magistr.Physics.PhysXImplCore
         public int TPS { get; set; } = 1000 / 60;
         public Guid WorldUid { get; } = Guid.NewGuid();
 
-        public Vector3 Gravity => new Vector3(0, -10, 0);
+        public Vector3 Gravity { get; set; }
 
         private SphereGeometry overlapSphere;
         private float overlapSphereRadius = 150;

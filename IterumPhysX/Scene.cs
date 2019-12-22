@@ -77,9 +77,9 @@ namespace Magistr.Physics.PhysXImplCore
         {
             //var obj = new PhyXD(geometry, this, world, api);
 
-            references.Add(obj.Ref, obj);
+            //references.Add(obj.Ref, obj);
 
-            return obj;
+            return null;
         }
 
         internal List<IThing> Overlap(Vector3 pos, IGeometry overlapSphere)

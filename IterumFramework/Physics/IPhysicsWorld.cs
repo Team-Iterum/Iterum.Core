@@ -25,7 +25,7 @@ namespace Magistr.Physics
         float OverlapSphereRadius { get; set; }
 
         System.Guid WorldUid { get; }
-        Vector3 Gravity { get; }
+        Vector3 Gravity { get; set; }
 
         Task WaitEndOfFrame();
 
