@@ -1,25 +1,23 @@
 ﻿using Magistr.Log;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading;
 using Valve.Sockets;
 
 namespace Magistr.Network
 {
+
     public class ValveSocketsNetwork : INetworkServer
     {
         private NetworkingSockets sockets;
         private Thread workerThread;
         private uint listenSocket;
-        private bool IsRecieveRunning = false;
-        private const int RecieveThreadSleep = 15;
+        private bool isReceiveRunning;
+        private const int ReceiveThreadSleep = 15;
 
-        public event Action<NetworkMessage> Recieved;
+        public event Action<NetworkMessage> Received;
         public event Func<ConnectionData, bool> Connecting;
         public event Action<ConnectionData> Connected;
         public event Action<ConnectionData> Disconnected;
@@ -31,7 +29,7 @@ namespace Magistr.Network
 
         public void Stop()
         {
-            IsRecieveRunning = false;
+            isReceiveRunning = false;
         }
 
         public void StartServer(string host, int port)
@@ -39,18 +37,18 @@ namespace Magistr.Network
             try
             {
                 sockets = new NetworkingSockets();
-                Address address = new Address();
+                var address = new Address();
                 address.SetLocalHost((ushort)port);
                 listenSocket = sockets.CreateListenSocket(ref address);
-                IsRecieveRunning = true;
+                isReceiveRunning = true;
 
-                workerThread = new Thread(RecieveLoop);
+                workerThread = new Thread(ReceiveLoop);
                 workerThread.Start();
 
             }
             catch (Exception e)
             {
-                Debug.LogError("[NetworkServer] " + e.ToString());
+                Debug.LogError("[NetworkServer] " + e);
                 throw;
             }
             finally
@@ -112,7 +110,7 @@ namespace Magistr.Network
         private void MessageCallback(in NetworkingMessage net)
         {
             // copy data to own structure
-            NetworkMessage msg = new NetworkMessage
+            var msg = new NetworkMessage
             {
                 data = new byte[net.length],
                 channel = net.channel,
@@ -125,41 +123,40 @@ namespace Magistr.Network
             net.CopyTo(msg.data);
             var buffer = Decompress(msg.data);
             msg.data = buffer;
-            Recieved.Invoke(msg);
+            Received.Invoke(msg);
         }
 
-        private void RecieveLoop()
+        private void ReceiveLoop()
         {
             const int maxMessages = 20;
 
-            NetworkingMessage[] netMessages = new NetworkingMessage[maxMessages];
-
-            while (IsRecieveRunning)
+            while (isReceiveRunning)
             {
                 sockets.DispatchCallback(Status);
 
                 sockets.ReceiveMessagesOnListenSocket(listenSocket, MessageCallback, maxMessages);
 
-                Thread.Sleep(RecieveThreadSleep);
+                Thread.Sleep(ReceiveThreadSleep);
             }
         }
-        public static byte[] Compress(byte[] data)
+
+        private static byte[] Compress(byte[] data)
         {
-            MemoryStream output = new MemoryStream();
-            using (var dstream = new GZipStream(output, System.IO.Compression.CompressionLevel.Optimal))
+            var output = new MemoryStream();
+            using (var stream = new GZipStream(output, CompressionLevel.Optimal))
             {
-                dstream.Write(data, 0, data.Length);
+                stream.Write(data, 0, data.Length);
             }
             return output.ToArray();
         }
 
-        public static byte[] Decompress(byte[] data)
+        private static byte[] Decompress(byte[] data)
         {
-            MemoryStream input = new MemoryStream(data);
-            MemoryStream output = new MemoryStream();
-            using (var dstream = new GZipStream(input, CompressionMode.Decompress))
+            var input = new MemoryStream(data);
+            var output = new MemoryStream();
+            using (var stream = new GZipStream(input, CompressionMode.Decompress))
             {
-                dstream.CopyTo(output);
+                stream.CopyTo(output);
             }
             return output.ToArray();
         }

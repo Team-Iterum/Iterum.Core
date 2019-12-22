@@ -20,7 +20,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DefineConstants>TRACE;NETSTACK_INLINING;VALVESOCKETS_INLINING;VALVESOCKETS_SPAN</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DocumentationFile>D:\Develop\Team Iterum\iterum\IterumValveSockets\IterumValvaSockets.xml</DocumentationFile>
+    <DocumentationFile></DocumentationFile>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
