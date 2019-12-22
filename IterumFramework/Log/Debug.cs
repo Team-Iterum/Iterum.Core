@@ -16,9 +16,9 @@ namespace Magistr.Log
             Console.BackgroundColor = BackColor;
         }
 
-        public static void Log(string str, ConsoleColor color = ConsoleColor.White, bool timestamp = true)
+        public static void Log(string e, ConsoleColor color = ConsoleColor.White, bool timestamp = true)
         {
-            var msg = timestamp ? $"[{DateTime.Now.ToLongTimeString()}] {str}" : str;
+            var msg = timestamp ? $"[{DateTime.Now.ToLongTimeString()}] {e}" : e;
             var foreground = Console.ForegroundColor;
             Console.ForegroundColor = color;
             Console.Write(msg);
@@ -26,61 +26,61 @@ namespace Magistr.Log
             Console.Write("\n");
         }
 
-        public static void LogError(string str)
+        public static void LogError(string e)
         {
             var foreground = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.Write($"[{DateTime.Now.ToLongTimeString()}] {str}");
+            Console.Write($"[{DateTime.Now.ToLongTimeString()}] {e}");
             Console.ForegroundColor = foreground;
             Console.Write("\n");
         }
 
         #region LogError overloades
 
-        public static void LogError(object val)
+        public static void LogError(object e)
         {
-            LogError(val.ToString());
+            LogError(e.ToString());
         }
-        public static void LogError(double val)
+        public static void LogError(double e)
         {
-            LogError(val.ToString("F2"));
+            LogError(e.ToString("F2"));
         }
-        public static void LogError(float val)
+        public static void LogError(float e)
         {
-            LogError(val.ToString("F2"));
+            LogError(e.ToString("F2"));
         }
-        public static void LogError(long val)
+        public static void LogError(long e)
         {
-            LogError(val.ToString());
+            LogError(e.ToString());
         }
-        public static void LogError(int val)
+        public static void LogError(int e)
         {
-            LogError(val.ToString());
+            LogError(e.ToString());
         }
 
         #endregion
 
         #region Log overloades
 
-        public static void Log(object val, ConsoleColor color = ConsoleColor.White, bool timestamp = true)
+        public static void Log(object e, ConsoleColor color = ConsoleColor.White, bool timestamp = true)
         {
-            Log(val.ToString(), color, timestamp);
+            Log(e.ToString(), color, timestamp);
         }
-        public static void Log(double val, ConsoleColor color = ConsoleColor.White, bool timestamp = true)
+        public static void Log(double e, ConsoleColor color = ConsoleColor.White, bool timestamp = true)
         {
-            Log(val.ToString("F2"), color, timestamp);
+            Log(e.ToString("F2"), color, timestamp);
         }
-        public static void Log(float val, ConsoleColor color = ConsoleColor.White, bool timestamp = true)
+        public static void Log(float e, ConsoleColor color = ConsoleColor.White, bool timestamp = true)
         {
-            Log(val.ToString("F2"), color, timestamp);
+            Log(e.ToString("F2"), color, timestamp);
         }
-        public static void Log(long val, ConsoleColor color = ConsoleColor.White, bool timestamp = true)
+        public static void Log(long e, ConsoleColor color = ConsoleColor.White, bool timestamp = true)
         {
-            Log(val.ToString(), color, timestamp);
+            Log(e.ToString(), color, timestamp);
         }
-        public static void Log(int val, ConsoleColor color = ConsoleColor.White, bool timestamp = true)
+        public static void Log(int e, ConsoleColor color = ConsoleColor.White, bool timestamp = true)
         {
-            Log(val.ToString(), color, timestamp);
+            Log(e.ToString(), color, timestamp);
         }
 
         #endregion

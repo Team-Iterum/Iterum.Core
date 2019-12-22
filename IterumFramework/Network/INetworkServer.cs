@@ -6,7 +6,7 @@ namespace Magistr.Network
 {
     public interface INetworkServer
     {
-        event Action<NetworkMessage> Recieved;
+        event Action<NetworkMessage> Received;
         event Func<ConnectionData, bool> Connecting;
         event Action<ConnectionData> Connected;
         event Action<ConnectionData> Disconnected;

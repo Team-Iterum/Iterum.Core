@@ -1,32 +1,33 @@
-﻿using Magistr.Log;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Magistr.Log;
 using vtortola.WebSockets;
 
 namespace Magistr.Network
 {
     public class WebSocketNetwork : INetworkServer
     {
-        class WebSocketConnection
+        private class WebSocketConnection
         {
-            public uint connection;
-            public WebSocket ws;
-            public CancellationTokenSource token;
+            public uint Connection;
+            public WebSocket Ws;
+            public CancellationTokenSource Token;
+
             public void RequestDisconnect()
             {
-                token.Cancel();
+                Token.Cancel();
             }
         }
 
         private CancellationTokenSource stopToken;
         private WebSocketListener sockets;
-        private List<WebSocketConnection> Connections = new List<WebSocketConnection>();
+        private List<WebSocketConnection> connections = new List<WebSocketConnection>();
 
-        public event Action<NetworkMessage> Recieved;
+        public event Action<NetworkMessage> Received;
         public event Func<ConnectionData, bool> Connecting;
         public event Action<ConnectionData> Connected;
         public event Action<ConnectionData> Disconnected;
@@ -52,12 +53,12 @@ namespace Magistr.Network
                 sockets.MessageExtensions.RegisterExtension(new WebSocketDeflateExtension());
                 sockets.StartAsync();
 
-                _ = Task.Run(() => AcceptWebSocketClientsAsync(sockets, stopToken.Token));
+                Task.Run(() => AcceptWebSocketClientsAsync(sockets, stopToken.Token));
 
             }
             catch (Exception e)
             {
-                Debug.LogError("[NetworkServer] " + e.ToString());
+                Debug.LogError("[NetworkServer] " + e);
                 throw;
             }
             finally
@@ -76,19 +77,26 @@ namespace Magistr.Network
                     var ws = await server.AcceptWebSocketAsync(token).ConfigureAwait(false);
                     if (ws != null)
                     {                        
-                        if (Connecting.Invoke(new ConnectionData() { address = ws.RemoteEndpoint, connection = (uint)0 }))
+                        if (Connecting.Invoke(new ConnectionData { address = ws.RemoteEndpoint, connection = 0 }))
                         {
-                            CancellationTokenSource cancel = new CancellationTokenSource();
+                            var cancel = new CancellationTokenSource();
 
-                            var connection = (uint)Connections.Count;
-                            var wsc = new WebSocketConnection() { ws = ws, token = cancel, connection = connection };
-                            Connections.Add(wsc);
+                            var connection = (uint)connections.Count;
+                            var wsc = new WebSocketConnection { Ws = ws, Token = cancel, Connection = connection };
+                            connections.Add(wsc);
 
+                            // ReSharper disable once MethodSupportsCancellation
+                            // ReSharper disable once AssignmentIsFullyDiscarded
                             _ = Task.Run(() => HandleConnectionAsync(ws, wsc, token, cancel.Token));
                         }
                         else
                         {
-                            try { ws.Close(); } catch { }
+                            try { ws.Close(); }
+                            catch
+                            {
+                                // ignored
+                            }
+
                             ws.Dispose();
                         }
                         
@@ -99,36 +107,41 @@ namespace Magistr.Network
                     Debug.LogError("Error Accepting clients: " + aex.GetBaseException().Message);
                 }
             }
-            foreach (var wsc in Connections)
+            foreach (var wsc in connections)
             {
                 wsc.RequestDisconnect();
             }
-            Connections.Clear();
+
+            connections.Clear();
             sockets.Stop();
+
             Debug.Log("NetworkServer Stop accepting clients");
         }
 
         private async Task HandleConnectionAsync(WebSocket ws, WebSocketConnection wsc, CancellationToken cancellation, CancellationToken disconnect)
         {
-            var connection = wsc.connection;
+            var connection = wsc.Connection;
             try
             {
-                Debug.Log($"Client connected - ID: {connection}, IP: {ws.RemoteEndpoint.Address.ToString()}");
-                Connected?.Invoke(new ConnectionData() { address = ws.RemoteEndpoint, connection = connection });
+                Debug.Log($"Client connected - ID: {connection}, IP: {ws.RemoteEndpoint.Address}");
+                Connected?.Invoke(new ConnectionData { address = ws.RemoteEndpoint, connection = connection });
 
                 while (ws.IsConnected && (!cancellation.IsCancellationRequested && !disconnect.IsCancellationRequested))
                 {
                     var message = await ws.ReadMessageAsync(cancellation).ConfigureAwait(false);
                     if (message != null && message.MessageType == WebSocketMessageType.Binary)
                     {
-                        Debug.Log("Recieved message");
-                        MemoryStream ms = new MemoryStream();
+                        Debug.Log("Received message");
+                     
+                        var ms = new MemoryStream();
                         message.CopyTo(ms);
-                        //byte[] net = new byte[ms.Length];
+                        
                         ms.Position = 0;
                         var net = ms.GetBuffer();
+                        
                         Debug.Log($"readLength {net.Length} {net[0]}");
-                        NetworkMessage msg = new NetworkMessage
+                        
+                        var msg = new NetworkMessage
                         {
                             data = net,
                             channel = net[0],
@@ -136,49 +149,58 @@ namespace Magistr.Network
                             length = net.Length,
                             messageNumber = 0,
                             timeReceived = 0,
-                            userData = 0,
+                            userData = 0
                         };
-                        Debug.Log("Recieved message invoke... " + net.Length);
-                        Recieved.Invoke(msg);
+
+                        Debug.Log("Received message invoke... " + net.Length);
+                        Received.Invoke(msg);
                     }
                 }
             }
             catch (Exception aex)
             {
                 Debug.LogError("Error Handling connection: " + aex.GetBaseException().Message);
+
                 try { ws.Close(); }
-                catch { }
+                catch
+                {
+                    // ignored
+                }
             }
             finally
             {
-                Connections.Remove(wsc);
+                connections.Remove(wsc);
 
                 try { ws.Close(); }
-                catch { }
+                catch
+                {
+                    // ignored
+                }
+
                 ws.Dispose();
                 
-                Disconnected.Invoke(new ConnectionData() { address = ws.RemoteEndpoint, connection = connection });
-                Debug.Log($"Client disconnected - ID: {connection}, IP: {ws.RemoteEndpoint.Address.ToString()}");
+                Disconnected.Invoke(new ConnectionData { address = ws.RemoteEndpoint, connection = connection });
+
+                Debug.Log($"Client disconnected - ID: {connection}, IP: {ws.RemoteEndpoint.Address}");
             }
         }
 
 
         public void Disconnect(uint connection)
         {
-            if (connection < Connections.Count)
-                Connections[(int)connection].RequestDisconnect();
+            if (connection < connections.Count)
+                connections[(int)connection].RequestDisconnect();
         }
 
         public void Send(uint connection, ISerializablePacket packet)
         {
-            if (connection < Connections.Count)
+            if (connection < connections.Count)
             {
-                var ws = Connections[(int)connection];
-                using (var messageWriter = ws.ws.CreateMessageWriter(WebSocketMessageType.Binary))
-                {
-                    var buffer = packet.Serialize();
-                    messageWriter.Write(buffer, 0, buffer.Length);
-                };
+                var ws = connections[(int)connection];
+                using var messageWriter = ws.Ws.CreateMessageWriter(WebSocketMessageType.Binary);
+
+                var buffer = packet.Serialize();
+                messageWriter.Write(buffer, 0, buffer.Length);
             }
         }
 
