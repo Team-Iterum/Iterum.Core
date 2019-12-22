@@ -25,7 +25,8 @@ namespace Magistr.Network
 
         private CancellationTokenSource stopToken;
         private WebSocketListener sockets;
-        private List<WebSocketConnection> connections = new List<WebSocketConnection>();
+        private long connectionCounter;
+        private Dictionary<long, WebSocketConnection> connections = new Dictionary<long, WebSocketConnection>();
 
         public event Action<NetworkMessage> Received;
         public event Func<ConnectionData, bool> Connecting;
@@ -48,11 +49,14 @@ namespace Magistr.Network
                 {
                     ip = new IPEndPoint(IPAddress.Parse(host), port);
                 }
-                sockets = new WebSocketListener(ip);
+                sockets = new WebSocketListener(ip, new WebSocketListenerOptions()
+                {
+                    PingMode = PingModes.LatencyControl,
+                });
                 sockets.Standards.RegisterStandard(new WebSocketFactoryRfc6455());
                 sockets.MessageExtensions.RegisterExtension(new WebSocketDeflateExtension());
                 sockets.StartAsync();
-
+               
                 Task.Run(() => AcceptWebSocketClientsAsync(sockets, stopToken.Token));
 
             }
@@ -77,13 +81,15 @@ namespace Magistr.Network
                     var ws = await server.AcceptWebSocketAsync(token).ConfigureAwait(false);
                     if (ws != null)
                     {                        
-                        if (Connecting.Invoke(new ConnectionData { address = ws.RemoteEndpoint, connection = 0 }))
+                        var connection = (uint)(connectionCounter++);
+
+                        if (Connecting.Invoke(new ConnectionData { address = ws.RemoteEndpoint, connection = connection }))
                         {
                             var cancel = new CancellationTokenSource();
 
-                            var connection = (uint)connections.Count;
                             var wsc = new WebSocketConnection { Ws = ws, Token = cancel, Connection = connection };
-                            connections.Add(wsc);
+                            connections.Add(connection, wsc);
+
 
                             // ReSharper disable once MethodSupportsCancellation
                             // ReSharper disable once AssignmentIsFullyDiscarded
@@ -109,7 +115,7 @@ namespace Magistr.Network
             }
             foreach (var wsc in connections)
             {
-                wsc.RequestDisconnect();
+                wsc.Value.RequestDisconnect();
             }
 
             connections.Clear();
@@ -128,10 +134,11 @@ namespace Magistr.Network
 
                 while (ws.IsConnected && (!cancellation.IsCancellationRequested && !disconnect.IsCancellationRequested))
                 {
+                    
                     var message = await ws.ReadMessageAsync(cancellation).ConfigureAwait(false);
                     if (message != null && message.MessageType == WebSocketMessageType.Binary)
                     {
-                        Debug.Log("Received message");
+                        //Debug.Log("Received message");
                      
                         var ms = new MemoryStream();
                         message.CopyTo(ms);
@@ -139,7 +146,7 @@ namespace Magistr.Network
                         ms.Position = 0;
                         var net = ms.GetBuffer();
                         
-                        Debug.Log($"readLength {net.Length} {net[0]}");
+                        //Debug.Log($"readLength {net.Length} {net[0]}");
                         
                         var msg = new NetworkMessage
                         {
@@ -152,7 +159,7 @@ namespace Magistr.Network
                             userData = 0
                         };
 
-                        Debug.Log("Received message invoke... " + net.Length);
+                        //Debug.Log("Received message invoke... " + net.Length);
                         Received.Invoke(msg);
                     }
                 }
@@ -169,7 +176,7 @@ namespace Magistr.Network
             }
             finally
             {
-                connections.Remove(wsc);
+                connections.Remove(wsc.Connection);
 
                 try { ws.Close(); }
                 catch
@@ -194,9 +201,9 @@ namespace Magistr.Network
 
         public void Send(uint connection, ISerializablePacket packet)
         {
-            if (connection < connections.Count)
+            if (connections.ContainsKey(connection))
             {
-                var ws = connections[(int)connection];
+                var ws = connections[connection];
                 using var messageWriter = ws.Ws.CreateMessageWriter(WebSocketMessageType.Binary);
 
                 var buffer = packet.Serialize();

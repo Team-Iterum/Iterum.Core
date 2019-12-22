@@ -84,36 +84,39 @@ namespace Magistr.Physics.PhysXImplCore
         }
         private AsyncManualResetEvent mre = new AsyncManualResetEvent(true);
         private Thread sceneThread;
-        private long lastScene;
+        private long beforeScene;
 
         private void StepPhysics()
         {
             mre.Reset();
+            
             var stopwatch = new Stopwatch();
             stopwatch.Start();
             last = stopwatch.ElapsedTicks;
-            int firstSkip = 0;
+            
             while (IsRunning)
             {
                 int sleep = TPS;
 
-                var elapsed = stopwatch.ElapsedTicks;
-                var dtSpan = TimeSpan.FromTicks(elapsed - last);
+                var dtSpan = TimeSpan.FromTicks(stopwatch.ElapsedTicks - last);
                 var dt = (float)dtSpan.TotalMilliseconds;
+
                 last = stopwatch.ElapsedTicks;
 
                 DeltaTime = dt;
                 Timestamp = (int)scene.Timestamp;
 
-                if (dt > 1 && firstSkip > 10)
+                if (dt > 1)
                 {
                     API.stepPhysics(scene.Ref, (float)dtSpan.TotalSeconds);
                     API.charactersUpdate((float)dtSpan.TotalSeconds, 0.05f);
                 }
+                
                 var stop = stopwatch.ElapsedTicks;
                 mre.Set();
                 
                 SceneFrame = (float)TimeSpan.FromTicks(stop - last).TotalMilliseconds;
+                
                 sleep -= Mathf.CeilToInt(SceneFrame);
                 if (sleep < 0)
                 {
@@ -126,7 +129,6 @@ namespace Magistr.Physics.PhysXImplCore
                     Thread.Sleep(sleep);
                     mre.Reset();
                 }
-                firstSkip++;
             }
         }
 
@@ -152,12 +154,14 @@ namespace Magistr.Physics.PhysXImplCore
         {
             InitPhysics();
             InitScene();
+
             IsCreated = true;
         }
 
         public void Destroy()
         {
             IsDestroyed = true;
+
             Stop();
             scene.Cleanup();
         }
@@ -169,10 +173,10 @@ namespace Magistr.Physics.PhysXImplCore
                 IsBackground = false,
                 Priority = ThreadPriority.Highest
             };
-
             sceneThread = new Thread(StepScene);
 
             IsRunning = true;
+
             workerThread.Start();
             sceneThread.Start();
 
@@ -183,18 +187,25 @@ namespace Magistr.Physics.PhysXImplCore
         {
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            lastScene = stopwatch.ElapsedTicks;
+
+            beforeScene = stopwatch.ElapsedTicks;
+            
             while (IsRunning)
             {
-                int sleep = 15;
-                var elapsed = stopwatch.ElapsedTicks;
-                var dtSpan = TimeSpan.FromTicks(elapsed - lastScene);
-                lastScene = elapsed;
-                
-                scene.Update((float)dtSpan.TotalSeconds);
-                var stop = stopwatch.ElapsedTicks;
+                int sleep = 15;    
 
-                var sceneFrame = (float)TimeSpan.FromTicks(stop - lastScene).TotalMilliseconds;
+                var dtSpan = TimeSpan.FromTicks(stopwatch.ElapsedTicks - beforeScene);
+
+                beforeScene = stopwatch.ElapsedTicks;
+                {
+                    scene.Update((float) dtSpan.TotalSeconds);
+                }
+                var afterScene = stopwatch.ElapsedTicks;
+
+
+                var sceneFrame = (float)TimeSpan.FromTicks(afterScene - beforeScene).TotalMilliseconds;
+                
+                
                 sleep -= (int)sceneFrame;
                 if (sleep < 0)
                 {
@@ -217,9 +228,9 @@ namespace Magistr.Physics.PhysXImplCore
 
         public IGeometry CreateStaticModelGeometry(IModelData modelData)
         {
+            
             return new SphereGeometry(1, API);
         }
-
 
         public IGeometry CreateSphereGeometry(float radius)
         {
@@ -240,7 +251,7 @@ namespace Magistr.Physics.PhysXImplCore
 
         public IPhysicsDynamicObject CreateDynamic(IGeometry geometry, Vector3 pos, Quaternion rot)
         {
-            
+            var rigidActor = scene.CreateRigidDynamic(geometry);   
             //var rigidActor = scene.Physics.CreateRigidDynamic();
             //RigidActorExt.CreateExclusiveShape(rigidActor, (Geometry)geometry.GetInternalGeometry(), Material);
 

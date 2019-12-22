@@ -72,6 +72,16 @@ namespace Magistr.Physics.PhysXImplCore
             return obj;
         }
 
+        
+        public object CreateRigidDynamic(IGeometry geometry)
+        {
+            //var obj = new PhyXD(geometry, this, world, api);
+
+            references.Add(obj.Ref, obj);
+
+            return obj;
+        }
+
         internal List<IThing> Overlap(Vector3 pos, IGeometry overlapSphere)
         {
             var hits = new List<IThing>();
@@ -101,5 +111,6 @@ namespace Magistr.Physics.PhysXImplCore
                 item.Value.Update(dt);
             }
         }
+
     }
 }
