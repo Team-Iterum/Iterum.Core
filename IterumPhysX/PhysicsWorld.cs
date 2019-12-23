@@ -86,6 +86,8 @@ namespace Magistr.Physics.PhysXImplCore
         private Thread sceneThread;
         private long beforeScene;
 
+        public Action<float> SceneUpdate;
+
         private void StepPhysics()
         {
             mre.Reset();
@@ -106,15 +108,18 @@ namespace Magistr.Physics.PhysXImplCore
                 DeltaTime = dt;
                 Timestamp = (int)scene.Timestamp;
 
+                
                 if (dt > 1)
                 {
+                    mre.Reset();
                     API.stepPhysics(scene.Ref, (float)dtSpan.TotalSeconds);
                     API.charactersUpdate((float)dtSpan.TotalSeconds, 0.05f);
+                    mre.Set();
                 }
-                
+               
+
                 var stop = stopwatch.ElapsedTicks;
-                mre.Set();
-                
+
                 SceneFrame = (float)TimeSpan.FromTicks(stop - last).TotalMilliseconds;
                 
                 sleep -= Mathf.CeilToInt(SceneFrame);
@@ -122,12 +127,11 @@ namespace Magistr.Physics.PhysXImplCore
                 {
                     sleep = 1;
                     Thread.Sleep(sleep);
-                    mre.Reset();
+                    
                 }
                 else
                 {
                     Thread.Sleep(sleep);
-                    mre.Reset();
                 }
             }
         }
@@ -192,12 +196,13 @@ namespace Magistr.Physics.PhysXImplCore
             
             while (IsRunning)
             {
-                int sleep = 15;    
+                int sleep = TPS;    
 
                 var dtSpan = TimeSpan.FromTicks(stopwatch.ElapsedTicks - beforeScene);
 
                 beforeScene = stopwatch.ElapsedTicks;
                 {
+                    SceneUpdate?.Invoke((float) dtSpan.TotalSeconds);
                     scene.Update((float) dtSpan.TotalSeconds);
                 }
                 var afterScene = stopwatch.ElapsedTicks;
