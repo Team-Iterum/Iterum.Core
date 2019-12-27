@@ -4,9 +4,10 @@ using System;
 
 namespace Magistr.Things
 {
+    public delegate void ThingPositionChange(IThing thing, Vector3 pos, bool force);
     public interface IThing
     {
-        event Action<IThing, Vector3, bool> PositionChange;
+        event ThingPositionChange PositionChange;
         Vector3 Position { get; set; }
         Quaternion Rotation { get; set; }
         Vector3 Scale { get; set; }

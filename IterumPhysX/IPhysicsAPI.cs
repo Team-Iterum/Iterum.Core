@@ -35,11 +35,20 @@ namespace Magistr.Physics.PhysXImplCore
         void cleanupGeometry(long nRef);
         long createRigidStatic(long nRefGeo, long nRefScene, APIVec3 pos, APIQuat quat);
         void destroyRigidStatic(long nRef);
+        APIVec3 getRigidDynamicPosition(long nRef);
+        APIQuat getRigidDynamicRotation(long nRef);
         APIVec3 getRigidStaticPosition(long nRef);
         APIQuat getRigidStaticRotation(long nRef);
         void setRigidStaticPosition(long nRef, APIVec3 p);
         void setRigidStaticRotation(long nRef, APIQuat q);
-        long createRigidDynamic(long nRefGeo, long nRefScene, APIVec3 pos, APIQuat quat);
+        void setRigidDynamicPosition(long nRef, APIVec3 p);
+        void setRigidDynamicRotation(long nRef, APIQuat q);
+        long createRigidDynamic(long nRefGeo, long nRefScene, bool kinematic, float mass, APIVec3 pos, APIQuat quat);
+        void setRigidDynamicKinematicTarget(long nRef, APIVec3 p, APIQuat q);
+        
+        void setRigidDynamicLinearVelocity(long nRef, APIVec3 v);
+        void setRigidDynamicMaxLinearVelocity(long nRef, float v);
+
         void destroyRigidDynamic(long nRef);
         long createCapsuleCharacter(long nRefScene, APIVec3 pos, APIVec3 up, float height, float radius, float stepOffset);
         void destroyController(long nRef);

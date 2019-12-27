@@ -11,7 +11,6 @@ namespace Magistr.Physics
         IThing Thing { get; set; }
         Quaternion Rotation { get; set; }
         bool IsDestroyed { get; }
-        IPhysicsWorld OwnerWorld { get; }
     }
 
     public interface IPhysicsStaticObject : IPhysicsObject
@@ -21,7 +20,7 @@ namespace Magistr.Physics
 
     public interface IPhysicsDynamicObject : IPhysicsObject
     {
-
+        void SetKinematicTarget(Vector3 position, Quaternion rotation);
     }
 
     [Flags]

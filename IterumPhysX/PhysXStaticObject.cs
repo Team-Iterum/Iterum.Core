@@ -2,6 +2,7 @@
 using Magistr.Math;
 using Magistr.Things;
 using System.Threading.Tasks;
+
 namespace Magistr.Physics.PhysXImplCore
 {
     public class PhysXStaticObject : IPhysicsStaticObject
@@ -10,46 +11,23 @@ namespace Magistr.Physics.PhysXImplCore
 
         private IPhysicsAPI api;
         private Scene scene;
+        private IPhysicsWorld world;
 
         #region IPhysicsObject
-        private Vector3 cachePosition;
+
         public Vector3 Position
         {
-            get => GetPosition();
-            set
-            {
-                if (!IsDestroyed)
-                {
-                    Task.Run(async () =>
-                    {
-                        await OwnerWorld.WaitEndOfFrame();
-                        api.setRigidStaticPosition(Ref, value.ToApi());
-                        cachePosition = value;
-                    }).ConfigureAwait(false);
-                }
-            }
+            get => api.getRigidStaticPosition(Ref).ToVector3();
+            set => api.setRigidStaticPosition(Ref, value.ToApi());
         }
 
-        private Quaternion cacheRotation;
         public Quaternion Rotation
         {
-            get => GetRotation();
-            set
-            {
-                if (!IsDestroyed)
-                {
-                    Task.Run(async () =>
-                    {
-                        await OwnerWorld.WaitEndOfFrame();
-                        api.setRigidStaticRotation(Ref, value.ToQuat());
-                        cacheRotation = value;
-                    }).ConfigureAwait(false);
-                }
-                
-            }
+            get => api.getRigidStaticRotation(Ref).ToQuat();
+            set => api.setRigidStaticRotation(Ref, value.ToQuat());
         }
         public bool IsDestroyed { get; private set; }
-        public IPhysicsWorld OwnerWorld { get; }
+
         public IThing Thing { get; set; }
 
         public void Destroy()
@@ -58,7 +36,7 @@ namespace Magistr.Physics.PhysXImplCore
             {
                 Task.Run(async () =>
                 {
-                    await OwnerWorld.WaitEndOfFrame();
+                    await world.WaitEndOfFrame();
                     scene.Destroy(this);
                 }).ConfigureAwait(false);
             }
@@ -66,42 +44,15 @@ namespace Magistr.Physics.PhysXImplCore
             IsDestroyed = true;
 
         }
-
-        private Vector3 GetPosition()
-        {
-            if (!IsDestroyed)
-            {
-                Task.Run(async () =>
-                {
-                    await OwnerWorld.WaitEndOfFrame();
-                    cachePosition = api.getRigidStaticPosition(Ref).ToVector3();
-                }).ConfigureAwait(false);
-            }
-            return cachePosition;
-        }
-        private Quaternion GetRotation()
-        {
-            if (!IsDestroyed)
-            {
-                Task.Run(async () =>
-                {
-                    await OwnerWorld.WaitEndOfFrame();
-                    cacheRotation = api.getRigidStaticRotation(Ref).ToQuat();
-                }).ConfigureAwait(false);
-            }
-            return cacheRotation;
-        }
         #endregion
 
         internal PhysXStaticObject(IGeometry geometry, Scene scene, IPhysicsWorld world, IPhysicsAPI api)
         {
             this.api = api;
-            OwnerWorld = world;
+            this.world = world;
             this.scene = scene;
 
             Ref = api.createRigidStatic((long)geometry.GetInternalGeometry(), scene.Ref, Vector3.zero.ToApi(), Quaternion.identity.ToQuat());
-           
-            
         }
 
     }

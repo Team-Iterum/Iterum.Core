@@ -63,10 +63,7 @@ namespace Magistr.Physics.PhysXImplCore
             {
                 var builder = new NativeLibraryBuilder(ImplementationOptions.EnableOptimizations | ImplementationOptions.UseIndirectCalls);
                 API = builder.ActivateInterface<IPhysicsAPI>("PhysXSharpNative");
-                API.initPhysics(false, Environment.ProcessorCount, (message) =>
-                {
-                    Log.Debug.LogError(message);
-                });
+                API.initPhysics(true, Environment.ProcessorCount, Log.Debug.LogError);
 
 
                 PhysXCreated = true;
@@ -113,7 +110,7 @@ namespace Magistr.Physics.PhysXImplCore
                 {
                     mre.Reset();
                     API.stepPhysics(scene.Ref, (float)dtSpan.TotalSeconds);
-                    API.charactersUpdate((float)dtSpan.TotalSeconds, 0.05f);
+                    //API.charactersUpdate((float)dtSpan.TotalSeconds, 0.05f);
                     mre.Set();
                 }
                
@@ -256,16 +253,9 @@ namespace Magistr.Physics.PhysXImplCore
 
         public IPhysicsDynamicObject CreateDynamic(IGeometry geometry, Vector3 pos, Quaternion rot)
         {
-            var rigidActor = scene.CreateRigidDynamic(geometry);   
-            //var rigidActor = scene.Physics.CreateRigidDynamic();
-            //RigidActorExt.CreateExclusiveShape(rigidActor, (Geometry)geometry.GetInternalGeometry(), Material);
+            var rigidActor = scene.CreateRigidDynamic(geometry);
 
-            //rigidActor.GlobalPosePosition = (Vec3)pos;
-            //rigidActor.GlobalPoseQuat = (Quat)rot;
-            ////rigidActor.UserData = controller;
-            //scene.AddActor(rigidActor);
-
-            return default;
+            return rigidActor;
         }
 
         public IPhysicsCharaceter CreateCapsuleCharacter(Vector3 pos, Vector3 up, float height = 4, float radius = 1)

@@ -44,6 +44,13 @@ namespace Magistr.Physics.PhysXImplCore
 
         }
 
+        internal void Destroy(PhysXDynamicObject obj)
+        {
+            references.Remove(obj.Ref);
+            api.destroyRigidDynamic(obj.Ref);
+
+        }
+
         internal void Destroy(PhysXCharacter obj)
         {
             characters.Remove(obj.Ref);
@@ -73,13 +80,13 @@ namespace Magistr.Physics.PhysXImplCore
         }
 
         
-        public object CreateRigidDynamic(IGeometry geometry)
+        public IPhysicsDynamicObject CreateRigidDynamic(IGeometry geometry)
         {
-            //var obj = new PhyXD(geometry, this, world, api);
+            var obj = new PhysXDynamicObject(geometry, false, 1.0f, this, api);
 
-            //references.Add(obj.Ref, obj);
+            references.Add(obj.Ref, obj);
 
-            return null;
+            return obj;
         }
 
         internal List<IThing> Overlap(Vector3 pos, IGeometry overlapSphere)

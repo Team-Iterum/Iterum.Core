@@ -6,16 +6,17 @@ namespace Magistr.Things
 {
     public class Thing : IThing
     {
-        private IPhysicsObject PhysicsObject;
+        private IPhysicsObject physicsObject;
+
         public Vector3 Position { get; set; }
         public Quaternion Rotation { get; set; }
         public Vector3 Scale { get; set; }
         public int ThingTypeId { get; set; }
         public string ThingName { get; set; } = null;
 
-        public event Action<IThing, Vector3, bool> PositionChange;
+        public event ThingPositionChange PositionChange;
 
-        public bool IsDestroyed => PhysicsObject == null ? true : PhysicsObject.IsDestroyed;
+        public bool IsDestroyed => physicsObject?.IsDestroyed ?? true;
 
         public Thing(int id, Vector3 position, Quaternion rotation, Vector3 scale)
         {
@@ -28,8 +29,8 @@ namespace Magistr.Things
 
         public void SyncTransform()
         {
-            PhysicsObject.Rotation = Rotation;
-            PhysicsObject.Position = Position;
+            physicsObject.Rotation = Rotation;
+            physicsObject.Position = Position;
             PositionChange?.Invoke(this, Position, false);
         }
 
@@ -38,21 +39,24 @@ namespace Magistr.Things
             var thingType = ThingTypeManager.GetThingType(ThingTypeId);
             
             var geometry = thingType.CreateGeometry(world);
+
             if (thingType.HasAttr(ThingAttr.Static))
             {
-                PhysicsObject = world.CreateStatic(geometry, Position, Rotation);
+                physicsObject = world.CreateStatic(geometry, Position, Rotation);
             }
             else if (thingType.HasAttr(ThingAttr.Dynamic))
             {
-                PhysicsObject = world.CreateDynamic(geometry, Position, Rotation);
+                physicsObject = world.CreateDynamic(geometry, Position, Rotation);
             }
+
             SyncTransform();
-            PhysicsObject.Thing = this;
+
+            physicsObject.Thing = this;
         }
 
         public void Destroy()
         {
-            PhysicsObject.Destroy();
+            physicsObject.Destroy();
         }
     }
 }
