@@ -23,6 +23,7 @@ namespace Magistr.Physics.PhysXImplCore
         public float z;
         public float w;
     }
+
     public delegate void OverlapCallback(int t1);
     public delegate void ErrorCallbackFunc(string message);
     public interface IPhysicsAPI
@@ -30,37 +31,63 @@ namespace Magistr.Physics.PhysXImplCore
         void charactersUpdate(float elapsed, float minDist);
         void setControllerDirection(long nRef, APIVec3 dir);
         int sceneOverlap(long nRefScene, long nRefGeo, APIVec3 pos, OverlapCallback callback);
+        
+        
+        
+        long createTriangleMesh(APIVec3[] vertices, int pointsCount, uint[] indices, int triCount);
+        long createConvexMesh(APIVec3[] vertices, int pointsCount);
+        void cleanupConvexMesh(long nRef);
+        void cleanupTriangleMesh(long nRef);
+
+
         long createSphereGeometry(float radius);
         long createBoxGeometry(APIVec3 half);
         void cleanupGeometry(long nRef);
-        long createRigidStatic(long nRefGeo, long nRefScene, APIVec3 pos, APIQuat quat);
+
+        long createRigidStatic(int geoType, long nRefGeo, long nRefScene, APIVec3 pos, APIQuat quat);
         void destroyRigidStatic(long nRef);
+
         APIVec3 getRigidDynamicPosition(long nRef);
         APIQuat getRigidDynamicRotation(long nRef);
+        void setRigidDynamicPosition(long nRef, APIVec3 p);
+        void setRigidDynamicRotation(long nRef, APIQuat q);
+
+        
         APIVec3 getRigidStaticPosition(long nRef);
         APIQuat getRigidStaticRotation(long nRef);
         void setRigidStaticPosition(long nRef, APIVec3 p);
         void setRigidStaticRotation(long nRef, APIQuat q);
-        void setRigidDynamicPosition(long nRef, APIVec3 p);
-        void setRigidDynamicRotation(long nRef, APIQuat q);
-        long createRigidDynamic(long nRefGeo, long nRefScene, bool kinematic, float mass, APIVec3 pos, APIQuat quat);
+
+        
+        long createRigidDynamic(int geoType, long nRefGeo, long nRefScene, bool kinematic, float mass, APIVec3 pos, APIQuat quat);
+        void destroyRigidDynamic(long nRef);
+
         void setRigidDynamicKinematicTarget(long nRef, APIVec3 p, APIQuat q);
         
         void setRigidDynamicLinearVelocity(long nRef, APIVec3 v);
         void setRigidDynamicMaxLinearVelocity(long nRef, float v);
 
-        void destroyRigidDynamic(long nRef);
+        
+        
+        
+        
         long createCapsuleCharacter(long nRefScene, APIVec3 pos, APIVec3 up, float height, float radius, float stepOffset);
         void destroyController(long nRef);
+        
         APIDoubleVec3 getControllerPosition(long nRef);
         APIDoubleVec3 getControllerFootPosition(long nRef);
+
         void setControllerPosition(long nRef, APIDoubleVec3 p);
         void setControllerFootPosition(long nRef, APIDoubleVec3 p);
+        
+        
+        
         long createScene(APIVec3 gravity);
-        void stepPhysics(long nRef, float dt);
         void cleanupScene(long nRef);
         long getSceneTimestamp(long nRef);
+        
         void initPhysics(bool isCreatePvd, int numThreads, ErrorCallbackFunc func);
+        void stepPhysics(long nRef, float dt);
         void cleanupPhysics();
     }
 

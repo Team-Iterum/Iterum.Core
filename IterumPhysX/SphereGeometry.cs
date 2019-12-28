@@ -20,5 +20,7 @@ namespace Magistr.Physics.PhysXImplCore
         {
             return nRef;
         }
+
+        public GeoType GeoType { get; } = GeoType.SimpleGeometry;
     }
 }

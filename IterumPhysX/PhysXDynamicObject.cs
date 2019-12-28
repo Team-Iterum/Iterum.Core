@@ -72,7 +72,7 @@ namespace Magistr.Physics.PhysXImplCore
             this.api = api;
             this.scene = scene;
 
-            Ref = api.createRigidDynamic((long)geometry.GetInternalGeometry(), scene.Ref, kinematic, mass, Vector3.zero.ToApi(), Quaternion.identity.ToQuat());
+            Ref = api.createRigidDynamic((int) geometry.GeoType,(long)geometry.GetInternalGeometry(), scene.Ref, kinematic, mass, Vector3.zero.ToApi(), Quaternion.identity.ToQuat());
         }
     }
 }

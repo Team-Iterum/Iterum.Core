@@ -1,19 +1,31 @@
-﻿using Magistr.Log;
+﻿#if !(ENABLE_MONO || ENABLE_IL2CPP)
+using Magistr.Log;
 using Magistr.Utils;
+#else
+using Debug = UnityEngine.Debug;
+#endif
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using Binder = Magistr.Utils.Binder;
 
 namespace Magistr.Things
 {
+
     public static class ThingTypeManager
     {
         public static int Count => ThingTypes.Count;
-        private static Dictionary<int, ThingType> ThingTypes;
+        public static Dictionary<int, ThingType> ThingTypes;
         public static Dictionary<int, ThingType>.ValueCollection All => ThingTypes.Values;
+
+        static ThingTypeManager()
+        {
+            ThingTypes = new Dictionary<int, ThingType>();
+        }
 
         public static bool HasThingType(int thingTypeId)
         {
@@ -26,6 +38,7 @@ namespace Magistr.Things
             {
                 return ThingTypes[thingTypeId];
             }
+
             return default;
         }
 
@@ -40,19 +53,21 @@ namespace Magistr.Things
             return thingsArchive;
 
         }
-        public static void Save(FileStream fs, string gameName, int version)
+
+        public static void Save(Stream fs, string gameName, int version)
         {
             var thingsArchive = CreateArchive(gameName, version);
 
             try
             {
                 var formatter = new BinaryFormatter();
+
                 thingsArchive.ThingTypes = ThingTypes.Values.ToArray();
                 formatter.Serialize(fs, thingsArchive);
             }
             catch (SerializationException e)
             {
-                Debug.LogError("Failed to serializer ThingTypeArchive. Reason: " + e.Message);
+                Debug.LogError("[ThingTypeManager] Failed to serializer ThingTypeArchive. Reason: " + e.Message);
                 throw;
             }
             finally
@@ -60,21 +75,21 @@ namespace Magistr.Things
                 fs.Close();
             }
         }
-        public static void Load(FileStream fs)
+
+        public static void Load(Stream fs)
         {
             try
             {
                 ThingTypes = new Dictionary<int, ThingType>();
                 var formatter = new BinaryFormatter
                 {
-                    Binder = new BinaryTypeBinder()
+                    Binder = new Binder()
                 };
 
-                var thingsArchive = (ThingTypeArchive)formatter.Deserialize(fs);
+                var thingsArchive = (ThingTypeArchive) formatter.Deserialize(fs);
                 for (int i = 0; i < thingsArchive.ThingTypes.Length; i++)
                 {
-                    thingsArchive.ThingTypes[i].ThingTypeId = i;
-                    ThingTypes.Add(i, thingsArchive.ThingTypes[i]);
+                    ThingTypes.Add(thingsArchive.ThingTypes[i].ThingTypeId, thingsArchive.ThingTypes[i]);
                 }
             }
             catch (SerializationException e)
@@ -85,19 +100,21 @@ namespace Magistr.Things
             finally
             {
                 fs.Close();
-                Debug.Log($"[ThingTypeManager] {Path.GetFileName(fs.Name)} loaded", ConsoleColor.Green);
             }
 
         }
 
-        [Serializable]
-        private struct ThingTypeArchive
-        {
-            public DateTime Created;
-            public int Version;
-            public string Name;
-            public ThingType[] ThingTypes;
-        }
+    }
+    
+
+    
+    [Serializable]
+    public struct ThingTypeArchive
+    {
+        public DateTime Created;
+        public int Version;
+        public string Name;
+        public ThingType[] ThingTypes;
     }
 
 }

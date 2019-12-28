@@ -73,10 +73,8 @@ namespace Magistr.Physics.PhysXImplCore
 
         private void InitScene()
         {
-
             scene = new Scene(API, this);
             overlapSphere = new SphereGeometry(OverlapSphereRadius, API);
-
 
         }
         private AsyncManualResetEvent mre = new AsyncManualResetEvent(true);
@@ -204,9 +202,7 @@ namespace Magistr.Physics.PhysXImplCore
                 }
                 var afterScene = stopwatch.ElapsedTicks;
 
-
                 var sceneFrame = (float)TimeSpan.FromTicks(afterScene - beforeScene).TotalMilliseconds;
-                
                 
                 sleep -= (int)sceneFrame;
                 if (sleep < 0)
@@ -228,10 +224,14 @@ namespace Magistr.Physics.PhysXImplCore
             IsRunning = false;
         }
 
-        public IGeometry CreateStaticModelGeometry(IModelData modelData)
+        public IGeometry CreateTriangleMeshGeometry(IModelData modelData)
         {
-            
-            return new SphereGeometry(1, API);
+            return new ModelGeometry(GeoType.TriangleMeshGeometry, modelData, API);
+        }
+
+        public IGeometry CreateConvexMeshGeometry(IModelData modelData)
+        {
+            return new ModelGeometry(GeoType.ConvexMeshGeometry, modelData, API);
         }
 
         public IGeometry CreateSphereGeometry(float radius)
@@ -241,19 +241,22 @@ namespace Magistr.Physics.PhysXImplCore
 
         public IGeometry CreateBoxGeometry(Vector3 size)
         {
-            return new BoxGeometry(size / 2, API);
+            return new BoxGeometry(size, API);
         }
 
         public IPhysicsStaticObject CreateStatic(IGeometry geometry, Vector3 pos, Quaternion rot)
         {
             var rigidActor = scene.CreateRigidStatic(geometry);
-
+            rigidActor.Position = pos;
+            rigidActor.Rotation = rot;
             return rigidActor;
         }
 
-        public IPhysicsDynamicObject CreateDynamic(IGeometry geometry, Vector3 pos, Quaternion rot)
+        public IPhysicsDynamicObject CreateDynamic(IGeometry geometry, bool kinematic, Vector3 pos, Quaternion rot)
         {
-            var rigidActor = scene.CreateRigidDynamic(geometry);
+            var rigidActor = scene.CreateRigidDynamic(geometry, kinematic);
+            rigidActor.Position = pos;
+            rigidActor.Rotation = rot;
 
             return rigidActor;
         }
@@ -269,7 +272,6 @@ namespace Magistr.Physics.PhysXImplCore
             return mre.WaitAsync();
         }
     }
-
 
 
 }

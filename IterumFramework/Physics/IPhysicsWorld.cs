@@ -32,11 +32,12 @@ namespace Magistr.Physics
         Task<(List<IThing>, List<IThing>)> Overlap(Vector3 pos, List<IThing> except, bool staticOnly);
 
         IPhysicsStaticObject CreateStatic(IGeometry geometry, Vector3 pos, Quaternion rot);
-        IPhysicsDynamicObject CreateDynamic(IGeometry geometry, Vector3 position, Quaternion rotation);
+        IPhysicsDynamicObject CreateDynamic(IGeometry geometry, bool kinematic, Vector3 position, Quaternion rotation);
         
         IPhysicsCharaceter CreateCapsuleCharacter(Vector3 pos, Vector3 up, float height, float radius);
         
-        IGeometry CreateStaticModelGeometry(IModelData modelData);
+        IGeometry CreateTriangleMeshGeometry(IModelData modelData);
+        IGeometry CreateConvexMeshGeometry(IModelData modelData);
         IGeometry CreateSphereGeometry(float radius);
         IGeometry CreateBoxGeometry(Vector3 size);
 

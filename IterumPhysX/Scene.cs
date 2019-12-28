@@ -79,10 +79,10 @@ namespace Magistr.Physics.PhysXImplCore
             return obj;
         }
 
-        
-        public IPhysicsDynamicObject CreateRigidDynamic(IGeometry geometry)
+
+        public IPhysicsDynamicObject CreateRigidDynamic(IGeometry geometry, bool kinematic)
         {
-            var obj = new PhysXDynamicObject(geometry, false, 1.0f, this, api);
+            var obj = new PhysXDynamicObject(geometry, kinematic, 1.0f, this, api);
 
             references.Add(obj.Ref, obj);
 

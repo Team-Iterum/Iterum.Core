@@ -52,7 +52,7 @@ namespace Magistr.Physics.PhysXImplCore
             this.world = world;
             this.scene = scene;
 
-            Ref = api.createRigidStatic((long)geometry.GetInternalGeometry(), scene.Ref, Vector3.zero.ToApi(), Quaternion.identity.ToQuat());
+            Ref = api.createRigidStatic((int) geometry.GeoType, (long)geometry.GetInternalGeometry(), scene.Ref, Vector3.zero.ToApi(), Quaternion.identity.ToQuat());
         }
 
     }
