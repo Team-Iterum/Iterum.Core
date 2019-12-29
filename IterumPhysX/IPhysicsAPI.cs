@@ -66,6 +66,7 @@ namespace Magistr.Physics.PhysXImplCore
         
         void setRigidDynamicLinearVelocity(long nRef, APIVec3 v);
         void setRigidDynamicMaxLinearVelocity(long nRef, float v);
+        void setRigidDynamicMaxAngularVelocity(long nRef, float v);
 
         
         

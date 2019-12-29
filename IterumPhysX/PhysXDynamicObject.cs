@@ -29,10 +29,17 @@ namespace Magistr.Physics.PhysXImplCore
 
         public bool IsDestroyed { get; private set; }
 
-        public void SetKinematicTarget(Vector3 position, Quaternion rotation)
+        private float maxLinearVelocity;
+        public float MaxLinearVelocity
         {
-            api.setRigidDynamicKinematicTarget(Ref, position.ToApi(), rotation.ToQuat());
+            get => maxLinearVelocity;
+            set
+            {
+                maxLinearVelocity = value;
+                api.setRigidDynamicMaxLinearVelocity(Ref, value);
+            }
         }
+
 
         private Vector3 linearVelocity;
         public Vector3 LinearVelocity
@@ -45,15 +52,19 @@ namespace Magistr.Physics.PhysXImplCore
             }
         }
 
-        private float maxLinearVelocity;
-        public float MaxLinearVelocity
+        private float maxAngularVelocity;
+        public float MaxAngularVelocity
         {
-            get => maxLinearVelocity;
+            get => maxAngularVelocity;
             set
             {
-                maxLinearVelocity = value;
-                api.setRigidDynamicMaxLinearVelocity(Ref, value);
+                maxAngularVelocity = value;
+                api.setRigidDynamicMaxAngularVelocity(Ref, value);
             }
+        }
+        public void SetKinematicTarget(Vector3 position, Quaternion rotation)
+        {
+            api.setRigidDynamicKinematicTarget(Ref, position.ToApi(), rotation.ToQuat());
         }
 
         public IThing Thing { get; set; }
@@ -74,5 +85,7 @@ namespace Magistr.Physics.PhysXImplCore
 
             Ref = api.createRigidDynamic((int) geometry.GeoType,(long)geometry.GetInternalGeometry(), scene.Ref, kinematic, mass, Vector3.zero.ToApi(), Quaternion.identity.ToQuat());
         }
+
+
     }
 }
