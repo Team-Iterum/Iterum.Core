@@ -1,31 +1,17 @@
-﻿using Magistr.Math;
+﻿
 
 // ReSharper disable InconsistentNaming
 
+using Magistr.Math;
+
 namespace Magistr.Physics.PhysXImplCore
 {
-    public struct APIVec3
-    {
-        public float x;
-        public float y;
-        public float z;
-    }
-    public struct APIDoubleVec3
-    {
-        public double x;
-        public double y;
-        public double z;
-    }
-    public struct APIQuat
-    {
-        public float x;
-        public float y;
-        public float z;
-        public float w;
-    }
 
     public delegate void OverlapCallback(int t1);
     public delegate void ErrorCallbackFunc(string message);
+
+    public delegate void DebugLogFunc(string message);
+    public delegate void DebugLogErrorFunc(string message);
     public interface IPhysicsAPI
     {
         void charactersUpdate(float elapsed, float minDist);
@@ -65,9 +51,15 @@ namespace Magistr.Physics.PhysXImplCore
         void setRigidDynamicKinematicTarget(long nRef, APIVec3 p, APIQuat q);
         
         void setRigidDynamicLinearVelocity(long nRef, APIVec3 v);
+        void setRigidDynamicAngularVelocity(long nRef, APIVec3 v);
+
         void setRigidDynamicMaxLinearVelocity(long nRef, float v);
         void setRigidDynamicMaxAngularVelocity(long nRef, float v);
 
+        APIVec3 getRigidDynamicAngularVelocity(long nRef);
+        APIVec3 getRigidDynamicLinearVelocity(long nRef);
+        float getRigidDynamicMaxAngularVelocity(long nRef);
+        float getRigidDynamicMaxLinearVelocity(long nRef);
         
         
         
@@ -86,42 +78,11 @@ namespace Magistr.Physics.PhysXImplCore
         long createScene(APIVec3 gravity);
         void cleanupScene(long nRef);
         long getSceneTimestamp(long nRef);
-        
+
+        void initLog(DebugLogFunc func, DebugLogErrorFunc func2);
         void initPhysics(bool isCreatePvd, int numThreads, ErrorCallbackFunc func);
         void stepPhysics(long nRef, float dt);
         void cleanupPhysics();
-    }
-
-    internal static class APIExt
-    {
-        public static APIVec3 ToApi(this Vector3 v)
-        {
-            return new APIVec3() { x = v.x, y = v.y, z = v.z };
-        }
-        public static APIDoubleVec3 ToApi(this DVector3 v)
-        {
-            return new APIDoubleVec3() { x = v.x, y = v.y, z = v.z };
-        }
-
-        public static APIQuat ToQuat(this Quaternion q)
-        {
-            return new APIQuat() { x = q.x, y = q.y, z = q.z, w = q.w };
-        }
-
-        public static Vector3 ToVector3(this APIVec3 v)
-        {
-            return new Vector3(v.x, v.y, v.z);
-        }
-
-        public static DVector3 ToVector3(this APIDoubleVec3 v)
-        {
-            return new DVector3(v.x, v.y, v.z);
-        }
-
-
-        public static Quaternion ToQuat(this APIQuat q)
-        {
-            return new Quaternion(q.x, q.y, q.z, q.w);
-        }
+        
     }
 }

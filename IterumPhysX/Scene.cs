@@ -7,14 +7,14 @@ using System.Collections.Generic;
 
 namespace Magistr.Physics.PhysXImplCore
 {
-    internal class Scene
+    public class Scene
     {
         private IPhysicsAPI api;
         private IPhysicsWorld world;
 
         public long Ref { get; }
 
-        private Dictionary<long, PhysXCharacter> characters = new Dictionary<long, PhysXCharacter>();
+        private Dictionary<long, PhysicsCharacter> characters = new Dictionary<long, PhysicsCharacter>();
         private Dictionary<long, IPhysicsObject> references = new Dictionary<long, IPhysicsObject>();
 
         public long Timestamp => api.getSceneTimestamp(Ref);
@@ -23,7 +23,7 @@ namespace Magistr.Physics.PhysXImplCore
         {
             this.api = api;
             this.world = world;
-            Ref = this.api.createScene(world.Gravity.ToApi());
+            Ref = this.api.createScene(world.Gravity);
             
         }
 
@@ -37,21 +37,19 @@ namespace Magistr.Physics.PhysXImplCore
             api.cleanupScene(Ref);
         }
 
-        internal void Destroy(PhysXStaticObject obj)
+        public void Destroy(StaticObject obj)
         {
             references.Remove(obj.Ref);
             api.destroyRigidStatic(obj.Ref);
 
         }
-
-        internal void Destroy(PhysXDynamicObject obj)
+        public void Destroy(DynamicObject obj)
         {
             references.Remove(obj.Ref);
             api.destroyRigidDynamic(obj.Ref);
 
         }
-
-        internal void Destroy(PhysXCharacter obj)
+        public void Destroy(PhysicsCharacter obj)
         {
             characters.Remove(obj.Ref);
             references.Remove(obj.Ref);
@@ -59,19 +57,16 @@ namespace Magistr.Physics.PhysXImplCore
 
         }
 
-        internal PhysXStaticObject CreateRigidStatic(IGeometry geometry)
+        public StaticObject CreateRigidStatic(IGeometry geometry)
         {
-
-            var obj = new PhysXStaticObject(geometry, this, world, api);
-
+            var obj = new StaticObject(geometry, this, api);
             references.Add(obj.Ref, obj);
-
             return obj;
         }
 
-        internal PhysXCharacter CreateCapsuleController(Vector3 pos, Vector3 up, float height, float radius)
+        public PhysicsCharacter CreateCapsuleController(Vector3 pos, Vector3 up, float height, float radius)
         {
-            var obj = new PhysXCharacter(pos, up, height, radius, this, world, api);
+            var obj = new PhysicsCharacter(pos, up, height, radius, this, world, api);
 
             characters.Add(obj.Ref, obj);
             references.Add(obj.Ref, obj);
@@ -82,21 +77,20 @@ namespace Magistr.Physics.PhysXImplCore
 
         public IPhysicsDynamicObject CreateRigidDynamic(IGeometry geometry, bool kinematic)
         {
-            var obj = new PhysXDynamicObject(geometry, kinematic, 1.0f, this, api);
+            var obj = new DynamicObject(geometry, kinematic, 1.0f, this, api);
 
             references.Add(obj.Ref, obj);
 
             return obj;
         }
 
-        internal List<IThing> Overlap(Vector3 pos, IGeometry overlapSphere)
+        public List<IThing> Overlap(Vector3 pos, IGeometry overlapSphere)
         {
             var hits = new List<IThing>();
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
-            var count = api.sceneOverlap(Ref, (long)overlapSphere.GetInternalGeometry(), pos.ToApi(), (nRef) =>
+            var count = api.sceneOverlap(Ref, (long)overlapSphere.GetInternalGeometry(), pos, (nRef) =>
             {
-                
                 if (references.ContainsKey(nRef))
                     hits.Add(references[nRef].Thing);
                 else
@@ -111,7 +105,7 @@ namespace Magistr.Physics.PhysXImplCore
             return hits;
         }
 
-        internal void Update(float dt)
+        public void Update(float dt)
         {
             foreach (var item in characters)
             {

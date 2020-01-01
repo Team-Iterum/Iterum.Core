@@ -1,7 +1,6 @@
 ﻿using Magistr.Log;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading;
 
@@ -9,9 +8,8 @@ namespace Magistr.Physics
 {
     public class PhysicsWorldWatcher
     {
-        public const int Period = 3000;
-        private Timer timer;
-        private static StringBuilder builder = new StringBuilder();
+        public Timer WatchTimer { get; private set; }
+        private static StringBuilder Builder = new StringBuilder();
         private List<IPhysicsWorld> worlds;
 
         public PhysicsWorldWatcher(List<IPhysicsWorld> worlds)
@@ -21,45 +19,45 @@ namespace Magistr.Physics
 
         public void Start()
         {
-            timer = new Timer(new TimerCallback(Watch), worlds, 0, Period);
+            const int period = 3000;
+            WatchTimer = new Timer(Watch, worlds, 0, period);
         }
         public static void Watch(object obj)
         {
             List<IPhysicsWorld> worlds = ((List<IPhysicsWorld>)obj);
+
             if (worlds.Count == 0) return;
-            Debug.Back(System.ConsoleColor.DarkBlue);
-            var header = "=========== Physics Watcher ===========";
-            Debug.Log(header, System.ConsoleColor.White);
-            Debug.ResetBack();
-            
+
+            var header = "\n";
+
             foreach (var w in worlds)
             {
-                System.ConsoleColor color = System.ConsoleColor.Black;
-                System.ConsoleColor backColor = System.ConsoleColor.Green;
+                var color = ConsoleColor.Black;
+                var backColor = ConsoleColor.DarkGreen;
 
                 if(!w.IsCreated)
                 {
-                    Debug.Back(System.ConsoleColor.Gray);
+                    Debug.Back(ConsoleColor.Gray);
                     var s = $"#{worlds.IndexOf(w)} not yet created";
                     s += Space(header.Length - s.Length);
 
-                    Debug.Log(s, System.ConsoleColor.White);
+                    Debug.Log(s);
                     Debug.ResetBack();
                     continue;
                 }
                 if (w.IsDestroyed)
                 {
-                    Debug.Back(System.ConsoleColor.Black);
+                    Debug.Back(ConsoleColor.Black);
                     var s = $"#{worlds.IndexOf(w)} is destroyed";
                     s += Space(header.Length - s.Length);
 
-                    Debug.Log(s, System.ConsoleColor.White);
+                    Debug.Log(s);
                     Debug.ResetBack();
                     continue;
                 }
                 if (!w.IsRunning)
                 {
-                    Debug.Back(System.ConsoleColor.Gray);
+                    Debug.Back(ConsoleColor.Gray);
                     var s = $"#{worlds.IndexOf(w)} stopped";
                     s += Space(header.Length - s.Length);
 
@@ -70,34 +68,46 @@ namespace Magistr.Physics
 
                 string infoText = "(Normal) ";
 
-                if(w.SceneFrame > w.TPS/2)
+                if(w.SceneFrame > w.TPS/2f)
                 {
-                    backColor = System.ConsoleColor.DarkYellow;
+                    backColor = ConsoleColor.DarkYellow;
                     infoText = "(Warning) ";
                 }
                 if (w.SceneFrame >= w.TPS * 0.75f)
                 {
-                    backColor = System.ConsoleColor.Red;
-                    color = System.ConsoleColor.White;
+                    backColor = ConsoleColor.Red;
+                    color = ConsoleColor.White;
                     infoText = "(Overload) ";
                 }
                 if (w.SceneFrame >= w.TPS)
                 {
-                    backColor = System.ConsoleColor.DarkRed;
-                    color = System.ConsoleColor.White;
+                    backColor = ConsoleColor.DarkRed;
+                    color = ConsoleColor.White;
                     infoText = "(Fatal Overload) ";
                 }
                 if (!w.IsRunning)
                 {
-                    backColor = System.ConsoleColor.Gray;
+                    backColor = ConsoleColor.Gray;
                     infoText = "(Stopped) ";
                 }
 
-                Debug.Back(backColor);
+               
+
                 var str = $"{infoText}#{worlds.IndexOf(w)} dt: {w.DeltaTime}ms frame: {w.SceneFrame}ms timestamp: {w.Timestamp}";
                 str += Space(header.Length - str.Length);
                 
-                Debug.Log(str, color);
+                var foreground = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.Write($"[Watcher] ");
+                Console.ForegroundColor = foreground;
+
+                Debug.Back(backColor);
+
+                Console.ForegroundColor = color;
+                Console.Write(str);
+                Console.ForegroundColor = foreground;
+                Console.Write("\n");
+
                 Debug.ResetBack();
             }
             Console.ResetColor();
@@ -106,12 +116,12 @@ namespace Magistr.Physics
 
         private static string Space(int count)
         {
-            builder.Clear();
+            Builder.Clear();
             for (int i = 0; i < count; i++)
             {
-                builder.Append(" ");
+                Builder.Append(" ");
             }
-            return builder.ToString();
+            return Builder.ToString();
 
         }
     }

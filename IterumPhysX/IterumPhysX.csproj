@@ -15,7 +15,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Nito.AsyncEx" Version="5.0.0" />
     <PackageReference Include="StrictEmit" Version="2.8.0" />
   </ItemGroup>
 

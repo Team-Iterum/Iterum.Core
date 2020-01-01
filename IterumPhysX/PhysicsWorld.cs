@@ -4,12 +4,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using System.Threading.Tasks;
 using AdvancedDLSupport;
 using Magistr.Framework.Physics;
 using Magistr.Math;
 using Magistr.Things;
-using Nito.AsyncEx;
 
 [assembly: InternalsVisibleTo("AdvancedDLSupport")]
 
@@ -18,42 +16,43 @@ namespace Magistr.Physics.PhysXImplCore
     public class PhysXWorld : IPhysicsWorld
     {
         private static bool PhysXCreated;
+        private static IPhysicsAPI API;
 
-        private Scene scene;
-        private Thread workerThread;
-
-        private long last;
+        
 
         public bool IsDestroyed { get; private set; }
         public bool IsCreated { get; private set; }
         public bool IsRunning { get; private set; }
+        
         public float SceneFrame { get; private set; }
         public int Timestamp { get; set; }
-
-
         public float DeltaTime { get; private set; }
         public int TPS { get; set; } = 1000 / 60;
-        public Guid WorldUid { get; } = Guid.NewGuid();
+        
 
         public Vector3 Gravity { get; set; }
 
+
+        private Thread workerThread;
+        private long last;
+        
+
+        private Scene scene;
+        private Thread sceneThread;
+
+        private long beforeScene;
+        public Action<float> SceneUpdate;
+
         private SphereGeometry overlapSphere;
         private float overlapSphereRadius = 150;
-
-
-        private static IPhysicsAPI API;
         public float OverlapSphereRadius
         {
             get => overlapSphereRadius;
             set
             {
+                if(API == null) throw new NullReferenceException("API not yet created or destroyed");
                 overlapSphereRadius = value;
-                Task.Run(async () =>
-                {
-                    await WaitEndOfFrame();
-                    overlapSphere?.Destroy();
-                    overlapSphere = new SphereGeometry(OverlapSphereRadius, API);
-                }).ConfigureAwait(false);
+                overlapSphere = new SphereGeometry(OverlapSphereRadius, API);
             }
         }
 
@@ -63,8 +62,10 @@ namespace Magistr.Physics.PhysXImplCore
             {
                 var builder = new NativeLibraryBuilder(ImplementationOptions.EnableOptimizations | ImplementationOptions.UseIndirectCalls);
                 API = builder.ActivateInterface<IPhysicsAPI>("PhysXSharpNative");
-                API.initPhysics(true, Environment.ProcessorCount, Log.Debug.LogError);
 
+                API.initLog((s) => Log.Debug.Log("PhysX", s, ConsoleColor.Yellow), (s) => Log.Debug.LogError("PhysX", s));
+                
+                API.initPhysics(true, Environment.ProcessorCount, (s) => Log.Debug.LogError("PhysX Critical", s));
 
                 PhysXCreated = true;
             }
@@ -77,16 +78,10 @@ namespace Magistr.Physics.PhysXImplCore
             overlapSphere = new SphereGeometry(OverlapSphereRadius, API);
 
         }
-        private AsyncManualResetEvent mre = new AsyncManualResetEvent(true);
-        private Thread sceneThread;
-        private long beforeScene;
-
-        public Action<float> SceneUpdate;
+        
 
         private void StepPhysics()
         {
-            mre.Reset();
-            
             var stopwatch = new Stopwatch();
             stopwatch.Start();
             last = stopwatch.ElapsedTicks;
@@ -97,56 +92,35 @@ namespace Magistr.Physics.PhysXImplCore
 
                 var dtSpan = TimeSpan.FromTicks(stopwatch.ElapsedTicks - last);
                 var dt = (float)dtSpan.TotalMilliseconds;
-
                 last = stopwatch.ElapsedTicks;
 
                 DeltaTime = dt;
                 Timestamp = (int)scene.Timestamp;
 
-                
-                if (dt > 1)
-                {
-                    mre.Reset();
-                    API.stepPhysics(scene.Ref, (float)dtSpan.TotalSeconds);
-                    //API.charactersUpdate((float)dtSpan.TotalSeconds, 0.05f);
-                    mre.Set();
-                }
-               
-
+                API.stepPhysics(scene.Ref, (float)dtSpan.TotalSeconds);
                 var stop = stopwatch.ElapsedTicks;
 
                 SceneFrame = (float)TimeSpan.FromTicks(stop - last).TotalMilliseconds;
                 
                 sleep -= Mathf.CeilToInt(SceneFrame);
-                if (sleep < 0)
-                {
-                    sleep = 1;
-                    Thread.Sleep(sleep);
-                    
-                }
-                else
-                {
-                    Thread.Sleep(sleep);
-                }
+                
+                // very bad - OVERLOAD
+                if (sleep < 0) sleep = 1;
+                
+                Thread.Sleep(sleep);
             }
         }
 
 
-        public async Task<(List<IThing>, List<IThing>)> Overlap(Vector3 pos, List<IThing> except, bool isStaticOnly)
+        public AddRemoveThings Overlap(Vector3 position, List<IThing> except, bool isStaticOnly)
         {
-            var thingsAdd = new List<IThing>();
-            var thingsRemove = new List<IThing>();
             
-            await WaitEndOfFrame();
-            var hits = scene.Overlap(pos, overlapSphere);
+            var hits = scene.Overlap(position, overlapSphere);
 
             var remove = except.Where(e => !hits.Contains(e));
             var add = hits.Where(e => !except.Contains(e));
 
-            thingsRemove.AddRange(remove);
-            thingsAdd.AddRange(add);
-
-            return (thingsAdd, thingsRemove);
+            return new AddRemoveThings() { Add = add.ToList(), Remove = remove.ToList() };
         }
 
         public void Create()
@@ -261,16 +235,12 @@ namespace Magistr.Physics.PhysXImplCore
             return rigidActor;
         }
 
-        public IPhysicsCharaceter CreateCapsuleCharacter(Vector3 pos, Vector3 up, float height = 4, float radius = 1)
+        public IPhysicsCharacter CreateCapsuleCharacter(Vector3 pos, Vector3 up, float height = 4, float radius = 1)
         {
             var controller = scene.CreateCapsuleController(pos, up, height, radius);
             return controller;
         }
 
-        public Task WaitEndOfFrame()
-        {
-            return mre.WaitAsync();
-        }
     }
 
 

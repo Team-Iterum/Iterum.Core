@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Drawing;
+using Packets.NoPackets;
 
 namespace Magistr.Log
 {
@@ -16,23 +18,69 @@ namespace Magistr.Log
             Console.BackgroundColor = BackColor;
         }
 
-        public static void Log(string e, ConsoleColor color = ConsoleColor.White, bool timestamp = true)
+        public static void Log(string group, string e, ConsoleColor color = ConsoleColor.White, bool timestamp = true)
         {
-            var msg = timestamp ? $"[{DateTime.Now.ToLongTimeString()}] {e}" : e;
-            var foreground = Console.ForegroundColor;
-            Console.ForegroundColor = color;
-            Console.Write(msg);
-            Console.ForegroundColor = foreground;
-            Console.Write("\n");
+            Log(group, e, color, color, timestamp);
         }
 
+        public static void LogSuccess(string group, string e, ConsoleColor _)
+        {
+            Log(group, e, ConsoleColor.Green, ConsoleColor.Gray);
+        }
+
+        public static void Log(string e, ConsoleColor color, bool timestamp = true)
+        {
+            Log(null, e, color, ConsoleColor.Gray, timestamp);
+        }
+        private static void Log(string group, string e, ConsoleColor color = ConsoleColor.White, ConsoleColor groupColor = ConsoleColor.Black,  bool timestamp = true)
+        {
+            // Timestamp
+            {
+                var foreground = Console.ForegroundColor;
+                if (timestamp)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.Write($"{DateTime.Now.ToLongTimeString()} ");
+                    Console.ForegroundColor = foreground;
+                }
+            }
+
+            // Group
+            {
+                var foreground = Console.ForegroundColor;
+                if (group != null)
+                {
+                    Console.ForegroundColor = groupColor;
+                    Console.Write($"[{group}] ");
+                    Console.ForegroundColor = foreground;
+                }
+            }
+
+            // Text
+            {
+                var foreground = Console.ForegroundColor;
+                Console.ForegroundColor = color;
+                Console.Write(e);
+                Console.ForegroundColor = foreground;
+                Console.Write("\n");
+            }
+        }
+
+        public static void LogError(string group, string e)
+        {
+            Log(group, e, ConsoleColor.Red, ConsoleColor.Gray);
+        }
         public static void LogError(string e)
         {
-            var foreground = Console.ForegroundColor;
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.Write($"[{DateTime.Now.ToLongTimeString()}] {e}");
-            Console.ForegroundColor = foreground;
-            Console.Write("\n");
+            Log(e, ConsoleColor.Red);
+        }
+        public static void LogError(string group, Exception e)
+        {
+            Log(group, e.ToString(), ConsoleColor.Red, ConsoleColor.Gray);
+        }
+        public static void LogError(Exception e)
+        {
+            Log(e, ConsoleColor.Red);
         }
 
         #region LogError overloades

@@ -16,6 +16,7 @@ namespace Magistr.Physics
         bool IsDestroyed { get; }
         bool IsCreated { get; }
         bool IsRunning { get; }
+
         int Timestamp { get; }
         float SceneFrame { get; }
         float DeltaTime { get; }
@@ -24,22 +25,25 @@ namespace Magistr.Physics
 
         float OverlapSphereRadius { get; set; }
 
-        System.Guid WorldUid { get; }
         Vector3 Gravity { get; set; }
 
-        Task WaitEndOfFrame();
+        AddRemoveThings Overlap(Vector3 position, List<IThing> except, bool staticOnly);
 
-        Task<(List<IThing>, List<IThing>)> Overlap(Vector3 pos, List<IThing> except, bool staticOnly);
-
-        IPhysicsStaticObject CreateStatic(IGeometry geometry, Vector3 pos, Quaternion rot);
+        IPhysicsStaticObject CreateStatic(IGeometry geometry, Vector3 position, Quaternion rotation);
         IPhysicsDynamicObject CreateDynamic(IGeometry geometry, bool kinematic, Vector3 position, Quaternion rotation);
+        IPhysicsCharacter CreateCapsuleCharacter(Vector3 position, Vector3 up, float height, float radius);
         
-        IPhysicsCharaceter CreateCapsuleCharacter(Vector3 pos, Vector3 up, float height, float radius);
-        
+
         IGeometry CreateTriangleMeshGeometry(IModelData modelData);
         IGeometry CreateConvexMeshGeometry(IModelData modelData);
         IGeometry CreateSphereGeometry(float radius);
         IGeometry CreateBoxGeometry(Vector3 size);
 
     }
+
+    public struct AddRemoveThings
+    {
+        public List<IThing> Add;
+        public List<IThing> Remove;
+    } 
 }

@@ -1,6 +1,6 @@
 ﻿namespace Magistr.Framework.Physics
 {
-    public enum GeoType : int
+    public enum GeoType
     {
         SimpleGeometry = 1,
         ConvexMeshGeometry = 2,

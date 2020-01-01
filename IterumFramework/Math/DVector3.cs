@@ -532,5 +532,14 @@ namespace Magistr.Math
             return System.Math.Acos(Mathf.Clamp(DVector3.Dot(from.normalized, to.normalized), -1f, 1f));
         }
 
+        public static implicit operator DVector3(Vector3 p)
+        {
+            return new DVector3() {x = p.x, y = p.y, z = p.z};
+        }
+        public static explicit operator Vector3(DVector3 p)
+        {
+            return new Vector3((float) p.x, (float) p.y, (float) p.z);
+        }
+
     }
 }

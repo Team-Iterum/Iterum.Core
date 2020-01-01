@@ -69,12 +69,12 @@ namespace Magistr.Network
             }
             catch (Exception e)
             {
-                Debug.LogError("[NetworkServer] " + e);
+                Debug.LogError(nameof(WebSocketNetwork), e);
                 throw;
             }
             finally
             {
-                Debug.Log($"[NetworkServer] started at port {port}", ConsoleColor.Green);
+                Debug.LogSuccess(nameof(WebSocketNetwork), $"Started at {port}", ConsoleColor.Green);
             }
 
         }

@@ -14,7 +14,7 @@ namespace Magistr.Protocol
         {
             for (int i = 0; i < count; i++)
             {
-                AddCirclular();
+                AddCircular();
             }
         }
 
@@ -41,10 +41,12 @@ namespace Magistr.Protocol
             circular.Push(msg);
         }
 
-        private void AddCirclular()
+        private void AddCircular()
         {
-            ProtocolCircular protocolCircular = new ProtocolCircular(1000, 15);
-            protocolCircular.Dispatch = Dispatch;
+            var protocolCircular = new ProtocolCircular(1000, 15)
+            {
+                Dispatch = Dispatch
+            };
             Circulars.Add(protocolCircular);
         }
 

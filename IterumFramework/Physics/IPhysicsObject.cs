@@ -21,6 +21,7 @@ namespace Magistr.Physics
     public interface IPhysicsDynamicObject : IPhysicsObject
     {
         Vector3 LinearVelocity { get; set; }
+        Vector3 AngularVelocity { get; set; }
         float MaxLinearVelocity { get; set; }
         float MaxAngularVelocity { get; set; }
         void SetKinematicTarget(Vector3 position, Quaternion rotation);
@@ -38,7 +39,7 @@ namespace Magistr.Physics
         Down = 1 << 5
     }
 
-    public interface IPhysicsCharaceter : IPhysicsObject
+    public interface IPhysicsCharacter : IPhysicsObject
     {
         Vector3 FootPosition { get; set; }
 

@@ -11,6 +11,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using Magistr.MapData;
 using Binder = Magistr.Utils.Binder;
 
 namespace Magistr.Things
@@ -67,18 +68,21 @@ namespace Magistr.Things
             }
             catch (SerializationException e)
             {
-                Debug.LogError("[ThingTypeManager] Failed to serializer ThingTypeArchive. Reason: " + e.Message);
+                Debug.LogError(nameof(ThingTypeManager), " Failed to serialize. Reason: " + e.Message);
                 throw;
             }
             finally
             {
+                Debug.LogSuccess(nameof(ThingTypeManager),$"'{thingsArchive.Name}' saved", ConsoleColor.Green);
                 fs.Close();
             }
         }
 
         public static void Load(Stream fs)
         {
+            ThingTypeArchive thingsArchive = default;
             try
+
             {
                 ThingTypes = new Dictionary<int, ThingType>();
                 var formatter = new BinaryFormatter
@@ -86,7 +90,7 @@ namespace Magistr.Things
                     Binder = new Binder()
                 };
 
-                var thingsArchive = (ThingTypeArchive) formatter.Deserialize(fs);
+                thingsArchive = (ThingTypeArchive) formatter.Deserialize(fs);
                 for (int i = 0; i < thingsArchive.ThingTypes.Length; i++)
                 {
                     ThingTypes.Add(thingsArchive.ThingTypes[i].ThingTypeId, thingsArchive.ThingTypes[i]);
@@ -94,14 +98,14 @@ namespace Magistr.Things
             }
             catch (SerializationException e)
             {
-                Debug.LogError("[ThingTypeManager] Failed to deserialize ThingTypeArchive. Reason: " + e.Message);
+                Debug.LogError(nameof(ThingTypeManager), " Failed to deserialize. Reason: " + e.Message);
                 throw;
             }
             finally
             {
+                Debug.LogSuccess(nameof(ThingTypeManager),$"'{thingsArchive.Name}' loaded", ConsoleColor.Green);
                 fs.Close();
             }
-
         }
 
     }

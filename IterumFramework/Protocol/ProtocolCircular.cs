@@ -2,35 +2,34 @@
 using Magistr.Network;
 using System;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Magistr.Protocol
 {
     public class ProtocolCircular : IComparable<ProtocolCircular>
     {
-        private CircularBuffer<NetworkMessage> Messages;
+        private CircularBuffer<NetworkMessage> messages;
         private Thread workerThread;
-        private bool IsRunning = false;
-        private int ThreadSleep = 15;
+        private bool isRunning;
+        private int threadSleep;
 
-        private bool IsStopping = false;
-        private int MaxCapacity;
+        private bool isStopping;
+        private int maxCapacity;
         public Action<NetworkMessage> Dispatch;
 
-        public float Fill => Messages.Size / (float)Messages.Capacity;
+        public float Fill => messages.Size / (float)messages.Capacity;
         public ProtocolCircular(int capacity, int sleepTime)
         {
-            MaxCapacity = (int)(capacity * 0.9f);
-            Messages = new CircularBuffer<NetworkMessage>(capacity);
-            ThreadSleep = sleepTime;
+            maxCapacity = (int)(capacity * 0.9f);
+            messages = new CircularBuffer<NetworkMessage>(capacity);
+            threadSleep = sleepTime;
 
             
         }
 
         public bool CanPush()
         {
-            if (IsStopping) return false;
-            if (Messages.Size > MaxCapacity) return false;
+            if (isStopping) return false;
+            if (messages.Size > maxCapacity) return false;
             return true;
         }
 
@@ -38,43 +37,42 @@ namespace Magistr.Protocol
         {
             if (!CanPush()) return false;
 
-            Messages.PushFront(msg);
+            messages.PushFront(msg);
             return true;
         }
 
         public void Start()
         {
             workerThread = new Thread(DispatchLoop);
-            IsRunning = true;
+            isRunning = true;
             workerThread.Start();
         }
 
         public void Stop()
         {
-            IsStopping = true;
+            isStopping = true;
         }
 
         private void DispatchLoop()
         {
-            while(IsRunning)
+            while(isRunning)
             {
-                if (!Messages.IsEmpty)
+                if (!messages.IsEmpty)
                 {
-                    var msg = Messages.Back();
+                    var msg = messages.Back();
                     Dispatch.Invoke(msg);
                     msg.data = null;
-                    msg = default;
-                    
+
                     //Buffers.StaticBuffers.Buffers.Return(msg.data);
-                    Messages.PopBack();
+                    messages.PopBack();
                     // stop after full remove buffer
-                    if (IsStopping && Messages.Size <= 0)
+                    if (isStopping && messages.Size <= 0)
                     {
-                        IsRunning = false;
+                        isRunning = false;
                     }
                 }
 
-                Thread.Sleep(ThreadSleep);
+                Thread.Sleep(threadSleep);
             }
         }
 

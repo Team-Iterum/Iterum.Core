@@ -11,7 +11,7 @@ namespace Magistr.Physics.PhysXImplCore
         public BoxGeometry(Vector3 half, IPhysicsAPI api)
         {
             this.api = api;
-            nRef = api.createBoxGeometry(half.ToApi());
+            nRef = api.createBoxGeometry(half);
         }
 
         public void Destroy()
