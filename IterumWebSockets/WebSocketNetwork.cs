@@ -116,7 +116,8 @@ namespace Magistr.Network
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError("[NetworkServer] Error Accepting clients: " + e.GetBaseException().Message);
+                    Debug.LogError(nameof(WebSocketNetwork), "Error Accepting clients: " + e.GetBaseException().Message);
+                    throw;
                 }
             }
 
@@ -128,7 +129,7 @@ namespace Magistr.Network
             connections.Clear();
             await sockets.StopAsync().ConfigureAwait(false);
 
-            Debug.Log("[NetworkServer]  Stop accepting clients");
+            Debug.Log(nameof(WebSocketNetwork), "Stop accepting clients");
         }
 
         private async Task HandleConnectionAsync(WebSocket ws, WebSocketConnection wsc,
@@ -137,8 +138,7 @@ namespace Magistr.Network
             var connection = wsc.Connection;
             try
             {
-                Debug.Log(
-                    $"[NetworkServer] Client connected - ID: {connection}, IP: {((IPEndPoint) ws.RemoteEndpoint).Address}");
+                Debug.Log(nameof(WebSocketNetwork),  $"Client connected - ID: {connection}, IP: {((IPEndPoint) ws.RemoteEndpoint).Address}");
 
                 Connected?.Invoke(
                     new ConnectionData {address = (IPEndPoint) ws.RemoteEndpoint, connection = connection});
@@ -178,7 +178,7 @@ namespace Magistr.Network
             }
             catch (WebSocketException e)
             {
-                Debug.Log("[NetworkServer] Error Handling connection: " + e.GetBaseException().Message);
+                Debug.Log(nameof(WebSocketNetwork), "Error Handling connection: " + e.GetBaseException().Message);
             }
             finally
             {
@@ -190,8 +190,8 @@ namespace Magistr.Network
                 Disconnected.Invoke(new ConnectionData
                     {address = (IPEndPoint) ws.RemoteEndpoint, connection = connection});
 
-                Debug.Log(
-                    $"[NetworkServer] Client disconnected - ID: {connection}, IP: {((IPEndPoint) ws.RemoteEndpoint).Address}");
+                Debug.Log(nameof(WebSocketNetwork), 
+                    $"Client disconnected - ID: {connection}, IP: {((IPEndPoint) ws.RemoteEndpoint).Address}");
             }
         }
 

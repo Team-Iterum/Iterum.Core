@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Drawing;
-using Packets.NoPackets;
 
 namespace Magistr.Log
 {
@@ -20,7 +18,7 @@ namespace Magistr.Log
 
         public static void Log(string group, string e, ConsoleColor color = ConsoleColor.White, bool timestamp = true)
         {
-            Log(group, e, color, color, timestamp);
+            Log(group, e, color, ConsoleColor.Gray, timestamp);
         }
 
         public static void LogSuccess(string group, string e, ConsoleColor _)
@@ -32,7 +30,7 @@ namespace Magistr.Log
         {
             Log(null, e, color, ConsoleColor.Gray, timestamp);
         }
-        private static void Log(string group, string e, ConsoleColor color = ConsoleColor.White, ConsoleColor groupColor = ConsoleColor.Black,  bool timestamp = true)
+        private static void Log(string group, string e, ConsoleColor color = ConsoleColor.White, ConsoleColor groupColor = ConsoleColor.Gray,  bool timestamp = true)
         {
             // Timestamp
             {
