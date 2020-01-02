@@ -86,8 +86,7 @@ namespace Magistr.Physics.PhysXImplCore
 
         public List<IThing> Overlap(Vector3 pos, IGeometry overlapSphere)
         {
-            var hits = new List<IThing>();
-            var watch = System.Diagnostics.Stopwatch.StartNew();
+            var hits = new List<IThing>();  
 
             var count = api.sceneOverlap(Ref, (long)overlapSphere.GetInternalGeometry(), pos, (nRef) =>
             {
@@ -99,9 +98,6 @@ namespace Magistr.Physics.PhysXImplCore
                 }
             });
 
-            Debug.Log($"[API.sceneOverlap ({count})]={watch.ElapsedMilliseconds}ms", ConsoleColor.Yellow);
-
-            watch.Stop();
             return hits;
         }
 
