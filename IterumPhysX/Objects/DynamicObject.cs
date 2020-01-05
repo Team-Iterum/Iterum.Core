@@ -22,7 +22,12 @@ namespace Magistr.Physics.PhysXImplCore
 
         public Quaternion Rotation
         {
-            get => api.getRigidDynamicRotation(Ref);
+            get
+            {  
+                // workaround threading bug on disconnect
+                if(IsDestroyed) return Quaternion.identity;
+                return api.getRigidDynamicRotation(Ref);
+            }
             set => api.setRigidDynamicRotation(Ref, value);
         }
 
