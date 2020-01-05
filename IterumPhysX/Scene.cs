@@ -29,7 +29,7 @@ namespace Magistr.Physics.PhysXImplCore
 
         public void Simulate(float step)
         {
-            api.stepPhysics(Ref, step);
+            //api.stepPhysics(Ref, step);
         }
 
         internal void Cleanup()

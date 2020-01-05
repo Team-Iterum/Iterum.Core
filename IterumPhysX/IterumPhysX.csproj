@@ -31,8 +31,4 @@
     </Reference>
   </ItemGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy /y /d  &quot;$(ProjectDir)External\*.dll&quot; &quot;$(SolutionDir)\bin\x64\$(ConfigurationName)\netcoreapp3.0\&quot;" />
-  </Target>
-
 </Project>

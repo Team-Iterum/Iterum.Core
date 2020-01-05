@@ -90,17 +90,17 @@ namespace Magistr.Physics.PhysXImplCore
             {
                 int sleep = TPS;
 
-                var dtSpan = TimeSpan.FromTicks(stopwatch.ElapsedTicks - last);
-                var dt = (float)dtSpan.TotalMilliseconds;
+                var dtSpan = ToSeconds(stopwatch.ElapsedTicks - last);
+                var dt = (float) dtSpan * 1000f;
                 last = stopwatch.ElapsedTicks;
 
                 DeltaTime = dt;
                 Timestamp = (int)scene.Timestamp;
 
-                API.stepPhysics(scene.Ref, (float)dtSpan.TotalSeconds);
+                API.stepPhysics(scene.Ref, (float)dtSpan);
                 var stop = stopwatch.ElapsedTicks;
 
-                SceneFrame = (float)TimeSpan.FromTicks(stop - last).TotalMilliseconds;
+                SceneFrame = (float)ToMs(stop - last);
                 
                 sleep -= Mathf.CeilToInt(SceneFrame);
                 
@@ -111,6 +111,23 @@ namespace Magistr.Physics.PhysXImplCore
             }
         }
 
+        private double ToSeconds(double ticks)
+        {
+            double seconds = ticks / Stopwatch.Frequency;
+            //double milliseconds = (ticks / Stopwatch.Frequency) * 1000;
+            //double nanoseconds = (ticks / Stopwatch.Frequency) * 1000000000;
+
+            return seconds;
+        }
+
+        private double ToMs(double ticks)
+        {
+            //double seconds = ticks / Stopwatch.Frequency;
+            double milliseconds = (ticks / Stopwatch.Frequency) * 1000;
+            //double nanoseconds = (ticks / Stopwatch.Frequency) * 1000000000;
+
+            return milliseconds;
+        }
 
         public AddRemoveThings Overlap(Vector3 position, List<IThing> except, bool isStaticOnly)
         {
@@ -167,16 +184,16 @@ namespace Magistr.Physics.PhysXImplCore
             {
                 int sleep = TPS;    
 
-                var dtSpan = TimeSpan.FromTicks(stopwatch.ElapsedTicks - beforeScene);
+                var dtSpan = ToSeconds(stopwatch.ElapsedTicks - beforeScene);
 
                 beforeScene = stopwatch.ElapsedTicks;
                 {
-                    SceneUpdate?.Invoke((float) dtSpan.TotalSeconds);
-                    scene.Update((float) dtSpan.TotalSeconds);
+                    SceneUpdate?.Invoke((float) dtSpan);
+                    scene.Update((float) dtSpan);
                 }
                 var afterScene = stopwatch.ElapsedTicks;
 
-                var sceneFrame = (float)TimeSpan.FromTicks(afterScene - beforeScene).TotalMilliseconds;
+                var sceneFrame = (float)ToMs(afterScene - beforeScene);
                 
                 sleep -= (int)sceneFrame;
                 if (sleep < 0)
