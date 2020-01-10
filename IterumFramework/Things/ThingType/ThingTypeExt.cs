@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Magistr.Framework.Physics;
+using Magistr.Log;
 using Magistr.Math;
 using Magistr.Physics;
 
@@ -37,17 +38,21 @@ namespace Magistr.Things
         {
             IPhysicsObject physicsObject = null;
 
+            
             // Select physics model
             if (thingType.HasAttr(ThingAttr.Static))
             {
+                Debug.Log(thingType.Title + " Static");
                 physicsObject = world.CreateDynamic(geometry, true, position, rotation);
             }
             else if (thingType.HasAttr(ThingAttr.Dynamic))
             {
+                Debug.Log(thingType.Title + " Dynamic");
                 physicsObject = world.CreateDynamic(geometry, false, position, rotation);
             }
             else if (thingType.HasAttr(ThingAttr.Kinematic))
             {
+                Debug.Log(thingType.Title + " Kinematic");
                 physicsObject = world.CreateDynamic(geometry, true, position, rotation);
             }
 
