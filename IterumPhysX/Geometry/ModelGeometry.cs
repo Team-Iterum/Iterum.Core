@@ -1,28 +1,27 @@
 ﻿using System;
 using System.Linq;
 using Magistr.Framework.Physics;
-using Magistr.Math;
+using static Magistr.Physics.PhysXImplCore.PhysicsAlias;
 
 namespace Magistr.Physics.PhysXImplCore
 {
     internal class ModelGeometry : IGeometry
     {
         private long nRef;
-        private IPhysicsAPI api;
 
-        public ModelGeometry(GeoType geoType, IModelData model, IPhysicsAPI api)
+        public ModelGeometry(GeoType geoType, IModelData model)
         {
-            this.api = api;
             GeoType = geoType;
-
+            var vertices = model.Points.Select(e => (APIVec3) e).ToArray();
+            var indices = model.Triangles.Select(e => (uint) e).ToArray();
             switch (geoType)
             {
+
                 case GeoType.TriangleMeshGeometry:
-                    nRef = api.createTriangleMesh(model.Points.Select(e => (APIVec3)e).ToArray(), model.Points.Length,
-                        model.Triangles.Select(e => (uint) e).ToArray(), model.Triangles.Length);
+                    nRef = API.createTriangleMesh(vertices, vertices.Length, indices, indices.Length);
                     break;
                 case GeoType.ConvexMeshGeometry:
-                    nRef = api.createConvexMesh(model.Points.Select(e => (APIVec3)e).ToArray(), model.Points.Length);
+                    nRef = API.createConvexMesh(vertices, vertices.Length);
                     break;
                 default:
                     throw new Exception("Model geometry can't be GeoType.SimpleGeometry");
@@ -37,10 +36,10 @@ namespace Magistr.Physics.PhysXImplCore
             switch (GeoType)
             {
                 case GeoType.ConvexMeshGeometry:
-                    api.cleanupConvexMesh(nRef);
+                    API.cleanupConvexMesh(nRef);
                     break;
                 case GeoType.TriangleMeshGeometry:
-                    api.cleanupTriangleMesh(nRef);
+                    API.cleanupTriangleMesh(nRef);
                     break;
             }
         }

@@ -18,18 +18,13 @@ namespace Magistr.Physics.PhysXImplCore
         public Vector3 Position
         {
             get => api.getRigidDynamicPosition(Ref);
-            set => api.setRigidDynamicPosition(Ref, value);
+            set => api.setRigidDynamicTransform(Ref, value, Rotation);
         }
 
         public Quaternion Rotation
         {
-            get
-            {  
-                // workaround threading bug on disconnect
-                if(IsDestroyed) return Quaternion.identity;
-                return api.getRigidDynamicRotation(Ref);
-            }
-            set => api.setRigidDynamicRotation(Ref, value);
+            get => api.getRigidDynamicRotation(Ref);
+            set => api.setRigidDynamicTransform(Ref, Position, value);
         }
 
 
@@ -61,9 +56,29 @@ namespace Magistr.Physics.PhysXImplCore
             set => api.setRigidDynamicAngularVelocity(Ref, value);
         }
 
+        public float LinearDamping
+        {
+            set => api.setRigidDynamicLinearDamping(Ref, value);
+        }
+
+        public float AngularDamping
+        {
+            set => api.setRigidDynamicAngularDamping(Ref, value);
+        }
+
         public void SetKinematicTarget(Vector3 position, Quaternion rotation)
         {
             api.setRigidDynamicKinematicTarget(Ref, position, rotation);
+        }
+
+        public void AddForce(Vector3 force)
+        {
+            api.addRigidDynamicForce(Ref, force);
+        }
+
+        public void AddTorque(Vector3 torque)
+        {
+            api.addRigidDynamicTorque(Ref, torque);
         }
 
         public IThing Thing { get; set; }
@@ -81,7 +96,7 @@ namespace Magistr.Physics.PhysXImplCore
         {
             this.api = api;
             this.scene = scene;
-            Debug.Log((long)geometry.GetInternalGeometry() + ", " + geometry.GeoType);
+
             Ref = api.createRigidDynamic((int) geometry.GeoType,(long)geometry.GetInternalGeometry(), scene.Ref, kinematic, mass, Vector3.zero, Quaternion.identity);
         }
 

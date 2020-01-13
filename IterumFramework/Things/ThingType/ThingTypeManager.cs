@@ -11,6 +11,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using Magistr.Framework.Physics;
 using Magistr.MapData;
 using Binder = Magistr.Utils.Binder;
 
@@ -20,6 +21,7 @@ namespace Magistr.Things
     public static class ThingTypeManager
     {
         public static int Count => ThingTypes.Count;
+
         public static Dictionary<int, ThingType> ThingTypes;
         public static Dictionary<int, ThingType>.ValueCollection All => ThingTypes.Values;
 
@@ -93,7 +95,9 @@ namespace Magistr.Things
                 thingsArchive = (ThingTypeArchive) formatter.Deserialize(fs);
                 for (int i = 0; i < thingsArchive.ThingTypes.Length; i++)
                 {
-                    ThingTypes.Add(thingsArchive.ThingTypes[i].ThingTypeId, thingsArchive.ThingTypes[i]);
+                    int thingTypeId = thingsArchive.ThingTypes[i].ThingTypeId;
+                    ThingTypes.Add(thingTypeId, thingsArchive.ThingTypes[i]);
+                    
                 }
             }
             catch (SerializationException e)

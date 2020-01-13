@@ -35,10 +35,9 @@ namespace Magistr.Physics.PhysXImplCore
 
         APIVec3 getRigidDynamicPosition(long nRef);
         APIQuat getRigidDynamicRotation(long nRef);
-        void setRigidDynamicPosition(long nRef, APIVec3 p);
-        void setRigidDynamicRotation(long nRef, APIQuat q);
+        void setRigidDynamicTransform(long nRef, APIVec3 p, APIQuat q);
 
-        
+
         APIVec3 getRigidStaticPosition(long nRef);
         APIQuat getRigidStaticRotation(long nRef);
         void setRigidStaticPosition(long nRef, APIVec3 p);
@@ -52,6 +51,13 @@ namespace Magistr.Physics.PhysXImplCore
         
         void setRigidDynamicLinearVelocity(long nRef, APIVec3 v);
         void setRigidDynamicAngularVelocity(long nRef, APIVec3 v);
+
+
+        void setRigidDynamicLinearDamping(long nRef, float v);
+        void setRigidDynamicAngularDamping(long nRef, float v);
+
+        void addRigidDynamicForce(long nRef, APIVec3 v);
+        void addRigidDynamicTorque(long nRef, APIVec3 v);
 
         void setRigidDynamicMaxLinearVelocity(long nRef, float v);
         void setRigidDynamicMaxAngularVelocity(long nRef, float v);
@@ -81,6 +87,7 @@ namespace Magistr.Physics.PhysXImplCore
 
         void initLog(DebugLogFunc func, DebugLogErrorFunc func2);
         void initPhysics(bool isCreatePvd, int numThreads, ErrorCallbackFunc func);
+        void initGlobalMaterial(float staticFriction, float dynamicFriction, float restitution);
         void stepPhysics(long nRef, float dt);
         void cleanupPhysics();
         

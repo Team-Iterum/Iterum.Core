@@ -1,20 +1,19 @@
 ﻿using Magistr.Framework.Physics;
+using static Magistr.Physics.PhysXImplCore.PhysicsAlias;
 
 namespace Magistr.Physics.PhysXImplCore
 {
     internal class SphereGeometry : IGeometry
     {
         private long nRef;
-        private IPhysicsAPI api;
-        public SphereGeometry(float radius, IPhysicsAPI api)
+        public SphereGeometry(float radius)
         {
-            this.api = api;
-            nRef = api.createSphereGeometry(radius);
+            nRef = API.createSphereGeometry(radius);
         }
 
         public void Destroy ()
         {
-            api.cleanupGeometry(nRef);
+            API.cleanupGeometry(nRef);
         }
         public object GetInternalGeometry()
         {

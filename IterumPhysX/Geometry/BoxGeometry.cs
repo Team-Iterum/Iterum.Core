@@ -1,22 +1,21 @@
 ﻿using Magistr.Framework.Physics;
 using Magistr.Math;
+using static Magistr.Physics.PhysXImplCore.PhysicsAlias;
 
 namespace Magistr.Physics.PhysXImplCore
 {
     internal class BoxGeometry : IGeometry
     {
         private long nRef;
-        private IPhysicsAPI api;
 
-        public BoxGeometry(Vector3 half, IPhysicsAPI api)
+        public BoxGeometry(Vector3 half)
         {
-            this.api = api;
-            nRef = api.createBoxGeometry(half);
+            nRef = API.createBoxGeometry(half);
         }
 
         public void Destroy()
         {
-            api.cleanupGeometry(nRef);
+            API.cleanupGeometry(nRef);
         }
         public object GetInternalGeometry()
         {

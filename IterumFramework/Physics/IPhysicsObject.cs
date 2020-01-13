@@ -24,7 +24,13 @@ namespace Magistr.Physics
         Vector3 AngularVelocity { get; set; }
         float MaxLinearVelocity { get; set; }
         float MaxAngularVelocity { get; set; }
+
+        float LinearDamping { set; }
+        float AngularDamping { set; }
+
         void SetKinematicTarget(Vector3 position, Quaternion rotation);
+        void AddForce(Vector3 force);
+        void AddTorque(Vector3 torque);
     }
 
     [Flags]

@@ -34,11 +34,15 @@ namespace Magistr.Physics
         IPhysicsCharacter CreateCapsuleCharacter(Vector3 position, Vector3 up, float height, float radius);
         
 
+    }
+
+    public interface IPhysics
+    {
+        void InitPhysics();
         IGeometry CreateTriangleMeshGeometry(IModelData modelData);
         IGeometry CreateConvexMeshGeometry(IModelData modelData);
         IGeometry CreateSphereGeometry(float radius);
         IGeometry CreateBoxGeometry(Vector3 size);
-
     }
 
     public struct AddRemoveThings
