@@ -27,12 +27,12 @@ namespace Magistr.Physics.PhysXImplCore
         {
             if (!physXCreated)
             {
-                var builder = new NativeLibraryBuilder(ImplementationOptions.EnableOptimizations | ImplementationOptions.UseIndirectCalls);
+                var builder = new NativeLibraryBuilder();
                 API = builder.ActivateInterface<IPhysicsAPI>("PhysXSharpNative");
 
                 API.initLog((s) => Log.Debug.Log("PhysX", s, ConsoleColor.Yellow), (s) => Log.Debug.LogError("PhysX", s));
                 
-                API.initPhysics(true, Environment.ProcessorCount, (s) => Log.Debug.LogError("PhysX Critical", s));
+                API.initPhysics(true, Environment.ProcessorCount,100, 1000, (s) => Log.Debug.LogError("PhysX Critical", s));
                 API.initGlobalMaterial(0.01f, 0.01f, 0.99f);
 
                 physXCreated = true;
@@ -58,6 +58,11 @@ namespace Magistr.Physics.PhysXImplCore
         public IGeometry CreateBoxGeometry(Vector3 size)
         {
             return new BoxGeometry(size);
+        }
+
+        public IGeometry LoadTriangleMeshGeometry(string name)
+        {
+            return new ModelGeometry(GeoType.TriangleMeshGeometry, name);
         }
     }
 }

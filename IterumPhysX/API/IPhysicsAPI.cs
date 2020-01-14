@@ -2,6 +2,7 @@
 
 // ReSharper disable InconsistentNaming
 
+using System;
 using Magistr.Math;
 
 namespace Magistr.Physics.PhysXImplCore
@@ -20,7 +21,7 @@ namespace Magistr.Physics.PhysXImplCore
         
         
         
-        long createTriangleMesh(APIVec3[] vertices, int pointsCount, uint[] indices, int triCount);
+        void createTriangleMesh(string name, APIVec3[] vertices, int pointsCount, uint[] indices, int triCount);
         long createConvexMesh(APIVec3[] vertices, int pointsCount);
         void cleanupConvexMesh(long nRef);
         void cleanupTriangleMesh(long nRef);
@@ -78,15 +79,16 @@ namespace Magistr.Physics.PhysXImplCore
 
         void setControllerPosition(long nRef, APIDoubleVec3 p);
         void setControllerFootPosition(long nRef, APIDoubleVec3 p);
-        
-        
+
+
+        long loadTriangleMesh(string name);
         
         long createScene(APIVec3 gravity);
         void cleanupScene(long nRef);
         long getSceneTimestamp(long nRef);
 
         void initLog(DebugLogFunc func, DebugLogErrorFunc func2);
-        void initPhysics(bool isCreatePvd, int numThreads, ErrorCallbackFunc func);
+        void initPhysics(bool isCreatePvd, int numThreads, float toleranceLength, float toleranceSpeed, ErrorCallbackFunc func);
         void initGlobalMaterial(float staticFriction, float dynamicFriction, float restitution);
         void stepPhysics(long nRef, float dt);
         void cleanupPhysics();
