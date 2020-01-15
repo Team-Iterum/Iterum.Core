@@ -182,9 +182,9 @@ namespace Magistr.Physics.PhysXImplCore
             return rigidActor;
         }
 
-        public IPhysicsDynamicObject CreateDynamic(IGeometry geometry, bool kinematic, Vector3 pos, Quaternion rot)
+        public IPhysicsDynamicObject CreateDynamic(IGeometry geometry, bool kinematic, float mass, Vector3 pos, Quaternion rot)
         {
-            var rigidActor = scene.CreateRigidDynamic(geometry, kinematic);
+            var rigidActor = scene.CreateRigidDynamic(geometry, kinematic, mass);
             rigidActor.Position = pos;
             rigidActor.Rotation = rot;
 

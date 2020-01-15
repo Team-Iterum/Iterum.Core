@@ -13,6 +13,17 @@ namespace Magistr.Physics.PhysXImplCore
 
     public delegate void DebugLogFunc(string message);
     public delegate void DebugLogErrorFunc(string message);
+
+    public struct RigidDynamicParams
+    {
+        public bool kinematic;
+        public bool ccd;
+        public bool retainAccelerations;
+
+        public float mass;
+    };
+
+
     public interface IPhysicsAPI
     {
         void charactersUpdate(float elapsed, float minDist);
@@ -45,7 +56,7 @@ namespace Magistr.Physics.PhysXImplCore
         void setRigidStaticRotation(long nRef, APIQuat q);
 
         
-        long createRigidDynamic(int geoType, long nRefGeo, long nRefScene, bool kinematic, float mass, APIVec3 pos, APIQuat quat);
+        long createRigidDynamic(int geoType, long nRefGeo, long nRefScene, RigidDynamicParams rigidParams, APIVec3 pos, APIQuat quat);
         void destroyRigidDynamic(long nRef);
 
         void setRigidDynamicKinematicTarget(long nRef, APIVec3 p, APIQuat q);

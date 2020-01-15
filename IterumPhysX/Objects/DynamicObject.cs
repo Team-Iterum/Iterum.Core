@@ -1,4 +1,5 @@
-﻿using Magistr.Framework.Physics;
+﻿using System;
+using Magistr.Framework.Physics;
 using Magistr.Log;
 using Magistr.Math;
 using Magistr.Things;
@@ -97,7 +98,15 @@ namespace Magistr.Physics.PhysXImplCore
             this.api = api;
             this.scene = scene;
 
-            Ref = api.createRigidDynamic((int) geometry.GeoType,(long)geometry.GetInternalGeometry(), scene.Ref, kinematic, mass, Vector3.zero, Quaternion.identity);
+            var rigidParams = new RigidDynamicParams()
+            {
+                kinematic = kinematic,
+                mass = mass,
+                ccd = true,
+                retainAccelerations = true,
+            };
+
+            Ref = api.createRigidDynamic((int) geometry.GeoType,(long)geometry.GetInternalGeometry(), scene.Ref, rigidParams, Vector3.zero, Quaternion.identity);
         }
 
 
