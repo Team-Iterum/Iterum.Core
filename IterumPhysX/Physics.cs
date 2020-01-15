@@ -33,7 +33,7 @@ namespace Magistr.Physics.PhysXImplCore
                 API.initLog((s) => Log.Debug.Log("PhysX", s, ConsoleColor.Yellow), (s) => Log.Debug.LogError("PhysX", s));
                 
                 API.initPhysics(true, Environment.ProcessorCount,100, 1000, (s) => Log.Debug.LogError("PhysX Critical", s));
-                API.initGlobalMaterial(0.01f, 0.01f, 0.99f);
+                API.initGlobalMaterial(0.01f, 0.01f, 0.1f);
 
                 physXCreated = true;
             }
