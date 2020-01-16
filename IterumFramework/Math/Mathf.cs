@@ -499,6 +499,16 @@ namespace Magistr.Math
             return result;
         }
 
+        public static float ClampAngle(float eulerAngles)
+        {
+            float result = eulerAngles - CeilToInt(eulerAngles / 360f) * 360f;
+            if (result < 0)
+            {
+                result += 360f;
+            }
+            return result;
+        }
+
         /// <summary>
         ///   <para>Linearly interpolates between a and b by t.</para>
         /// </summary>
