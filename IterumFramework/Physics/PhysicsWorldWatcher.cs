@@ -66,49 +66,58 @@ namespace Magistr.Physics
                     continue;
                 }
 
+                bool draw = false;
                 string infoText = "(Normal) ";
 
-                if(w.SceneFrame > w.TPS/2f)
+                if(w.SceneFrame > w.TPS * 0.5f)
                 {
                     backColor = ConsoleColor.DarkYellow;
                     infoText = "(Warning) ";
+                    draw = true;
                 }
                 if (w.SceneFrame >= w.TPS * 0.75f)
                 {
                     backColor = ConsoleColor.Red;
                     color = ConsoleColor.White;
                     infoText = "(Overload) ";
+                    draw = true;
                 }
                 if (w.SceneFrame >= w.TPS)
                 {
                     backColor = ConsoleColor.DarkRed;
                     color = ConsoleColor.White;
                     infoText = "(Fatal Overload) ";
+                    draw = true;
                 }
+
                 if (!w.IsRunning)
                 {
                     backColor = ConsoleColor.Gray;
                     infoText = "(Stopped) ";
+                    draw = false;
                 }
 
-               
 
-                var str = $"{infoText}#{worlds.IndexOf(w)} dt: {w.DeltaTime}ms frame: {w.SceneFrame}ms timestamp: {w.Timestamp}";
-                str += Space(header.Length - str.Length);
-                
-                var foreground = Console.ForegroundColor;
-                Console.ForegroundColor = ConsoleColor.DarkGray;
-                Console.Write($"[Watcher] ");
-                Console.ForegroundColor = foreground;
+                if (draw)
+                {
+                    var str =
+                        $"{infoText}#{worlds.IndexOf(w)} dt: {w.DeltaTime}ms frame: {w.SceneFrame}ms timestamp: {w.Timestamp}";
+                    str += Space(header.Length - str.Length);
 
-                Debug.Back(backColor);
+                    var foreground = Console.ForegroundColor;
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.Write($"[Watcher] ");
+                    Console.ForegroundColor = foreground;
 
-                Console.ForegroundColor = color;
-                Console.Write(str);
-                Console.ForegroundColor = foreground;
-                Console.Write("\n");
+                    Debug.Back(backColor);
 
-                Debug.ResetBack();
+                    Console.ForegroundColor = color;
+                    Console.Write(str);
+                    Console.ForegroundColor = foreground;
+                    Console.Write("\n");
+
+                    Debug.ResetBack();
+                }
             }
             Console.ResetColor();
         }
