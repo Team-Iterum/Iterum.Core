@@ -68,8 +68,8 @@ namespace Magistr.Physics.PhysXImplCore
         void setRigidDynamicLinearDamping(long nRef, float v);
         void setRigidDynamicAngularDamping(long nRef, float v);
 
-        void addRigidDynamicForce(long nRef, APIVec3 v);
-        void addRigidDynamicTorque(long nRef, APIVec3 v);
+        void addRigidDynamicForce(long nRef, APIVec3 v, ForceMode mode);
+        void addRigidDynamicTorque(long nRef, APIVec3 v, ForceMode mode);
 
         void setRigidDynamicMaxLinearVelocity(long nRef, float v);
         void setRigidDynamicMaxAngularVelocity(long nRef, float v);

@@ -73,14 +73,14 @@ namespace Magistr.Physics.PhysXImplCore
             api.setRigidDynamicKinematicTarget(Ref, position, rotation);
         }
 
-        public void AddForce(Vector3 force)
+        public void AddForce(Vector3 force, ForceMode mode)
         {
-            api.addRigidDynamicForce(Ref, force);
+            api.addRigidDynamicForce(Ref, force, mode);
         }
 
-        public void AddTorque(Vector3 torque)
+        public void AddTorque(Vector3 torque, ForceMode mode)
         {
-            api.addRigidDynamicTorque(Ref, torque);
+            api.addRigidDynamicTorque(Ref, torque, mode);
         }
 
         public IThing Thing { get; set; }
