@@ -138,7 +138,7 @@ namespace Magistr.Network
             var connection = wsc.Connection;
             try
             {
-                Debug.Log(nameof(WebSocketNetwork),  $"Client connected - ID: {connection}, IP: {((IPEndPoint) ws.RemoteEndpoint).Address}");
+                Debug.Log(nameof(WebSocketNetwork),  $"Client connected - ID: {connection}, IP: {((IPEndPoint) ws.RemoteEndpoint).Address}", ConsoleColor.Magenta);
 
                 Connected?.Invoke(
                     new ConnectionData {address = (IPEndPoint) ws.RemoteEndpoint, connection = connection});
@@ -191,7 +191,7 @@ namespace Magistr.Network
                     {address = (IPEndPoint) ws.RemoteEndpoint, connection = connection});
 
                 Debug.Log(nameof(WebSocketNetwork), 
-                    $"Client disconnected - ID: {connection}, IP: {((IPEndPoint) ws.RemoteEndpoint).Address}");
+                    $"Client disconnected - ID: {connection}, IP: {((IPEndPoint) ws.RemoteEndpoint).Address}", ConsoleColor.Magenta);
             }
         }
 
