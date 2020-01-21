@@ -40,6 +40,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -49,6 +50,7 @@ namespace NetStack.Serialization {
 		private const int stringLengthMax = 512;
 		private const int stringLengthBits = 9;
 		private const int bitsASCII = 7;
+        private const int bitsUTF8 = 8;
 		private const int growFactor = 2;
 		private const int minGrow = 1;
 		private int readPosition;
@@ -498,11 +500,14 @@ namespace NetStack.Serialization {
 			if (length > stringLengthMax)
 				length = (uint)stringLengthMax;
 
-			Add(stringLengthBits, length);
+			
+            var bytes = Encoding.UTF8.GetBytes(value);
+            Add(stringLengthBits, (uint) bytes.Length);
 
-			for (int i = 0; i < length; i++) {
-				Add(bitsASCII, ToASCII(value[i]));
-			}
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                AddByte(bytes[i]);
+            }
 
 			return this;
 		}
@@ -511,15 +516,15 @@ namespace NetStack.Serialization {
 			[MethodImpl(256)]
 		#endif
 		public string ReadString() {
-			StringBuilder builder = new StringBuilder();
-			uint length = Read(stringLengthBits);
+            uint length = Read(stringLengthBits);
 
+            List<byte> bytes = new List<byte>();
 			for (int i = 0; i < length; i++) {
-				builder.Append((char)Read(bitsASCII));
+				bytes.Add(ReadByte());
 			}
 
-			return builder.ToString();
-		}
+            return Encoding.UTF8.GetString(bytes.ToArray());
+        }
 
 		public override string ToString() {
 			StringBuilder builder = new StringBuilder();
@@ -575,5 +580,7 @@ namespace NetStack.Serialization {
 
 			return value;
 		}
+
+       
 	}
 }
