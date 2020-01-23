@@ -5,6 +5,11 @@ namespace Magistr.Log
     public static class Debug
     {
         private static ConsoleColor BackColor;
+
+        public delegate void LogCallbackDelegate(DateTime time, string msg, ConsoleColor color);
+
+        public static event  LogCallbackDelegate LogCallback;
+
         public static void Back(ConsoleColor consoleColor)
         {
             BackColor = Console.BackgroundColor;
@@ -32,13 +37,17 @@ namespace Magistr.Log
         }
         private static void Log(string group, string e, ConsoleColor color = ConsoleColor.White, ConsoleColor groupColor = ConsoleColor.Gray,  bool timestamp = true)
         {
+            var dateTime = DateTime.Now;
+            var finalText = string.Empty;
             // Timestamp
             {
                 var foreground = Console.ForegroundColor;
                 if (timestamp)
                 {
+                    var text = $"{dateTime.ToLongTimeString()} ";
+                    finalText += text;
                     Console.ForegroundColor = ConsoleColor.DarkGray;
-                    Console.Write($"{DateTime.Now.ToLongTimeString()} ");
+                    Console.Write(text);
                     Console.ForegroundColor = foreground;
                 }
             }
@@ -48,6 +57,8 @@ namespace Magistr.Log
                 var foreground = Console.ForegroundColor;
                 if (group != null)
                 {
+                    var text = $"[{group}] ";
+                    finalText += text;
                     Console.ForegroundColor = groupColor;
                     Console.Write($"[{group}] ");
                     Console.ForegroundColor = foreground;
@@ -56,12 +67,15 @@ namespace Magistr.Log
 
             // Text
             {
+                finalText += e;
                 var foreground = Console.ForegroundColor;
                 Console.ForegroundColor = color;
                 Console.Write(e);
                 Console.ForegroundColor = foreground;
                 Console.Write("\n");
             }
+
+            OnLogCallback(dateTime, finalText, color);
         }
 
         public static void LogError(string group, string e)
@@ -130,5 +144,10 @@ namespace Magistr.Log
         }
 
         #endregion
+
+        private static void OnLogCallback(DateTime time, string msg, ConsoleColor color)
+        {
+            LogCallback?.Invoke(time, msg, color);
+        }
     }
 }
