@@ -75,7 +75,7 @@ namespace Magistr.Things
             }
             finally
             {
-                Debug.LogSuccess(nameof(ThingTypeManager),$"'{thingsArchive.Name}' saved", ConsoleColor.Green);
+                Debug.LogSuccess(nameof(ThingTypeManager),$"'{thingsArchive.Name}' saved");
                 fs.Close();
             }
         }
@@ -107,7 +107,7 @@ namespace Magistr.Things
             }
             finally
             {
-                Debug.LogSuccess(nameof(ThingTypeManager),$"'{thingsArchive.Name}' loaded", ConsoleColor.Green);
+                Debug.LogSuccess(nameof(ThingTypeManager),$"'{thingsArchive.Name}' loaded");
                 fs.Close();
             }
         }

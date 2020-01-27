@@ -44,7 +44,7 @@ namespace Magistr.MapData
             }
             finally
             {
-                Debug.LogSuccess(nameof(MapDataManager),$"'{mapArchive.Name}' loaded", ConsoleColor.Green);
+                Debug.LogSuccess(nameof(MapDataManager),$"'{mapArchive.Name}' loaded");
                 fs.Close();
             }
         }
@@ -68,7 +68,7 @@ namespace Magistr.MapData
             }
             finally
             {
-                Debug.LogSuccess(nameof(MapDataManager),$"'{mapArchive.Name}' loaded", ConsoleColor.Green);
+                Debug.LogSuccess(nameof(MapDataManager),$"'{mapArchive.Name}' loaded");
                 fs.Close();
             }
 

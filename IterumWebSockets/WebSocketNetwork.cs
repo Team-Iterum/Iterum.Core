@@ -74,7 +74,7 @@ namespace Magistr.Network
             }
             finally
             {
-                Debug.LogSuccess(nameof(WebSocketNetwork), $"Started at {port}", ConsoleColor.Green);
+                Debug.LogSuccess(nameof(WebSocketNetwork), $"Started at {port}");
             }
 
         }

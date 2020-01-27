@@ -21,12 +21,16 @@ namespace Magistr.Log
             Console.BackgroundColor = BackColor;
         }
 
+        public static void EmptyLine()
+        {
+            Log("", ConsoleColor.Black, false);
+        }
         public static void Log(string group, string e, ConsoleColor color = ConsoleColor.White, bool timestamp = true)
         {
             Log(group, e, color, ConsoleColor.Gray, timestamp);
         }
 
-        public static void LogSuccess(string group, string e, ConsoleColor _)
+        public static void LogSuccess(string group, string e)
         {
             Log(group, e, ConsoleColor.Green, ConsoleColor.Gray);
         }
