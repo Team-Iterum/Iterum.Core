@@ -8,13 +8,13 @@ namespace Magistr.Physics.PhysXImplCore
 
     public static class PhysicsAlias
     {
-        public static Physics Physics { get; private set; }
+        public static Physics GlobalPhysics { get; private set; }
 
-        public static IPhysicsAPI API => Physics.API;
+        public static IPhysicsAPI API => GlobalPhysics.API;
 
         public static void Set(Physics physics)
         {
-            Physics = physics;
+            GlobalPhysics = physics;
         }
     }
     public class Physics : IPhysics
