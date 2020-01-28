@@ -5,7 +5,6 @@ using Magistr.Math;
 
 namespace Magistr.Physics.PhysXImplCore
 {
-
     public static class PhysicsAlias
     {
         public static Physics GlobalPhysics { get; private set; }
@@ -19,25 +18,46 @@ namespace Magistr.Physics.PhysXImplCore
     }
     public class Physics : IPhysics
     {
-        private bool physXCreated;
+        private bool isCreated;
 
         public IPhysicsAPI API { get; private set; }
         
         public void InitPhysics()
         {
-            if (!physXCreated)
+            if (!isCreated)
             {
-                var builder = new NativeLibraryBuilder();
-                API = builder.ActivateInterface<IPhysicsAPI>("PhysXSharpNative");
+                API = NativeLibraryBuilder.Default.ActivateInterface<IPhysicsAPI>("PhysXSharpNative");
 
-                API.initLog((s) => Log.Debug.Log("PhysX", s, ConsoleColor.Yellow), (s) => Log.Debug.LogError("PhysX", s));
+                API.initLog(LogDebug, LogError);
+
+                const bool isCreatePvd = true;
+
+                #if !DEBUG
+                isCreatePvd = false;
+                #endif
+
+                API.initPhysics(isCreatePvd, Environment.ProcessorCount, 1, 5, LogCritical);
                 
-                API.initPhysics(true, Environment.ProcessorCount, 1, 5, (s) => Log.Debug.LogError("PhysX Critical", s));
                 API.initGlobalMaterial(0.99f, 0.99f, 0.5f);
 
-                physXCreated = true;
+                isCreated = true;
             }
 
+        }
+
+        private void LogDebug(string message)
+        {
+            Log.Debug.Log("PhysX", message, ConsoleColor.Yellow);
+        }
+
+        private void LogCritical(string message)
+        {
+            Log.Debug.LogError("PhysX Critical", message);
+        }
+
+        private void LogError(string message)
+        {
+            Log.Debug.LogError("PhysX", message);
         }
 
         public IGeometry CreateTriangleMeshGeometry(IModelData modelData)
