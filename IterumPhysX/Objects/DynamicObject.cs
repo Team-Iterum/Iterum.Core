@@ -88,7 +88,6 @@ namespace Magistr.Physics.PhysXImplCore
         public void Destroy()
         { 
             scene.Destroy(this);
-    
             IsDestroyed = true;
 
         }

@@ -1,5 +1,4 @@
-﻿using System;
-using Magistr.Framework.Physics;
+﻿using Magistr.Framework.Physics;
 using Magistr.Log;
 using Magistr.Math;
 using Magistr.Things;
@@ -95,7 +94,7 @@ namespace Magistr.Physics.PhysXImplCore
         {
             var hits = new List<IThing>();  
 
-            int count = API.sceneOverlap(Ref, (long)overlapSphere.GetInternalGeometry(), pos, (nRef) =>
+            int unused = API.sceneOverlap(Ref, (long)overlapSphere.GetInternalGeometry(), pos, (nRef) =>
             {
                 if (references.ContainsKey(nRef))
                     hits.Add(references[nRef].Thing);

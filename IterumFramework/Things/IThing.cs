@@ -1,15 +1,14 @@
 ﻿using Magistr.Math;
 using Magistr.Physics;
-using System;
+using Magistr.Game;
 
 namespace Magistr.Things
 {
-    public delegate void ThingPositionChange(IThing thing, Vector3 pos, bool force);
+    public delegate void ThingTransformChange(IThing thing, ITransform transform, bool force);
     public interface IThing
     {
-        event ThingPositionChange PositionChanged;
-        Vector3 Position { get; set; }
-        Quaternion Rotation { get; set; }
+        event ThingTransformChange TransformChanged;
+        ITransform Transform { get; set; }
         int ThingTypeId { get; set; }
         void Create(IPhysicsWorld world);
         void Destroy();
