@@ -1,4 +1,5 @@
-﻿using Magistr.Framework.Physics;
+﻿using System;
+using Magistr.Framework.Physics;
 using Magistr.Log;
 using Magistr.Math;
 using Magistr.Things;
@@ -18,11 +19,12 @@ namespace Magistr.Physics.PhysXImplCore
 
         public int Timestamp => (int) API.getSceneTimestamp(Ref);
 
-        public Scene(IPhysicsWorld world)
+        public Scene(IPhysicsWorld world, ContactReportCallbackFunc func)
         {
             this.world = world;
-            Ref = API.createScene(world.Gravity);
-            
+
+            Ref = API.createScene(world.Gravity, func);
+
         }
 
         public void StepPhysics(in float dt)
@@ -114,5 +116,9 @@ namespace Magistr.Physics.PhysXImplCore
             }
         }
 
+        public IPhysicsObject GetReference(in long nRef)
+        {
+            return references[nRef];
+        }
     }
 }

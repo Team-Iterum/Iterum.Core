@@ -2,8 +2,7 @@
 
 // ReSharper disable InconsistentNaming
 
-using System;
-using Magistr.Math;
+using AdvancedDLSupport;
 
 namespace Magistr.Physics.PhysXImplCore
 {
@@ -13,6 +12,7 @@ namespace Magistr.Physics.PhysXImplCore
 
     public delegate void DebugLogFunc(string message);
     public delegate void DebugLogErrorFunc(string message);
+    public delegate void ContactReportCallbackFunc(long ref0, long ref1);
 
     public struct RigidDynamicParams
     {
@@ -94,12 +94,12 @@ namespace Magistr.Physics.PhysXImplCore
 
         long loadTriangleMesh(string name);
         
-        long createScene(APIVec3 gravity);
+        long createScene(APIVec3 gravity, [DelegateLifetime(DelegateLifetime.Persistent)] ContactReportCallbackFunc func);
         void cleanupScene(long nRef);
         long getSceneTimestamp(long nRef);
 
-        void initLog(DebugLogFunc func, DebugLogErrorFunc func2);
-        void initPhysics(bool isCreatePvd, int numThreads, float toleranceLength, float toleranceSpeed, ErrorCallbackFunc func);
+        void initLog([DelegateLifetime(DelegateLifetime.Persistent)] DebugLogFunc func, [DelegateLifetime(DelegateLifetime.Persistent)]DebugLogErrorFunc func2);
+        void initPhysics(bool isCreatePvd, int numThreads, float toleranceLength, float toleranceSpeed, [DelegateLifetime(DelegateLifetime.Persistent)] ErrorCallbackFunc func);
         void initGlobalMaterial(float staticFriction, float dynamicFriction, float restitution);
         void stepPhysics(long nRef, float dt);
         void cleanupPhysics();

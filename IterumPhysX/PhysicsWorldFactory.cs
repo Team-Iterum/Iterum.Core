@@ -10,10 +10,8 @@ namespace Magistr.Physics
         public static void CreatePhysics()
         {
             // PhysX
-            var physics = new PhysXImplCore.Physics();
-            physics.InitPhysics();
-
-            PhysicsAlias.Set(physics);
+            PhysicsAlias.GlobalPhysics = new PhysXImplCore.Physics();
+            PhysicsAlias.GlobalPhysics.InitPhysics();
         }
         public static IPhysicsWorld CreateWorld(int tps)
         {

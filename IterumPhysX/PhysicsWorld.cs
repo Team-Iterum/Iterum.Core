@@ -9,6 +9,7 @@ using Magistr.Math;
 using Magistr.Things;
 using Magistr.Utils;
 using static Magistr.Physics.PhysXImplCore.PhysicsAlias;
+using Debug = Magistr.Log.Debug;
 
 [assembly: InternalsVisibleTo("AdvancedDLSupport")]
 
@@ -28,6 +29,7 @@ namespace Magistr.Physics.PhysXImplCore
         
 
         public Vector3 Gravity { get; set; }
+        public event EventHandler<ContactReport> ContactReport;
 
 
         private Thread workerThread;
@@ -55,7 +57,7 @@ namespace Magistr.Physics.PhysXImplCore
 
         private void InitScene()
         {
-            scene = new Scene(this);
+            scene = new Scene(this, OnContactReport);
             overlapSphere = new SphereGeometry(OverlapSphereRadius);
 
         }
@@ -198,5 +200,16 @@ namespace Magistr.Physics.PhysXImplCore
             return controller;
         }
 
+        protected virtual void OnContactReport(long ref0, long ref1)
+        {
+            var obj0 = scene.GetReference(ref0);
+            var obj1 = scene.GetReference(ref1);
+
+            ContactReport?.Invoke(this, new ContactReport()
+            {
+                obj0 = obj0.Thing,
+                obj1 = obj1.Thing,
+            });
+        }
     }
 }

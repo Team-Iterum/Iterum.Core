@@ -15,20 +15,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AdvancedDLSupport" Version="3.1.0" />
     <PackageReference Include="StrictEmit" Version="2.8.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\IterumFramework\IterumFramework.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="AdvancedDLSupport">
-      <HintPath>..\..\..\..\Dev\AdvanceDLSupport-master\AdvanceDLSupport-master\AdvancedDLSupport\bin\x64\Release\netstandard2.0\AdvancedDLSupport.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.DllMap">
-      <HintPath>..\..\..\..\Dev\AdvanceDLSupport-master\AdvanceDLSupport-master\AdvancedDLSupport\bin\x64\Release\netstandard2.0\Mono.DllMap.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>

@@ -7,14 +7,9 @@ namespace Magistr.Physics.PhysXImplCore
 {
     public static class PhysicsAlias
     {
-        public static Physics GlobalPhysics { get; private set; }
+        public static Physics GlobalPhysics;
 
         public static IPhysicsAPI API => GlobalPhysics.API;
-
-        public static void Set(Physics physics)
-        {
-            GlobalPhysics = physics;
-        }
     }
     public class Physics : IPhysics
     {
@@ -26,7 +21,8 @@ namespace Magistr.Physics.PhysXImplCore
         {
             if (!isCreated)
             {
-                API = NativeLibraryBuilder.Default.ActivateInterface<IPhysicsAPI>("PhysXSharpNative");
+                var builder = new NativeLibraryBuilder(ImplementationOptions.UseIndirectCalls | ImplementationOptions.EnableOptimizations);
+                API = builder.ActivateInterface<IPhysicsAPI>("PhysXSharpNative");
 
                 API.initLog(LogDebug, LogError);
 

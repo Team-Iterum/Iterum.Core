@@ -1,4 +1,5 @@
-﻿using Magistr.Framework.Physics;
+﻿using System;
+using Magistr.Framework.Physics;
 using Magistr.Math;
 using Magistr.Things;
 using System.Collections.Generic;
@@ -27,6 +28,7 @@ namespace Magistr.Physics
 
         Vector3 Gravity { get; set; }
 
+        event EventHandler<ContactReport> ContactReport;
         AddRemoveThings Overlap(Vector3 position, List<IThing> except, bool staticOnly);
 
         IPhysicsStaticObject CreateStatic(IGeometry geometry, Vector3 position, Quaternion rotation);
@@ -34,6 +36,12 @@ namespace Magistr.Physics
         IPhysicsCharacter CreateCapsuleCharacter(Vector3 position, Vector3 up, float height, float radius);
         
 
+    }
+
+    public struct ContactReport
+    {
+        public IThing obj0;
+        public IThing obj1;
     }
 
     public interface IPhysics
