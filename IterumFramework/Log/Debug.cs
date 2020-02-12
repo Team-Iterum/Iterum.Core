@@ -25,7 +25,8 @@ namespace Magistr.Log
         {
             Log("", ConsoleColor.Black, false);
         }
-        public static void Log(string group, string e, ConsoleColor color = ConsoleColor.White, bool timestamp = true)
+        public static void Log(string group, string e, ConsoleColor color = ConsoleColor.White, 
+            bool timestamp = true)
         {
             Log(group, e, color, ConsoleColor.Gray, timestamp);
         }
@@ -39,7 +40,10 @@ namespace Magistr.Log
         {
             Log(null, e, color, ConsoleColor.Gray, timestamp);
         }
-        private static void Log(string group, string e, ConsoleColor color = ConsoleColor.White, ConsoleColor groupColor = ConsoleColor.Gray,  bool timestamp = true)
+        private static void Log(string group, string e, 
+            ConsoleColor color = ConsoleColor.White, 
+            ConsoleColor groupColor = ConsoleColor.Gray, 
+            bool timestamp = true)
         {
             var dateTime = DateTime.Now;
             var finalText = string.Empty;

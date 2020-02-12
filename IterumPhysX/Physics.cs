@@ -19,25 +19,24 @@ namespace Magistr.Physics.PhysXImplCore
         
         public void InitPhysics()
         {
-            if (!isCreated)
-            {
-                var builder = new NativeLibraryBuilder(ImplementationOptions.UseIndirectCalls | ImplementationOptions.EnableOptimizations);
-                API = builder.ActivateInterface<IPhysicsAPI>("PhysXSharpNative");
+            if (isCreated) return;
+            
+            var builder = new NativeLibraryBuilder(ImplementationOptions.UseIndirectCalls | ImplementationOptions.EnableOptimizations);
+            API = builder.ActivateInterface<IPhysicsAPI>("PhysXSharpNative");
 
-                API.initLog(LogDebug, LogError);
+            API.initLog(LogDebug, LogError);
 
-                const bool isCreatePvd = true;
+            const bool isCreatePvd = true;
 
-                #if !DEBUG
+#if !DEBUG
                 isCreatePvd = false;
-                #endif
+#endif
 
-                API.initPhysics(isCreatePvd, Environment.ProcessorCount, 1, 5, LogCritical);
+            API.initPhysics(isCreatePvd, Environment.ProcessorCount, 1, 5, LogCritical);
                 
-                API.initGlobalMaterial(0.99f, 0.99f, 0.5f);
+            API.initGlobalMaterial(0.99f, 0.99f, 0.5f);
 
-                isCreated = true;
-            }
+            isCreated = true;
 
         }
 
