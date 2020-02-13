@@ -1,7 +1,7 @@
 ﻿
 using Magistr.Math;
 
-namespace Magistr.Framework.Physics
+namespace Magistr.Physics
 {
     public interface IModelData
     {

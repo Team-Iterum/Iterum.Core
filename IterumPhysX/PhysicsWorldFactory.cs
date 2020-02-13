@@ -1,4 +1,4 @@
-﻿using Magistr.Physics.PhysXImplCore;
+﻿using Magistr.Physics.PhysXImpl;
 
 namespace Magistr.Physics
 {
@@ -10,13 +10,13 @@ namespace Magistr.Physics
         public static void CreatePhysics()
         {
             // PhysX
-            PhysicsAlias.GlobalPhysics = new PhysXImplCore.Physics();
+            PhysicsAlias.GlobalPhysics = new PhysXImpl.Physics();
             PhysicsAlias.GlobalPhysics.InitPhysics();
         }
         public static IPhysicsWorld CreateWorld(int tps)
         {
             // PhysX
-            var world = new PhysXWorld {TPS = tps};
+            var world = new PhysicsWorld {TPS = tps};
             return world;
         }
     }

@@ -1,6 +1,5 @@
 ﻿using System;
-using Magistr.Framework.Physics;
-using Magistr.Math;
+using Magistr.Physics;
 
 namespace Magistr.Things
 {
@@ -28,6 +27,20 @@ namespace Magistr.Things
     public abstract class DataBlock
     {
 
+    }
+    
+    [Serializable]
+    public class Pivot
+    {
+        public Math.Vector3 LocalPosition;
+        public Math.Quaternion LocalRotation;
+        public string Name;
+    }
+    
+    [Serializable]
+    public class PivotData : DataBlock
+    {
+        public Pivot[] Pivots;
     }
 
     [Serializable]

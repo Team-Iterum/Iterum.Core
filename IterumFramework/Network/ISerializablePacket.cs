@@ -1,11 +1,4 @@
-﻿using NetStack.Serialization;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Magistr.Network
+﻿namespace Magistr.Network
 {
     public interface ISerializablePacket
     {

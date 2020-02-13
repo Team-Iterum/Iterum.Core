@@ -8,9 +8,9 @@ namespace Magistr.Physics
 {
     public class PhysicsWorldWatcher
     {
-        public Timer WatchTimer { get; private set; }
-        private static StringBuilder Builder = new StringBuilder();
-        private List<IPhysicsWorld> worlds;
+        private Timer WatchTimer { get; set; }
+        private static readonly StringBuilder Builder = new StringBuilder();
+        private readonly List<IPhysicsWorld> worlds;
 
         public PhysicsWorldWatcher(List<IPhysicsWorld> worlds)
         {
@@ -22,7 +22,8 @@ namespace Magistr.Physics
             const int period = 3000;
             WatchTimer = new Timer(Watch, worlds, 0, period);
         }
-        public static void Watch(object obj)
+
+        private static void Watch(object obj)
         {
             List<IPhysicsWorld> worlds = ((List<IPhysicsWorld>)obj);
 

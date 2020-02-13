@@ -9,7 +9,7 @@ namespace Magistr.Network
         public int length;
         public UInt32 connection;
         public long userData;
-        public Int64 timeReceived; // microsecunds
+        public Int64 timeReceived;
         public long messageNumber;
         public int channel;
     }

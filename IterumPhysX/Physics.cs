@@ -1,14 +1,13 @@
 ﻿using System;
 using AdvancedDLSupport;
-using Magistr.Framework.Physics;
+using Magistr.Log;
 using Magistr.Math;
 
-namespace Magistr.Physics.PhysXImplCore
+namespace Magistr.Physics.PhysXImpl
 {
     public static class PhysicsAlias
     {
         public static Physics GlobalPhysics;
-
         public static IPhysicsAPI API => GlobalPhysics.API;
     }
     public class Physics : IPhysics
@@ -17,7 +16,7 @@ namespace Magistr.Physics.PhysXImplCore
 
         public IPhysicsAPI API { get; private set; }
         
-        public void InitPhysics()
+        public void InitPhysics(float toleranceLength = 1, float toleranceSpeed = 5)
         {
             if (isCreated) return;
             
@@ -28,11 +27,11 @@ namespace Magistr.Physics.PhysXImplCore
 
             const bool isCreatePvd = true;
 
-#if !DEBUG
-                isCreatePvd = false;
-#endif
+            #if !DEBUG
+            isCreatePvd = false;
+            #endif
 
-            API.initPhysics(isCreatePvd, Environment.ProcessorCount, 1, 5, LogCritical);
+            API.initPhysics(isCreatePvd, Environment.ProcessorCount, toleranceLength, toleranceSpeed, LogCritical);
                 
             API.initGlobalMaterial(0.99f, 0.99f, 0.5f);
 
@@ -40,19 +39,19 @@ namespace Magistr.Physics.PhysXImplCore
 
         }
 
-        private void LogDebug(string message)
+        private static void LogDebug(string message)
         {
-            Log.Debug.Log("PhysX", message, ConsoleColor.Yellow);
+            Debug.Log("PhysX Debug", message, ConsoleColor.Yellow);
         }
 
-        private void LogCritical(string message)
+        private static void LogCritical(string message)
         {
-            Log.Debug.LogError("PhysX Critical", message);
+            Debug.LogError("PhysX Critical", message);
         }
 
-        private void LogError(string message)
+        private static void LogError(string message)
         {
-            Log.Debug.LogError("PhysX", message);
+            Debug.LogError("PhysX Error", message);
         }
 
         public IGeometry CreateTriangleMeshGeometry(IModelData modelData)
@@ -75,7 +74,7 @@ namespace Magistr.Physics.PhysXImplCore
             return new BoxGeometry(size);
         }
 
-        public IGeometry LoadTriangleMeshGeometry(string name)
+        public static IGeometry LoadTriangleMeshGeometry(string name)
         {
             return new ModelGeometry(GeoType.TriangleMeshGeometry, name);
         }

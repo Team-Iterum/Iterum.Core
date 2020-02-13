@@ -13,12 +13,12 @@ namespace Magistr.Physics
         bool IsDestroyed { get; }
     }
 
-    public interface IPhysicsStaticObject : IPhysicsObject
+    public interface IStaticObject : IPhysicsObject
     {
 
     }
 
-    public interface IPhysicsDynamicObject : IPhysicsObject
+    public interface IDynamicObject : IPhysicsObject
     {
         Vector3 LinearVelocity { get; set; }
         Vector3 AngularVelocity { get; set; }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using Magistr.Log;
@@ -73,24 +72,5 @@ namespace Magistr.MapData
             }
 
         }
-
-        private sealed class BinaryTypeBinderLocal : SerializationBinder
-        {
-            public override Type BindToType(string assemblyName, string typeName)
-            {
-                Type typeToDeserialize = null;
-                foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies())
-                {
-                    if (a.GetType(typeName) != null)
-                    {
-                        typeToDeserialize = a.GetType(typeName);
-                    }
-                }
-
-                return typeToDeserialize;
-            }
-        }
-
-        
     }
 }

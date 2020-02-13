@@ -2,15 +2,15 @@
 using Magistr.Things;
 using System;
 
-namespace Magistr.Physics.PhysXImplCore
+namespace Magistr.Physics.PhysXImpl
 {
     public class PhysicsCharacter : IPhysicsCharacter
     {
 
-        public long Ref;
+        public readonly long Ref;
 
-        private Scene scene;
-        private IPhysicsAPI api;
+        private readonly Scene scene;
+        private readonly IPhysicsAPI api;
 
 
         #region IPhysicsCharacter
@@ -121,7 +121,7 @@ namespace Magistr.Physics.PhysXImplCore
                 moveDelta += -up;
 
 
-            Direction = (moveDelta.LengthSqr() == 0 ?
+            Direction = (System.Math.Abs(moveDelta.LengthSqr()) < 0.01f ?
                             Vector3.zero :
                             Vector3.Normalize(moveDelta)) * Speed + OwnerWorld.Gravity;
 

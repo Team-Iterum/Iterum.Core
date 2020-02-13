@@ -1,15 +1,14 @@
-﻿using Magistr.Framework.Physics;
-using Magistr.Math;
+﻿using Magistr.Math;
 using Magistr.Things;
 
-namespace Magistr.Physics.PhysXImplCore
+namespace Magistr.Physics.PhysXImpl
 {
-    public class StaticObject : IPhysicsStaticObject
+    public class StaticObject : IStaticObject
     {
-        public long Ref { get; set; }
+        public long Ref { get; }
 
-        private IPhysicsAPI api;
-        private Scene scene;
+        private readonly IPhysicsAPI api;
+        private readonly Scene scene;
 
         #region IPhysicsObject
 

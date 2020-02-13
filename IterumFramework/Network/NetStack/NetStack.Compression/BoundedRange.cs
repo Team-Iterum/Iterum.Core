@@ -20,7 +20,6 @@
  *  SOFTWARE.
  */
 
-using System;
 using System.Runtime.CompilerServices;
 
 #if !(ENABLE_MONO || ENABLE_IL2CPP)

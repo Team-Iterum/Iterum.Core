@@ -4,18 +4,14 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using Magistr.Framework.Physics;
 using Magistr.Math;
 using Magistr.Things;
 using Magistr.Utils;
-using static Magistr.Physics.PhysXImplCore.PhysicsAlias;
-using Debug = Magistr.Log.Debug;
 
 [assembly: InternalsVisibleTo("AdvancedDLSupport")]
-
-namespace Magistr.Physics.PhysXImplCore
+namespace Magistr.Physics.PhysXImpl
 {
-    public class PhysXWorld : IPhysicsWorld
+    public sealed class PhysicsWorld : IPhysicsWorld
     {
 
         public bool IsDestroyed { get; private set; }
@@ -23,43 +19,31 @@ namespace Magistr.Physics.PhysXImplCore
         public bool IsRunning { get; private set; }
         
         public float SceneFrame { get; private set; }
-        public int Timestamp { get; set; }
+        public int Timestamp { get; private set; }
         public float DeltaTime { get; private set; }
-        public int TPS { get; set; } = 1000 / 60;
-        
+        public int TPS { get; set; }
 
+        
         public Vector3 Gravity { get; set; }
+        
+        public float OverlapSphereRadius { get; set; }
+        
+        
         public event EventHandler<ContactReport> ContactReport;
 
-
+        
         private Thread workerThread;
         private long last;
         
-
+        
         private Scene scene;
-        private Thread sceneThread;
-
-        private long beforeScene;
-        public Action<float> SceneUpdate;
-
-        private SphereGeometry overlapSphere;
-        private float overlapSphereRadius = 150;
-        public float OverlapSphereRadius
-        {
-            get => overlapSphereRadius;
-            set
-            {
-                overlapSphereRadius = value;
-                overlapSphere = new SphereGeometry(OverlapSphereRadius);
-            }
-        }
-
-
+        
         private void InitScene()
         {
-            scene = new Scene(this, OnContactReport);
-            overlapSphere = new SphereGeometry(OverlapSphereRadius);
-
+            scene = new Scene(this, OnContactReport)
+            {
+                OverlapSphereRadius = OverlapSphereRadius
+            };
         }
         
 
@@ -74,7 +58,7 @@ namespace Magistr.Physics.PhysXImplCore
             {
                 int sleep = TPS;
 
-                float dt = (float) TimeConversion.TicksToSeconds(stopwatch.ElapsedTicks - last);
+                var dt = (float) TimeConversion.TicksToSeconds(stopwatch.ElapsedTicks - last);
                 last = stopwatch.ElapsedTicks;
 
                 // Information
@@ -93,37 +77,7 @@ namespace Magistr.Physics.PhysXImplCore
                 Thread.Sleep(sleep);
             }
         }
-
-        private void StepScene()
-        {
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
-
-            beforeScene = stopwatch.ElapsedTicks;
-
-            while (IsRunning)
-            {
-                int sleep = TPS;    
-
-                float dt = (float) TimeConversion.TicksToSeconds(stopwatch.ElapsedTicks - beforeScene);
-                beforeScene = stopwatch.ElapsedTicks;
-
-                // Update scene
-                SceneUpdate?.Invoke(dt);
-                scene.Update(dt);
-
-                // Calculate remaining time
-                float sceneFrame = (float)TimeConversion.TicksToMs(stopwatch.ElapsedTicks - beforeScene);
-                
-                // Wait
-                sleep -= Mathf.CeilToInt(sceneFrame);
-                if (sleep < 0) sleep = 1;
-                    
-                Thread.Sleep(sleep);
-            }
-        }
-
-
+        
         public void Create()
         {
             InitScene();
@@ -146,72 +100,57 @@ namespace Magistr.Physics.PhysXImplCore
                 IsBackground = false,
                 Priority = ThreadPriority.Highest
             };
-            sceneThread = new Thread(StepScene);
-
+            
             IsRunning = true;
 
             workerThread.Start();
-            sceneThread.Start();
 
         }
 
         public void Stop()
         {
-            sceneThread = null;
             workerThread = null;
             IsRunning = false;
         }
-
         
-        public AddRemoveThings Overlap(Vector3 position, List<IThing> except, bool isStaticOnly)
+        public AddRemoveThings Overlap(Vector3 position, List<IThing> except)
         {
-            var hits = scene.Overlap(position, overlapSphere);
+            var hits = scene.Overlap(position);
 
             var remove = except.Where(e => !hits.Contains(e));
             var add = hits.Where(e => !except.Contains(e));
 
-            return new AddRemoveThings() { Add = add.ToList(), Remove = remove.ToList() };
+            return new AddRemoveThings() { Add = add, Remove = remove };
         }
 
-
-       
-
-        public IPhysicsStaticObject CreateStatic(IGeometry geometry, Vector3 pos, Quaternion rot)
+        public IStaticObject CreateStatic(IGeometry geometry, Transform transform)
         {
-            var rigidActor = scene.CreateRigidStatic(geometry);
-            rigidActor.Position = pos;
-            rigidActor.Rotation = rot;
-            return rigidActor;
+            return scene.CreateStatic(geometry, transform);
+        }
+        public IDynamicObject CreateDynamic(IGeometry geometry, bool kinematic, float mass, Transform transform)
+        {
+            return scene.CreateDynamic(geometry, kinematic, mass, transform);
+        }
+        public IPhysicsCharacter CreateCapsuleCharacter(Vector3 position, Vector3 up, float height, float radius)
+        {
+            return scene.CreateCapsuleCharacter(position, up, height, radius);
         }
 
-        public IPhysicsDynamicObject CreateDynamic(IGeometry geometry, bool kinematic, float mass, Vector3 pos, Quaternion rot)
+        private void OnContactReport(long ref0, long ref1, APIVec3 normal, APIVec3 position, APIVec3 impulse, float separation)
         {
-            var rigidActor = scene.CreateRigidDynamic(geometry, kinematic, mass);
-            rigidActor.Position = pos;
-            rigidActor.Rotation = rot;
-
-            return rigidActor;
-        }
-
-        public IPhysicsCharacter CreateCapsuleCharacter(Vector3 pos, Vector3 up, float height = 4, float radius = 1)
-        {
-            var controller = scene.CreateCapsuleController(pos, up, height, radius);
-
-            return controller;
-        }
-
-        protected virtual void OnContactReport(long ref0, long ref1, APIVec3 normal, APIVec3 position, APIVec3 impulse, float separation)
-        {
-            var obj0 = scene.GetReference(ref0);
-            var obj1 = scene.GetReference(ref1);
+            var obj0 = scene.GetObject(ref0);
+            var obj1 = scene.GetObject(ref1);
 
             ContactReport?.Invoke(this, new ContactReport()
             {
                 obj0 = obj0.Thing,
                 obj1 = obj1.Thing,
+                
                 position = position,
+                
                 normal = normal,
                 impulse = impulse,
+                
                 separation = separation
             });
         }

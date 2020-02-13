@@ -1,19 +1,14 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
-using System.Runtime.ExceptionServices;
-using System.Runtime.InteropServices;
-using System.Security;
-using Magistr.Framework.Physics;
-using static Magistr.Physics.PhysXImplCore.PhysicsAlias;
+using static Magistr.Physics.PhysXImpl.PhysicsAlias;
 
-namespace Magistr.Physics.PhysXImplCore
+namespace Magistr.Physics.PhysXImpl
 {
     internal class ModelGeometry : IGeometry
     {
         private long nRef;
         private uint[] indices;
-        private APIVec3[] vertices;
+        private readonly APIVec3[] vertices;
 
         public ModelGeometry(GeoType geoType, IModelData model)
         {
@@ -35,10 +30,6 @@ namespace Magistr.Physics.PhysXImplCore
         {
             switch (GeoType)
             {
-
-                case GeoType.TriangleMeshGeometry:
-                    //nRef = API.createTriangleMesh(vertices, vertices.Length, indices, indices.Length);
-                    break;
                 case GeoType.ConvexMeshGeometry:
                     nRef = API.createConvexMesh(vertices, vertices.Length);
                     break;

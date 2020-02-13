@@ -1,29 +1,43 @@
-﻿using Magistr.Framework.Physics;
-using Magistr.Log;
+﻿using Magistr.Log;
 using Magistr.Math;
 using Magistr.Things;
 using System.Collections.Generic;
-using static Magistr.Physics.PhysXImplCore.PhysicsAlias;
+using static Magistr.Physics.PhysXImpl.PhysicsAlias;
 
-namespace Magistr.Physics.PhysXImplCore
+namespace Magistr.Physics.PhysXImpl
 {
     public class Scene
     {
-        private IPhysicsWorld world;
-
+        private readonly IPhysicsWorld world;
         public long Ref { get; }
-
-        private Dictionary<long, PhysicsCharacter> characters = new Dictionary<long, PhysicsCharacter>();
-        private Dictionary<long, IPhysicsObject> references = new Dictionary<long, IPhysicsObject>();
+        
+        private readonly Dictionary<long, IPhysicsObject> refs = new Dictionary<long, IPhysicsObject>();
 
         public int Timestamp => (int) API.getSceneTimestamp(Ref);
 
-        public Scene(IPhysicsWorld world, ContactReportCallbackFunc func)
+        private SphereGeometry overlapSphere;
+        private float overlapSphereRadius = 150;
+        public float OverlapSphereRadius
+        {
+            get => overlapSphereRadius;
+            set
+            {
+                overlapSphereRadius = value;
+                overlapSphere = new SphereGeometry(OverlapSphereRadius);
+            }
+        }
+
+        public Scene(IPhysicsWorld world, ContactReportCallbackFunc contactReportCallback)
         {
             this.world = world;
+            
+            Ref = API.createScene(world.Gravity, contactReportCallback);
 
-            Ref = API.createScene(world.Gravity, func);
-
+        }
+        
+        public IPhysicsObject GetObject(in long nRef)
+        {
+            return refs[nRef];
         }
 
         public void StepPhysics(in float dt)
@@ -40,20 +54,21 @@ namespace Magistr.Physics.PhysXImplCore
 
         public void Destroy(StaticObject obj)
         {
-            references.Remove(obj.Ref);
+            refs.Remove(obj.Ref);
+            
             API.destroyRigidStatic(obj.Ref);
 
         }
         public void Destroy(DynamicObject obj)
         {
-            references.Remove(obj.Ref);
+            refs.Remove(obj.Ref);
             API.destroyRigidDynamic(obj.Ref);
 
         }
         public void Destroy(PhysicsCharacter obj)
         {
-            characters.Remove(obj.Ref);
-            references.Remove(obj.Ref);
+            refs.Remove(obj.Ref);
+            
             API.destroyController(obj.Ref);
 
         } 
@@ -61,43 +76,49 @@ namespace Magistr.Physics.PhysXImplCore
         #endregion
 
         #region Create objects
-
-        public StaticObject CreateRigidStatic(IGeometry geometry)
+        
+        public IStaticObject CreateStatic(IGeometry geometry, Transform transform)
         {
-            var obj = new StaticObject(geometry, this, API);
-            references.Add(obj.Ref, obj);
+            var obj = new StaticObject(geometry, this, API)
+            {
+                Position = transform.Position,
+                Rotation = transform.Rotation
+            };
+            refs.Add(obj.Ref, obj);
+            
             return obj;
         }
 
-        public PhysicsCharacter CreateCapsuleController(Vector3 pos, Vector3 up, float height, float radius)
+        public IDynamicObject CreateDynamic(IGeometry geometry, bool kinematic, float mass, Transform transform)
         {
-            var obj = new PhysicsCharacter(pos, up, height, radius, this, world, API);
-
-            characters.Add(obj.Ref, obj);
-            references.Add(obj.Ref, obj);
+            var obj = new DynamicObject(geometry, kinematic, mass, this, API)
+            {
+                Position = transform.Position,
+                Rotation = transform.Rotation
+            };
+            refs.Add(obj.Ref, obj);
 
             return obj;
         }
 
-        public IPhysicsDynamicObject CreateRigidDynamic(IGeometry geometry, bool kinematic, float mass)
+        public IPhysicsCharacter CreateCapsuleCharacter(Vector3 position, Vector3 up, float height, float radius)
         {
-            var obj = new DynamicObject(geometry, kinematic, mass, this, API);
-
-            references.Add(obj.Ref, obj);
+            var obj = new PhysicsCharacter(position, up, height, radius, this, world, API);
+            refs.Add(obj.Ref, obj);
 
             return obj;
         }
-
+        
         #endregion
 
-        public List<IThing> Overlap(Vector3 pos, IGeometry overlapSphere)
+        public List<IThing> Overlap(Vector3 position)
         {
             var hits = new List<IThing>();  
 
-            int unused = API.sceneOverlap(Ref, (long)overlapSphere.GetInternalGeometry(), pos, (nRef) =>
+            int unused = API.sceneOverlap(Ref, (long)overlapSphere.GetInternalGeometry(), position, (nRef) =>
             {
-                if (references.ContainsKey(nRef))
-                    hits.Add(references[nRef].Thing);
+                if (refs.ContainsKey(nRef))
+                    hits.Add(refs[nRef].Thing);
                 else
                 {
                     Debug.LogError("Overlap", "No reference: " + nRef);
@@ -105,19 +126,6 @@ namespace Magistr.Physics.PhysXImplCore
             });
 
             return hits;
-        }
-
-        public void Update(float dt)
-        {
-            foreach (var item in characters)
-            {
-                item.Value.Update(dt);
-            }
-        }
-
-        public IPhysicsObject GetReference(in long nRef)
-        {
-            return references[nRef];
         }
     }
 }

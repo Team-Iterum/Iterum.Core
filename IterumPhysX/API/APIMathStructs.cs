@@ -1,6 +1,7 @@
 ﻿using Magistr.Math;
+// ReSharper disable MemberCanBePrivate.Global
 
-namespace Magistr.Physics.PhysXImplCore
+namespace Magistr.Physics.PhysXImpl
 {
     public struct APIVec3
     {

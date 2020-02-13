@@ -1,9 +1,7 @@
 ﻿using System;
-using Magistr.Framework.Physics;
 using Magistr.Math;
 using Magistr.Things;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Magistr.Physics
 {
@@ -29,12 +27,12 @@ namespace Magistr.Physics
         Vector3 Gravity { get; set; }
 
         event EventHandler<ContactReport> ContactReport;
-        AddRemoveThings Overlap(Vector3 position, List<IThing> except, bool staticOnly);
-
-        IPhysicsStaticObject CreateStatic(IGeometry geometry, Vector3 position, Quaternion rotation);
-        IPhysicsDynamicObject CreateDynamic(IGeometry geometry, bool kinematic, float mass, Vector3 position, Quaternion rotation);
-        IPhysicsCharacter CreateCapsuleCharacter(Vector3 position, Vector3 up, float height, float radius);
         
+        AddRemoveThings Overlap(Vector3 position, List<IThing> except);
+
+        public IStaticObject CreateStatic(IGeometry geometry, Transform transform);
+        public IDynamicObject CreateDynamic(IGeometry geometry, bool kinematic, float mass, Transform transform);
+        public IPhysicsCharacter CreateCapsuleCharacter(Vector3 position, Vector3 up, float height, float radius);
 
     }
 
@@ -48,18 +46,9 @@ namespace Magistr.Physics
         public float separation;
     }
 
-    public interface IPhysics
-    {
-        void InitPhysics();
-        IGeometry CreateTriangleMeshGeometry(IModelData modelData);
-        IGeometry CreateConvexMeshGeometry(IModelData modelData);
-        IGeometry CreateSphereGeometry(float radius);
-        IGeometry CreateBoxGeometry(Vector3 size);
-    }
-
     public struct AddRemoveThings
     {
-        public List<IThing> Add;
-        public List<IThing> Remove;
+        public IEnumerable<IThing> Add;
+        public IEnumerable<IThing> Remove;
     } 
 }

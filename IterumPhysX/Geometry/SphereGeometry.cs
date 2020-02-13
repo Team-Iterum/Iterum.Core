@@ -1,7 +1,6 @@
-﻿using Magistr.Framework.Physics;
-using static Magistr.Physics.PhysXImplCore.PhysicsAlias;
+﻿using static Magistr.Physics.PhysXImpl.PhysicsAlias;
 
-namespace Magistr.Physics.PhysXImplCore
+namespace Magistr.Physics.PhysXImpl
 {
     internal class SphereGeometry : IGeometry
     {

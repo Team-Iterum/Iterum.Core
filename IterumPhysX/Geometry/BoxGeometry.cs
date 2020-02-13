@@ -1,8 +1,7 @@
-﻿using Magistr.Framework.Physics;
-using Magistr.Math;
-using static Magistr.Physics.PhysXImplCore.PhysicsAlias;
+﻿using Magistr.Math;
+using static Magistr.Physics.PhysXImpl.PhysicsAlias;
 
-namespace Magistr.Physics.PhysXImplCore
+namespace Magistr.Physics.PhysXImpl
 {
     internal class BoxGeometry : IGeometry
     {

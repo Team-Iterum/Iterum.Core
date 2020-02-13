@@ -1,18 +1,10 @@
-﻿#if !(ENABLE_MONO || ENABLE_IL2CPP)
-using Magistr.Log;
-using Magistr.Utils;
-#else
-using Debug = UnityEngine.Debug;
-#endif
+﻿using Magistr.Log;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
-using Magistr.Framework.Physics;
-using Magistr.MapData;
 using Binder = Magistr.Utils.Binder;
 
 namespace Magistr.Things
@@ -20,29 +12,27 @@ namespace Magistr.Things
 
     public static class ThingTypeManager
     {
-        public static int Count => ThingTypes.Count;
-
-        public static Dictionary<int, ThingType> ThingTypes;
+        private static Dictionary<int, ThingType> ThingTypes;
         public static Dictionary<int, ThingType>.ValueCollection All => ThingTypes.Values;
+
+        public static ThingType Find(string title)
+        {
+            return All.FirstOrDefault(e => e.Title == title);
+        }
 
         static ThingTypeManager()
         {
             ThingTypes = new Dictionary<int, ThingType>();
         }
 
-        public static bool HasThingType(int thingTypeId)
+        private static bool HasThingType(int thingTypeId)
         {
             return ThingTypes.ContainsKey(thingTypeId);
         }
 
-        public static ThingType GetThingType(int thingTypeId)
+        public static ThingType Get(int thingTypeId)
         {
-            if (HasThingType(thingTypeId))
-            {
-                return ThingTypes[thingTypeId];
-            }
-
-            return default;
+            return HasThingType(thingTypeId) ? ThingTypes[thingTypeId] : default;
         }
 
         private static ThingTypeArchive CreateArchive(string gameName, int version)

@@ -1,15 +1,14 @@
 ﻿using Magistr.Math;
 using Magistr.Physics;
-using Magistr.Game;
 
 namespace Magistr.Things
 {
-    public delegate void ThingTransformChange(IThing thing, ITransform transform, bool force);
+    public delegate void ThingTransformChange(IThing thing, Transform transform, bool force);
     public interface IThing
     {
         event ThingTransformChange TransformChanged;
-        ITransform Transform { get; set; }
-        int ThingTypeId { get; set; }
+        Transform Transform { get; }
+        ThingType ThingType { get; }
         void Create(IPhysicsWorld world);
         void Destroy();
     }

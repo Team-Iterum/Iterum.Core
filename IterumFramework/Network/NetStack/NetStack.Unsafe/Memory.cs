@@ -20,9 +20,6 @@
  *  SOFTWARE.
  */
 
-using System;
-using System.Runtime.CompilerServices;
-
 namespace NetStack.Unsafe {
 	#if NET_4_6 || NET_STANDARD_2_0
 		public static class Memory {

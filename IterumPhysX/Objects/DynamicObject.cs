@@ -1,19 +1,15 @@
-﻿using System;
-using System.Runtime.CompilerServices;
-using Magistr.Framework.Physics;
-using Magistr.Log;
-using Magistr.Math;
+﻿using Magistr.Math;
 using Magistr.Things;
 
 
-namespace Magistr.Physics.PhysXImplCore
+namespace Magistr.Physics.PhysXImpl
 {
-    public class DynamicObject : IPhysicsDynamicObject
+    public class DynamicObject : IDynamicObject
     {
-        public long Ref { get; set; }
+        public long Ref { get; }
 
-        private IPhysicsAPI api;
-        private Scene scene;
+        private readonly IPhysicsAPI api;
+        private readonly Scene scene;
 
         #region IPhysicsObject
 
@@ -98,7 +94,7 @@ namespace Magistr.Physics.PhysXImplCore
             this.api = api;
             this.scene = scene;
 
-            Ref = api.createRigidDynamic((int) geometry.GeoType,(long)geometry.GetInternalGeometry(), scene.Ref, kinematic, true, true, mass, Vector3.zero, Quaternion.identity);
+            Ref = api.createRigidDynamic((int) geometry.GeoType,(long)geometry.GetInternalGeometry(), scene.Ref, kinematic, false, false, mass, Vector3.zero, Quaternion.identity);
         }
 
 

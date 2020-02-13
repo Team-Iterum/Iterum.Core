@@ -7,9 +7,9 @@ namespace Magistr.Buffers
 {
     public static class StaticBuffers
     {
-        public static ArrayPool<byte> Buffers = ArrayPool<byte>.Create(1024, 50);
+        public static readonly ArrayPool<byte> Buffers = ArrayPool<byte>.Create(1024, 50);
 
-        public static ConcurrentPool<BitBuffer> BitBuffers = new ConcurrentPool<BitBuffer>(8, () => new BitBuffer());
+        public static readonly ConcurrentPool<BitBuffer> BitBuffers = new ConcurrentPool<BitBuffer>(8, () => new BitBuffer());
 
         public static BitBuffer PacketToBitBuffer(byte[] packet)
         {

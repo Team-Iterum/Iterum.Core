@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Magistr.Network
 {
@@ -10,6 +8,7 @@ namespace Magistr.Network
         event Func<ConnectionData, bool> Connecting;
         event Action<ConnectionData> Connected;
         event Action<ConnectionData> Disconnected;
+        
         void Stop();
         void StartServer(string host, int port);
         void Disconnect(uint connection);

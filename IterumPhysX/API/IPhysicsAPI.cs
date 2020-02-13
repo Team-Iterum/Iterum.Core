@@ -1,10 +1,8 @@
-﻿
-
-// ReSharper disable InconsistentNaming
+﻿// ReSharper disable InconsistentNaming
 
 using AdvancedDLSupport;
 
-namespace Magistr.Physics.PhysXImplCore
+namespace Magistr.Physics.PhysXImpl
 {
 
     public delegate void OverlapCallback(int t1);
@@ -13,17 +11,7 @@ namespace Magistr.Physics.PhysXImplCore
     public delegate void DebugLogFunc(string message);
     public delegate void DebugLogErrorFunc(string message);
     public delegate void ContactReportCallbackFunc(long ref0, long ref1, APIVec3 normal, APIVec3 position, APIVec3 impulse, float separation);
-
-    public struct RigidDynamicParams
-    {
-        public bool kinematic;
-        public bool ccd;
-        public bool retainAccelerations;
-
-        public float mass;
-    };
-
-
+    
     public interface IPhysicsAPI
     {
         void charactersUpdate(float elapsed, float minDist);
