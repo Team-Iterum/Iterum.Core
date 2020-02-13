@@ -209,7 +209,15 @@ namespace Magistr.Network
                 var ws = connections[connection];
 
                 var buffer = packet.Serialize();
-                ws.Ws.WriteBytesAsync(buffer, 0, buffer.Length, ws.Token.Token);
+
+                try
+                {
+                    ws.Ws.WriteBytesAsync(buffer, 0, buffer.Length, ws.Token.Token);
+                }
+                catch(Exception e)
+                {
+                    Debug.LogError(nameof(WebSocketNetwork), e);
+                }
             }
         }
     }
