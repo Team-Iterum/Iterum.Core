@@ -42,6 +42,10 @@ namespace Magistr.Physics
     {
         public IThing obj0;
         public IThing obj1;
+        public Vector3 normal;
+        public Vector3 position;
+        public Vector3 impulse;
+        public float separation;
     }
 
     public interface IPhysics

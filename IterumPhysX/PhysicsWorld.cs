@@ -200,7 +200,7 @@ namespace Magistr.Physics.PhysXImplCore
             return controller;
         }
 
-        protected virtual void OnContactReport(long ref0, long ref1)
+        protected virtual void OnContactReport(long ref0, long ref1, APIVec3 normal, APIVec3 position, APIVec3 impulse, float separation)
         {
             var obj0 = scene.GetReference(ref0);
             var obj1 = scene.GetReference(ref1);
@@ -209,6 +209,10 @@ namespace Magistr.Physics.PhysXImplCore
             {
                 obj0 = obj0.Thing,
                 obj1 = obj1.Thing,
+                position = position,
+                normal = normal,
+                impulse = impulse,
+                separation = separation
             });
         }
     }

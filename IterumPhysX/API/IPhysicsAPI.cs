@@ -12,7 +12,7 @@ namespace Magistr.Physics.PhysXImplCore
 
     public delegate void DebugLogFunc(string message);
     public delegate void DebugLogErrorFunc(string message);
-    public delegate void ContactReportCallbackFunc(long ref0, long ref1);
+    public delegate void ContactReportCallbackFunc(long ref0, long ref1, APIVec3 normal, APIVec3 position, APIVec3 impulse, float separation);
 
     public struct RigidDynamicParams
     {
