@@ -44,6 +44,7 @@ namespace Magistr.Protocol
         public void Start()
         {
             workerThread = new Thread(DispatchLoop);
+            workerThread.Name = $"ProtocolCircularThread";
             isRunning = true;
             workerThread.Start();
         }

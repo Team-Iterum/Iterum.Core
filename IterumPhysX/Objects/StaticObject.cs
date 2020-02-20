@@ -35,12 +35,12 @@ namespace Magistr.Physics.PhysXImpl
         }
         #endregion
 
-        public StaticObject(IGeometry geometry, Scene scene, IPhysicsAPI api)
+        public StaticObject(IGeometry geometry, Scene scene, IPhysicsAPI api, bool isTrigger)
         {
             this.api = api;
             this.scene = scene;
 
-            Ref = api.createRigidStatic((int) geometry.GeoType, (long)geometry.GetInternalGeometry(), scene.Ref, Vector3.zero, Quaternion.identity);
+            Ref = api.createRigidStatic((int) geometry.GeoType, (long)geometry.GetInternalGeometry(), scene.Ref, Vector3.zero, Quaternion.identity, isTrigger);
         }
 
     }

@@ -40,7 +40,7 @@ namespace Magistr.Physics.PhysXImpl
         
         private void InitScene()
         {
-            scene = new Scene(this, OnContactReport)
+            scene = new Scene(this, OnContactReport, OnTriggerReport)
             {
                 OverlapSphereRadius = OverlapSphereRadius
             };
@@ -100,6 +100,7 @@ namespace Magistr.Physics.PhysXImpl
                 IsBackground = false,
                 Priority = ThreadPriority.Highest
             };
+            workerThread.Name = $"PhysicsWorldThread";
             
             IsRunning = true;
 
@@ -123,19 +124,32 @@ namespace Magistr.Physics.PhysXImpl
             return new AddRemoveThings() { Add = add, Remove = remove };
         }
 
-        public IStaticObject CreateStatic(IGeometry geometry, Transform transform)
+        public IStaticObject CreateStatic(IGeometry geometry, Transform transform, bool isTrigger)
         {
-            return scene.CreateStatic(geometry, transform);
+            return scene.CreateStatic(geometry, transform, isTrigger);
         }
-        public IDynamicObject CreateDynamic(IGeometry geometry, bool kinematic, float mass, Transform transform)
+        public IDynamicObject CreateDynamic(IGeometry geometry, bool kinematic, bool isTrigger, float mass, Transform transform)
         {
-            return scene.CreateDynamic(geometry, kinematic, mass, transform);
+            return scene.CreateDynamic(geometry, kinematic, isTrigger, mass, transform);
         }
         public IPhysicsCharacter CreateCapsuleCharacter(Vector3 position, Vector3 up, float height, float radius)
         {
             return scene.CreateCapsuleCharacter(position, up, height, radius);
         }
 
+        private void OnTriggerReport(long ref0, long ref1)
+        {
+            var obj0 = scene.GetObject(ref0);
+            var obj1 = scene.GetObject(ref1);
+
+            ContactReport?.Invoke(this, new ContactReport()
+            {
+                obj0 = obj0.Thing,
+                obj1 = obj1.Thing,
+                
+                IsTrigger = true,
+            });
+        }
         private void OnContactReport(long ref0, long ref1, APIVec3 normal, APIVec3 position, APIVec3 impulse, float separation)
         {
             var obj0 = scene.GetObject(ref0);

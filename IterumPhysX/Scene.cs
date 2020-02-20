@@ -1,4 +1,5 @@
-﻿using Magistr.Log;
+﻿using System;
+using Magistr.Log;
 using Magistr.Math;
 using Magistr.Things;
 using System.Collections.Generic;
@@ -27,11 +28,11 @@ namespace Magistr.Physics.PhysXImpl
             }
         }
 
-        public Scene(IPhysicsWorld world, ContactReportCallbackFunc contactReportCallback)
+        public Scene(IPhysicsWorld world, ContactReportCallbackFunc contactReportCallback, TriggerReportCallbackFunc triggerCallback)
         {
             this.world = world;
             
-            Ref = API.createScene(world.Gravity, contactReportCallback);
+            Ref = API.createScene(world.Gravity, contactReportCallback, triggerCallback);
 
         }
         
@@ -63,6 +64,8 @@ namespace Magistr.Physics.PhysXImpl
         {
             refs.Remove(obj.Ref);
             API.destroyRigidDynamic(obj.Ref);
+            
+            Debug.Log($"DynamicObject ({obj.Ref})", $"Destroyed", ConsoleColor.DarkRed);
 
         }
         public void Destroy(PhysicsCharacter obj)
@@ -77,9 +80,9 @@ namespace Magistr.Physics.PhysXImpl
 
         #region Create objects
         
-        public IStaticObject CreateStatic(IGeometry geometry, Transform transform)
+        public IStaticObject CreateStatic(IGeometry geometry, Transform transform, bool isTrigger)
         {
-            var obj = new StaticObject(geometry, this, API)
+            var obj = new StaticObject(geometry, this, API, isTrigger)
             {
                 Position = transform.Position,
                 Rotation = transform.Rotation
@@ -89,9 +92,9 @@ namespace Magistr.Physics.PhysXImpl
             return obj;
         }
 
-        public IDynamicObject CreateDynamic(IGeometry geometry, bool kinematic, float mass, Transform transform)
+        public IDynamicObject CreateDynamic(IGeometry geometry, bool kinematic, bool isTrigger, float mass, Transform transform)
         {
-            var obj = new DynamicObject(geometry, kinematic, mass, this, API)
+            var obj = new DynamicObject(geometry, kinematic, isTrigger, mass, this, API)
             {
                 Position = transform.Position,
                 Rotation = transform.Rotation
@@ -118,10 +121,19 @@ namespace Magistr.Physics.PhysXImpl
             int unused = API.sceneOverlap(Ref, (long)overlapSphere.GetInternalGeometry(), position, (nRef) =>
             {
                 if (refs.ContainsKey(nRef))
+                {
+                    if (refs[nRef] == null)
+                    {
+                        Debug.LogError("Scene Overlap", $"Ref: {nRef} == null");
+                        return;
+                    }
+                    
+                    //Debug.Log("Scene Overlap", $"Add ref: {nRef} Thing: {refs[nRef].Thing.ThingType.Title}");
                     hits.Add(refs[nRef].Thing);
+                }
                 else
                 {
-                    Debug.LogError("Overlap", "No reference: " + nRef);
+                    Debug.LogError("Scene Overlap", $"No reference: {nRef}");
                 }
             });
 

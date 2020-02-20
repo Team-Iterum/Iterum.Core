@@ -11,7 +11,7 @@ namespace Magistr.Physics.PhysXImpl
     public delegate void DebugLogFunc(string message);
     public delegate void DebugLogErrorFunc(string message);
     public delegate void ContactReportCallbackFunc(long ref0, long ref1, APIVec3 normal, APIVec3 position, APIVec3 impulse, float separation);
-    
+    public delegate void TriggerReportCallbackFunc(long ref0, long ref1);
     public interface IPhysicsAPI
     {
         void charactersUpdate(float elapsed, float minDist);
@@ -30,7 +30,7 @@ namespace Magistr.Physics.PhysXImpl
         long createBoxGeometry(APIVec3 half);
         void cleanupGeometry(long nRef);
 
-        long createRigidStatic(int geoType, long nRefGeo, long nRefScene, APIVec3 pos, APIQuat quat);
+        long createRigidStatic(int geoType, long nRefGeo, long nRefScene, APIVec3 pos, APIQuat quat, bool isTrigger);
         void destroyRigidStatic(long nRef);
 
         APIVec3 getRigidDynamicPosition(long nRef);
@@ -44,7 +44,7 @@ namespace Magistr.Physics.PhysXImpl
         void setRigidStaticRotation(long nRef, APIQuat q);
 
         
-        long createRigidDynamic(int geoType, long nRefGeo, long nRefScene, bool kinematic, bool ccd, bool retain, float mass, APIVec3 pos, APIQuat quat);
+        long createRigidDynamic(int geoType, long nRefGeo, long nRefScene, bool kinematic, bool ccd, bool retain, bool isTrigger, float mass, APIVec3 pos, APIQuat quat);
         void destroyRigidDynamic(long nRef);
 
         void setRigidDynamicKinematicTarget(long nRef, APIVec3 p, APIQuat q);
@@ -82,7 +82,8 @@ namespace Magistr.Physics.PhysXImpl
 
         long loadTriangleMesh(string name);
         
-        long createScene(APIVec3 gravity, [DelegateLifetime(DelegateLifetime.Persistent)] ContactReportCallbackFunc func);
+        long createScene(APIVec3 gravity, [DelegateLifetime(DelegateLifetime.Persistent)] ContactReportCallbackFunc func,
+            [DelegateLifetime(DelegateLifetime.Persistent)] TriggerReportCallbackFunc triggerFunc);
         void cleanupScene(long nRef);
         long getSceneTimestamp(long nRef);
 

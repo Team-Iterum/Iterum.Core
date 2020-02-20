@@ -1,4 +1,6 @@
-﻿using Magistr.Math;
+﻿using System;
+using Magistr.Log;
+using Magistr.Math;
 using Magistr.Things;
 
 
@@ -82,19 +84,22 @@ namespace Magistr.Physics.PhysXImpl
         public IThing Thing { get; set; }
 
         public void Destroy()
-        { 
+        {
+
+            Debug.Log($"DynamicObject ({Ref})", $"Destroy invoked...", ConsoleColor.Red);
+            
             scene.Destroy(this);
             IsDestroyed = true;
 
         }
         #endregion
 
-        internal DynamicObject(IGeometry geometry, bool kinematic, float mass, Scene scene, IPhysicsAPI api)
+        internal DynamicObject(IGeometry geometry, bool kinematic, bool isTrigger, float mass, Scene scene, IPhysicsAPI api)
         {
             this.api = api;
             this.scene = scene;
 
-            Ref = api.createRigidDynamic((int) geometry.GeoType,(long)geometry.GetInternalGeometry(), scene.Ref, kinematic, false, false, mass, Vector3.zero, Quaternion.identity);
+            Ref = api.createRigidDynamic((int) geometry.GeoType,(long)geometry.GetInternalGeometry(), scene.Ref, kinematic, false, false, isTrigger, mass, Vector3.zero, Quaternion.identity);
         }
 
 
