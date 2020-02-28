@@ -33,7 +33,7 @@ namespace Magistr.Physics.PhysXImpl
 
             API.initPhysics(isCreatePvd, Environment.ProcessorCount, toleranceLength, toleranceSpeed, LogCritical);
                 
-            API.initGlobalMaterial(0.99f, 0.99f, 0.5f);
+            API.initGlobalMaterial(0.5f, 0.5f, 0.5f);
 
             isCreated = true;
 
