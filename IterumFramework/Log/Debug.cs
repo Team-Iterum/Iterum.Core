@@ -10,6 +10,8 @@ namespace Magistr.Log
 
         public static event  LogCallbackDelegate LogCallback;
 
+        public static bool Verbose { get; set; } = false;
+
         public static void Back(ConsoleColor consoleColor)
         {
             BackColor = Console.BackgroundColor;
@@ -25,11 +27,11 @@ namespace Magistr.Log
         {
             Log("", ConsoleColor.Black, false);
         }
-        public static void Log(string group, string e, ConsoleColor color = ConsoleColor.White, 
-            bool timestamp = true)
-        {
-            Log(group, e, color, ConsoleColor.Gray, timestamp);
-        }
+        public static void Log(string group, string e, ConsoleColor color = ConsoleColor.White, bool timestamp = true) 
+            => Log(group, e, color, ConsoleColor.Gray, timestamp);
+        
+        public static void LogV(string group, string e, ConsoleColor color = ConsoleColor.White, bool timestamp = true) 
+            => Log(group, e, color, ConsoleColor.Gray, timestamp, true);
 
         public static void LogSuccess(string group, string e)
         {
@@ -43,8 +45,11 @@ namespace Magistr.Log
         private static void Log(string group, string e, 
             ConsoleColor color = ConsoleColor.White, 
             ConsoleColor groupColor = ConsoleColor.Gray, 
-            bool timestamp = true)
+            bool timestamp = true,
+            bool verboseGroup = false)
         {
+            if (verboseGroup && !Verbose) return;
+            
             var dateTime = DateTime.Now;
             var finalText = string.Empty;
             // Timestamp
