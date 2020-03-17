@@ -65,7 +65,7 @@ namespace Magistr.Physics.PhysXImpl
             refs.Remove(obj.Ref);
             API.destroyRigidDynamic(obj.Ref);
             
-            Debug.LogV($"DynamicObject ({obj.Ref})", $"Destroyed", ConsoleColor.DarkRed);
+            Debug.LogV($"DynamicObject ({obj.Ref})", $"Destroyed", ConsoleColor.Red);
 
         }
         public void Destroy(PhysicsCharacter obj)

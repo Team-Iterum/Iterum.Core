@@ -865,6 +865,7 @@ namespace Magistr.Math
         {
             System.Numerics.Quaternion vec = new System.Numerics.Quaternion(p.x, p.y, p.z, p.w);
             return vec;
+            
         }
 
     }

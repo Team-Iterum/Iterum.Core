@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <None Remove="YamlDotNet.dll" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="SharpZipLib" Version="1.2.0" />
+      <PackageReference Include="YamlDotNet" Version="8.1.0" />
+    </ItemGroup>
+
+</Project>

@@ -97,8 +97,7 @@ namespace Magistr.Physics
                     infoText = "(Stopped) ";
                     draw = false;
                 }
-
-
+                
                 if (draw)
                 {
                     var str =

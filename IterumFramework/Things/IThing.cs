@@ -1,4 +1,5 @@
 ﻿using Magistr.Math;
+using Magistr.New.ThingTypes;
 using Magistr.Physics;
 
 namespace Magistr.Things

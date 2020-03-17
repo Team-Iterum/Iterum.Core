@@ -10,6 +10,7 @@ namespace Magistr.Math
     public struct Vector3
     {
         public const float kEpsilon = 1E-05f;
+        public const float kEpsilonNormalSqrt = 1e-15F;
 
         /// <summary>
         ///   <para>X component of the vector.</para>
@@ -388,7 +389,27 @@ namespace Magistr.Math
         /// <param name="to">The angle extends round to this vector.</param>
         public static float Angle(Vector3 from, Vector3 to)
         {
-            return Mathf.Acos(Mathf.Clamp(Vector3.Dot(from.normalized, to.normalized), -1f, 1f)) * 57.29578f;
+            // sqrt(a) * sqrt(b) = sqrt(a * b) -- valid for real numbers
+            float denominator = (float)System.Math.Sqrt(from.sqrMagnitude * to.sqrMagnitude);
+            if (denominator < kEpsilonNormalSqrt)
+                return 0F;
+
+            float dot = Mathf.Clamp(Dot(from, to) / denominator, -1F, 1F);
+            return ((float)System.Math.Acos(dot)) * Mathf.Rad2Deg;
+        }
+        
+        // The smaller of the two possible angles between the two vectors is returned, therefore the result will never be greater than 180 degrees or smaller than -180 degrees.
+        // If you imagine the from and to vectors as lines on a piece of paper, both originating from the same point, then the /axis/ vector would point up out of the paper.
+        // The measured angle between the two vectors would be positive in a clockwise direction and negative in an anti-clockwise direction.
+        public static float SignedAngle(Vector3 from, Vector3 to, Vector3 axis)
+        {
+            float unsignedAngle = Angle(from, to);
+
+            float cross_x = from.y * to.z - from.z * to.y;
+            float cross_y = from.z * to.x - from.x * to.z;
+            float cross_z = from.x * to.y - from.y * to.x;
+            float sign = Mathf.Sign(axis.x * cross_x + axis.y * cross_y + axis.z * cross_z);
+            return unsignedAngle * sign;
         }
 
         /// <summary>
@@ -525,17 +546,10 @@ namespace Magistr.Math
             return Mathf.Acos(Mathf.Clamp(Vector3.Dot(from.normalized, to.normalized), -1f, 1f));
         }
 
-        public static explicit operator Vector3(System.Numerics.Vector3 p)  // explicit byte to digit conversion operator
-        {
-            Vector3 vec = new Vector3(p.X, p.Y, p.Z);
+        public static implicit  operator Vector3(System.Numerics.Vector3 p) => new Vector3(p.X, p.Y, p.Z);
+        public static implicit  operator System.Numerics.Vector3(Vector3 p) => new System.Numerics.Vector3(p.x, p.y, p.z);
 
-            return vec;
-        }
-
-        public static explicit operator System.Numerics.Vector3(Vector3 p)  // explicit byte to digit conversion operator
-        {
-            System.Numerics.Vector3 vec = new System.Numerics.Vector3(p.x, p.y, p.z);
-            return vec;
-        }
+        public static implicit  operator float[](Vector3 p) => new []{p.x, p.y, p.z};
+        public static implicit operator Vector3(float[] p) => new Vector3(p[0], p[1], p[2]);
     }
 }

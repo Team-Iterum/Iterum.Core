@@ -85,8 +85,7 @@ namespace Magistr.Physics.PhysXImpl
 
         public void Destroy()
         {
-
-            Debug.LogV($"DynamicObject ({Ref})", $"Destroy invoked...", ConsoleColor.Red);
+            Debug.LogV($"DynamicObject ({Ref})", $"Destroy invoked...", ConsoleColor.DarkRed);
             
             scene.Destroy(this);
             IsDestroyed = true;
