@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Magistr.New.ThingTypes
@@ -10,14 +11,28 @@ namespace Magistr.New.ThingTypes
         public string Category;
         
         public string Description;
-        
+
         public string[] Flags;
+        
+        public Dictionary<string, string> Attrs;
 
         public IDataBlock[] DataBlocks;
 
-        public bool HasFlag(string attr)
+        public string GetAttr(string attr)
         {
-            return Flags != null && Flags.Contains(attr);
+            if (Attrs == null) return null;
+            if (!Attrs.ContainsKey(attr)) return null;
+            return Attrs[attr];
+        }
+        
+        public bool HasFlag(string flag)
+        {
+            return Flags != null && Flags.Contains(flag);
+        }
+
+        public override string ToString()
+        {
+            return $"ThingType {Category}/{Name}";
         }
     }
     

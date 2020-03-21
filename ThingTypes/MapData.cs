@@ -15,6 +15,7 @@ namespace Magistr.New.ThingTypes
             var split = Attrs[key].Split(separator);
             return new[] {float.Parse(split[0]), float.Parse(split[1]), float.Parse(split[2])};
         }
+        
 
         public string GetString(string key)
         {

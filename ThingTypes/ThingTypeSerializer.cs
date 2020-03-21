@@ -66,6 +66,8 @@ namespace Magistr.New.ThingTypes
         {
             var builder = new SerializerBuilder();
             builder.DisableAliases();
+            builder.WithEventEmitter(e => new FlowStyleFloatSequences(e));
+            
             foreach (var dataBlock in GetDataBlocksTypes())
             {
                 builder.WithTagMapping($"!{dataBlock.Name}", dataBlock);
