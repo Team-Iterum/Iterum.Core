@@ -612,37 +612,44 @@ namespace Magistr.Math
         }
 
         // from http://stackoverflow.com/questions/12088610/conversion-between-euler-quaternion-like-in-unity3d-engine
-        private static Vector3 Internal_ToEulerRad(Quaternion rotation)
+        private static Vector3 Internal_ToEulerRad(Quaternion q)
         {
-            float sqw = rotation.w * rotation.w;
-            float sqx = rotation.x * rotation.x;
-            float sqy = rotation.y * rotation.y;
-            float sqz = rotation.z * rotation.z;
-            float unit = sqx + sqy + sqz + sqw; // if normalised is one, otherwise is correction factor
-            float test = rotation.x * rotation.w - rotation.y * rotation.z;
-            Vector3 v;
+            Vector3 euler;
 
-            if (test > 0.4995f * unit)
+            // if the input quaternion is normalized, this is exactly one. Otherwise, this acts as a correction factor for the quaternion's not-normalizedness
+            float unit = (q.x * q.x) + (q.y * q.y) + (q.z * q.z) + (q.w * q.w);
+
+            // this will have a magnitude of 0.5 or greater if and only if this is a singularity case
+            float test = q.x * q.w - q.y * q.z;
+
+            if (test > 0.4995f * unit) // singularity at north pole
             {
-                // singularity at north pole
-                v.y = 2f * Mathf.Atan2(rotation.y, rotation.x);
-                v.x = Mathf.PI / 2;
-                v.z = 0;
-                return NormalizeAngles(v * Mathf.Rad2Deg);
+                euler.x = Mathf.PI / 2;
+                euler.y = 2f * Mathf.Atan2(q.y, q.x);
+                euler.z = 0;
             }
-            if (test < -0.4995f * unit)
+            else if (test < -0.4995f * unit) // singularity at south pole
             {
-                // singularity at south pole
-                v.y = -2f * Mathf.Atan2(rotation.y, rotation.x);
-                v.x = -Mathf.PI / 2;
-                v.z = 0;
-                return NormalizeAngles(v * Mathf.Rad2Deg);
+                euler.x = -Mathf.PI / 2;
+                euler.y = -2f * Mathf.Atan2(q.y, q.x);
+                euler.z = 0;
             }
-            Quaternion q = new Quaternion(rotation.w, rotation.z, rotation.x, rotation.y);
-            v.y = Mathf.Atan2(2f * q.x * q.w + 2f * q.y * q.z, 1 - 2f * (q.z * q.z + q.w * q.w)); // Yaw
-            v.x = Mathf.Asin(2f * (q.x * q.z - q.w * q.y)); // Pitch
-            v.z = Mathf.Atan2(2f * q.x * q.y + 2f * q.z * q.w, 1 - 2f * (q.y * q.y + q.z * q.z)); // Roll
-            return NormalizeAngles(v * Mathf.Rad2Deg);
+            else // no singularity - this is the majority of cases
+            {
+                euler.x = Mathf.Asin(2f * (q.w * q.x - q.y * q.z));
+                euler.y = Mathf.Atan2(2f * q.w * q.y + 2f * q.z * q.x, 1 - 2f * (q.x * q.x + q.y * q.y));
+                euler.z = Mathf.Atan2(2f * q.w * q.z + 2f * q.x * q.y, 1 - 2f * (q.z * q.z + q.x * q.x));
+            }
+
+            // all the math so far has been done in radians. Before returning, we convert to degrees...
+            euler *= Mathf.Rad2Deg;
+
+            //...and then ensure the degree values are between 0 and 360
+            euler.x %= 360;
+            euler.y %= 360;
+            euler.z %= 360;
+
+            return euler;
         }
 
         private static Vector3 NormalizeAngles(Vector3 angles)
@@ -666,23 +673,23 @@ namespace Magistr.Math
         // from http://stackoverflow.com/questions/11492299/quaternion-to-euler-angles-algorithm-how-to-convert-to-y-up-and-between-ha
         private static Quaternion Internal_FromEulerRad(Vector3 euler)
         {
-            float yaw = euler.x;
-            float pitch = euler.y;
-            float roll = euler.z;
-            float rollOver2 = roll * 0.5f;
-            float sinRollOver2 = (float)System.Math.Sin(rollOver2);
-            float cosRollOver2 = (float)System.Math.Cos(rollOver2);
-            float pitchOver2 = pitch * 0.5f;
-            float sinPitchOver2 = (float)System.Math.Sin(pitchOver2);
-            float cosPitchOver2 = (float)System.Math.Cos(pitchOver2);
-            float yawOver2 = yaw * 0.5f;
-            float sinYawOver2 = (float)System.Math.Sin(yawOver2);
-            float cosYawOver2 = (float)System.Math.Cos(yawOver2);
+            float xOver2 = euler.x * 0.5f;
+            float yOver2 = euler.y * 0.5f;
+            float zOver2 = euler.z * 0.5f;
+
+            float sinXOver2 = Mathf.Sin(xOver2);
+            float cosXOver2 = Mathf.Cos(xOver2);
+            float sinYOver2 = Mathf.Sin(yOver2);
+            float cosYOver2 = Mathf.Cos(yOver2);
+            float sinZOver2 = Mathf.Sin(zOver2);
+            float cosZOver2 = Mathf.Cos(zOver2);
+
             Quaternion result;
-            result.x = cosYawOver2 * cosPitchOver2 * cosRollOver2 + sinYawOver2 * sinPitchOver2 * sinRollOver2;
-            result.y = cosYawOver2 * cosPitchOver2 * sinRollOver2 - sinYawOver2 * sinPitchOver2 * cosRollOver2;
-            result.z = cosYawOver2 * sinPitchOver2 * cosRollOver2 + sinYawOver2 * cosPitchOver2 * sinRollOver2;
-            result.w = sinYawOver2 * cosPitchOver2 * cosRollOver2 - cosYawOver2 * sinPitchOver2 * sinRollOver2;
+            result.x = cosYOver2 * sinXOver2 * cosZOver2 + sinYOver2 * cosXOver2 * sinZOver2;
+            result.y = sinYOver2 * cosXOver2 * cosZOver2 - cosYOver2 * sinXOver2 * sinZOver2;
+            result.z = cosYOver2 * cosXOver2 * sinZOver2 - sinYOver2 * sinXOver2 * cosZOver2;
+            result.w = cosYOver2 * cosXOver2 * cosZOver2 + sinYOver2 * sinXOver2 * sinZOver2;
+
             return result;
 
         }
@@ -854,14 +861,15 @@ namespace Magistr.Math
         }
 
 
-        public static explicit operator Quaternion(System.Numerics.Quaternion p)  // explicit byte to digit conversion operator
+        public static implicit  operator Quaternion(System.Numerics.Quaternion p)  // explicit byte to digit conversion operator
         {
             Quaternion vec = new Quaternion(p.X, p.Y, p.Z, p.W);
 
             return vec;
         }
+        
 
-        public static explicit operator System.Numerics.Quaternion(Quaternion p)  // explicit byte to digit conversion operator
+        public static implicit operator System.Numerics.Quaternion(Quaternion p)  // explicit byte to digit conversion operator
         {
             System.Numerics.Quaternion vec = new System.Numerics.Quaternion(p.x, p.y, p.z, p.w);
             return vec;
