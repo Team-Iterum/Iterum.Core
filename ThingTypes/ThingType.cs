@@ -24,7 +24,15 @@ namespace Magistr.New.ThingTypes
             if (!Attrs.ContainsKey(attr)) return null;
             return Attrs[attr];
         }
-        
+
+        public float GetFloat(string attr)
+        {
+            if (float.TryParse(GetAttr(attr), out float result))
+                return result;
+            return 0;
+        }
+
+
         public bool HasFlag(string flag)
         {
             return Flags != null && Flags.Contains(flag);
