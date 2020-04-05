@@ -15,7 +15,7 @@ namespace Magistr.Physics.PhysXImpl
 
         #region IPhysicsCharacter
 
-        public Vector3 Direction { get; set; }
+        public Vector3 Direction { get; private set; }
 
         public float Speed { get; set; } = 0.1f;
 
@@ -42,10 +42,7 @@ namespace Magistr.Physics.PhysXImpl
             get => (Vector3)(DVector3)api.getControllerPosition(Ref);
             set => api.setControllerPosition(Ref, value);
         }
-
-        private Vector3 prevPosition;
-
-        public event Action<Vector3, bool> PositionChange;
+        
 
         public Quaternion Rotation { get; set; }
 
@@ -67,36 +64,12 @@ namespace Magistr.Physics.PhysXImpl
             api.setControllerDirection(Ref, (Vector3.zero + world.Gravity));
         }
 
-        private float timeUpdate;
-        
-        internal void Update(float dt)
+        public void Move(Vector3 direction)
         {
-            const float forceUpdateSeconds = 2f;
-
-            bool force = false;
-            timeUpdate += dt;
-            if (timeUpdate >= forceUpdateSeconds)
-            {
-                timeUpdate = 0;
-                force = true;
-            }
-
-            var pos = Position;
-            if ((pos - prevPosition).magnitude > 0.05f || force)
-            {
-                PositionChange?.Invoke(pos, force);
-                prevPosition = pos;
-            }
-
-
+            api.setControllerDirection(Ref, direction);
         }
 
-        public bool AutoMove(Vector3 toPosition)
-        {
-            return false;
-        }
-
-        public void Move(MoveDirection directions, bool clearQueue = false)
+        public void Move(MoveDirection directions)
         {
 
             var rotation = Quaternion.Euler(0, -CharacterRotation, 0);

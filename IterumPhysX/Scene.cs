@@ -44,6 +44,7 @@ namespace Magistr.Physics.PhysXImpl
         public void StepPhysics(in float dt)
         {
             API.stepPhysics(Ref, dt);
+            API.charactersUpdate(dt, 0.05f);
         }
 
         internal void Cleanup()

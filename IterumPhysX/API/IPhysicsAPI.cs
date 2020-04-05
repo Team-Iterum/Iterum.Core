@@ -19,8 +19,6 @@ namespace Magistr.Physics.PhysXImpl
         int sceneOverlap(long nRefScene, long nRefGeo, APIVec3 pos, OverlapCallback callback);
         
         
-        
-        void createTriangleMesh(string name, APIVec3[] vertices, int pointsCount, uint[] indices, int triCount);
         long createConvexMesh(APIVec3[] vertices, int pointsCount);
         void cleanupConvexMesh(long nRef);
         void cleanupTriangleMesh(long nRef);

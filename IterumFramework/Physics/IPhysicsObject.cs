@@ -55,12 +55,11 @@ namespace Magistr.Physics
     public interface IPhysicsCharacter : IPhysicsObject
     {
         Vector3 FootPosition { get; set; }
-
-        event Action<Vector3, bool> PositionChange;
+        
         float Speed { get; set; }
-        Vector3 Direction { get; set; }
+        Vector3 Direction { get; }
         float CharacterRotation { get; set; }
-        void Move(MoveDirection directions, bool clearQueue);
-        bool AutoMove(Vector3 toPosition);
+        void Move(MoveDirection directions);
+        public void Move(Vector3 direction);
     }
 }
