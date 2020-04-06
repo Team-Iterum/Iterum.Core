@@ -129,7 +129,6 @@ namespace Magistr.Physics.PhysXImpl
                         return;
                     }
                     
-                    //Debug.Log("Scene Overlap", $"Add ref: {nRef} Thing: {refs[nRef].Thing.ThingType.Title}");
                     hits.Add(refs[nRef].Thing);
                 }
                 else

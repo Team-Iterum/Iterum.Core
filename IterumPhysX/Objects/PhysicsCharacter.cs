@@ -61,18 +61,20 @@ namespace Magistr.Physics.PhysXImpl
             
             Ref = api.createCapsuleCharacter(this.scene.Ref, pos, up.normalized, height, radius, 0.05f);
 
-            api.setControllerDirection(Ref, (Vector3.zero + world.Gravity));
+            Move(Vector3.zero + world.Gravity);
         }
 
         public void Move(Vector3 direction)
         {
-            api.setControllerDirection(Ref, direction);
+            Direction = direction;
+            
+            api.setControllerDirection(Ref, Direction);
         }
 
         public void Move(MoveDirection directions)
         {
 
-            var rotation = Quaternion.Euler(0, -CharacterRotation, 0);
+            var rotation = Quaternion.Euler(0, CharacterRotation, 0);
 
             var forward = (rotation * Vector3.forward);
             var up = Vector3.up;
@@ -81,9 +83,9 @@ namespace Magistr.Physics.PhysXImpl
             var moveDelta = Vector3.zero;
 
             if (directions.HasFlag(MoveDirection.Forward))
-                moveDelta += -forward;
-            if (directions.HasFlag(MoveDirection.Backward))
                 moveDelta += forward;
+            if (directions.HasFlag(MoveDirection.Backward))
+                moveDelta += -forward;
             if (directions.HasFlag(MoveDirection.Left))
                 moveDelta += -right;
             if (directions.HasFlag(MoveDirection.Right))

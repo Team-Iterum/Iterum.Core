@@ -11,7 +11,7 @@ using vtortola.WebSockets.Rfc6455;
 
 namespace Magistr.Network
 {
-    public class WebSocketNetwork : INetworkServer
+    public sealed class WebSocketNetwork : INetworkServer, IDisposable
     {
         private class WebSocketConnection
         {
@@ -34,6 +34,7 @@ namespace Magistr.Network
         public event Func<ConnectionData, bool> Connecting;
         public event Action<ConnectionData> Connected;
         public event Action<ConnectionData> Disconnected;
+        
 
         public void Stop()
         {
@@ -219,6 +220,23 @@ namespace Magistr.Network
                     Debug.LogError(nameof(WebSocketNetwork), e);
                 }
             }
+        }
+
+        private void Dispose(bool dispose)
+        {
+            stopToken?.Dispose();
+            sockets?.Dispose();
+        }
+        
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        ~WebSocketNetwork()
+        {
+            Dispose(false);
         }
     }
 }
