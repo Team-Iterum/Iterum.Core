@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Magistr.DataBlocks;
 
 namespace Magistr.New.ThingTypes
 {

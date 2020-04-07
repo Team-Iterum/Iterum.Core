@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Magistr.DataBlocks;
 using YamlDotNet.Serialization;
 
 namespace Magistr.New.ThingTypes

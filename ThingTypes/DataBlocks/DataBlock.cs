@@ -1,4 +1,4 @@
-namespace Magistr.New.ThingTypes
+namespace Magistr.DataBlocks
 {
     public interface IDataBlock
     {

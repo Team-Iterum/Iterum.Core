@@ -11,14 +11,12 @@ namespace Magistr.Physics.PhysXImpl
 
         private readonly Scene scene;
         private readonly IPhysicsAPI api;
-
+        public float JumpHeight { get; } = 11f;
 
         #region IPhysicsCharacter
 
         public Vector3 Direction { get; private set; }
-
         public float Speed { get; set; } = 0.1f;
-
         public float CharacterRotation { get; set; }
 
         public Vector3 FootPosition
@@ -43,12 +41,9 @@ namespace Magistr.Physics.PhysXImpl
             set => api.setControllerPosition(Ref, value);
         }
         
-
         public Quaternion Rotation { get; set; }
-
         public bool IsDestroyed { get; private set; }
-
-        public IPhysicsWorld OwnerWorld { get; }
+        public IPhysicsWorld World { get; }
         public IThing Thing { get; set; }
 
         #endregion
@@ -57,7 +52,7 @@ namespace Magistr.Physics.PhysXImpl
         {
             this.scene = scene;
             this.api = api;
-            OwnerWorld = world;
+            World = world;
             
             Ref = api.createCapsuleCharacter(this.scene.Ref, pos, up.normalized, height, radius, 0.05f);
 
@@ -82,23 +77,17 @@ namespace Magistr.Physics.PhysXImpl
 
             var moveDelta = Vector3.zero;
 
-            if (directions.HasFlag(MoveDirection.Forward))
-                moveDelta += forward;
-            if (directions.HasFlag(MoveDirection.Backward))
-                moveDelta += -forward;
-            if (directions.HasFlag(MoveDirection.Left))
-                moveDelta += -right;
-            if (directions.HasFlag(MoveDirection.Right))
-                moveDelta += right;
-            if (directions.HasFlag(MoveDirection.Up))
-                moveDelta += up;
-            if (directions.HasFlag(MoveDirection.Down))
-                moveDelta += -up;
+            if (directions.HasFlag(MoveDirection.Forward)) moveDelta += forward;
+            else if (directions.HasFlag(MoveDirection.Backward)) moveDelta += -forward;
+            
+            if (directions.HasFlag(MoveDirection.Left)) moveDelta += -right;
+            else if (directions.HasFlag(MoveDirection.Right)) moveDelta += right;
+            
+            if (directions.HasFlag(MoveDirection.Up)) moveDelta += up * World.Gravity.magnitude * JumpHeight;
+            else if (directions.HasFlag(MoveDirection.Down)) moveDelta += -up;
 
 
-            Direction = (System.Math.Abs(moveDelta.LengthSqr()) < 0.01f ?
-                            Vector3.zero :
-                            Vector3.Normalize(moveDelta)) * Speed + OwnerWorld.Gravity;
+            Direction = moveDelta * Speed + World.Gravity;
 
             api.setControllerDirection(Ref, Direction);
 
