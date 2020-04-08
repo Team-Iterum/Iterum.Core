@@ -1,10 +1,20 @@
 ﻿using System;
+using ShellProgressBar;
 
 namespace Magistr.Log
 {
     public static class Debug
     {
         private static ConsoleColor BackColor;
+        
+        public static ProgressBarOptions ProgressBarOptions = new ProgressBarOptions
+        {
+            ProgressBarOnBottom = true,
+            
+            ForegroundColor = ConsoleColor.Yellow,
+            ForegroundColorDone = ConsoleColor.DarkGreen,
+            BackgroundColor = ConsoleColor.DarkGray,
+        };
 
         public delegate void LogCallbackDelegate(DateTime time, string msg, ConsoleColor color);
 

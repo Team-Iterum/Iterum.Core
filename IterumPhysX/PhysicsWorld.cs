@@ -128,9 +128,9 @@ namespace Magistr.Physics.PhysXImpl
         {
             return scene.CreateStatic(geometry, transform, isTrigger);
         }
-        public IDynamicObject CreateDynamic(IGeometry geometry, bool kinematic, bool isTrigger, float mass, Transform transform)
+        public IDynamicObject CreateDynamic(IGeometry geometry, bool kinematic,  bool isTrigger, bool disableGravity, float mass, Transform transform)
         {
-            return scene.CreateDynamic(geometry, kinematic, isTrigger, mass, transform);
+            return scene.CreateDynamic(geometry, kinematic, isTrigger, disableGravity, mass, transform);
         }
         public IPhysicsCharacter CreateCapsuleCharacter(Vector3 position, Vector3 up, float height, float radius)
         {
@@ -154,7 +154,8 @@ namespace Magistr.Physics.PhysXImpl
         {
             var obj0 = scene.GetObject(ref0);
             var obj1 = scene.GetObject(ref1);
-
+            if (obj0 == null || obj1 == null) return;
+            
             ContactReport?.Invoke(this, new ContactReport()
             {
                 obj0 = obj0.Thing,

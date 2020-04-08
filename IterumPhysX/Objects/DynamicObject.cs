@@ -93,12 +93,12 @@ namespace Magistr.Physics.PhysXImpl
         }
         #endregion
 
-        internal DynamicObject(IGeometry geometry, bool kinematic, bool isTrigger, float mass, Scene scene, IPhysicsAPI api)
+        internal DynamicObject(IGeometry geometry, bool kinematic, bool isTrigger, bool disableGravity, float mass, Scene scene, IPhysicsAPI api)
         {
             this.api = api;
             this.scene = scene;
 
-            Ref = api.createRigidDynamic((int) geometry.GeoType,(long)geometry.GetInternalGeometry(), scene.Ref, kinematic, false, false, isTrigger, mass, Vector3.zero, Quaternion.identity);
+            Ref = api.createRigidDynamic((int) geometry.GeoType,(long)geometry.GetInternalGeometry(), scene.Ref, kinematic, false, false, disableGravity, isTrigger, mass, Vector3.zero, Quaternion.identity);
         }
 
 

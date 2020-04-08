@@ -38,6 +38,7 @@ namespace Magistr.Physics.PhysXImpl
         
         public IPhysicsObject GetObject(in long nRef)
         {
+            if (!refs.ContainsKey(nRef)) return null;
             return refs[nRef];
         }
 
@@ -93,9 +94,9 @@ namespace Magistr.Physics.PhysXImpl
             return obj;
         }
 
-        public IDynamicObject CreateDynamic(IGeometry geometry, bool kinematic, bool isTrigger, float mass, Transform transform)
+        public IDynamicObject CreateDynamic(IGeometry geometry, bool kinematic, bool isTrigger, bool disableGravity, float mass, Transform transform)
         {
-            var obj = new DynamicObject(geometry, kinematic, isTrigger, mass, this, API)
+            var obj = new DynamicObject(geometry, kinematic, isTrigger, disableGravity, mass, this, API)
             {
                 Position = transform.Position,
                 Rotation = transform.Rotation

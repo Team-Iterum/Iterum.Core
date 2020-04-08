@@ -42,7 +42,7 @@ namespace Magistr.Physics.PhysXImpl
         void setRigidStaticRotation(long nRef, APIQuat q);
 
         
-        long createRigidDynamic(int geoType, long nRefGeo, long nRefScene, bool kinematic, bool ccd, bool retain, bool isTrigger, float mass, APIVec3 pos, APIQuat quat);
+        long createRigidDynamic(int geoType, long nRefGeo, long nRefScene, bool kinematic, bool ccd, bool retain, bool disableGravity, bool isTrigger, float mass, APIVec3 pos, APIQuat quat);
         void destroyRigidDynamic(long nRef);
 
         void setRigidDynamicKinematicTarget(long nRef, APIVec3 p, APIQuat q);
