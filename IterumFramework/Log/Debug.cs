@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using ShellProgressBar;
 
 namespace Magistr.Log
@@ -100,6 +102,7 @@ namespace Magistr.Log
 
             OnLogCallback(dateTime, finalText, color);
         }
+        
 
         public static void LogError(string group, string e)
         {
@@ -171,6 +174,35 @@ namespace Magistr.Log
         private static void OnLogCallback(DateTime time, string msg, ConsoleColor color)
         {
             LogCallback?.Invoke(time, msg, color);
+        }
+    }
+
+    public static class StringSpaces
+    {
+        private static char space = ' ';
+        private static Dictionary<int, string> spaces = new Dictionary<int, string>();
+
+        static StringSpaces()
+        {
+            for (int i = 5; i < 40; i++)
+            {
+                Create(i);
+            }
+        }
+
+        private static void Create(int count)
+        {
+            StringBuilder str = new StringBuilder(count);
+            for (int i = 0; i < count; i++)
+            {
+                str.Append(space);
+            }
+            spaces.Add(count, str.ToString());
+        }
+        
+        public static string s(int count)
+        {
+            return spaces[count];
         }
     }
 }
