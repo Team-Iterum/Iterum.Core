@@ -7,11 +7,11 @@ namespace Magistr.Physics
     /// </summary>
     public static class PhysicsWorldFactory
     {
-        public static void CreatePhysics()
+        public static void CreatePhysics(float toleranceLength, float toleranceSpeed)
         {
             // PhysX
             PhysicsAlias.GlobalPhysics = new PhysXImpl.Physics();
-            PhysicsAlias.GlobalPhysics.InitPhysics();
+            PhysicsAlias.GlobalPhysics.InitPhysics(toleranceLength, toleranceSpeed);
         }
         public static IPhysicsWorld CreateWorld(int tps)
         {

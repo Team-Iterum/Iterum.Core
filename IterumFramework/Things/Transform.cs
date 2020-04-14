@@ -5,8 +5,8 @@ namespace Magistr.Things
     public class Transform
     {
         // Position & Rotation
-        public Vector3 Position { get; set; } = Vector3.zero;
-        public Quaternion Rotation { get; set; } = Quaternion.identity;
+        public virtual Vector3 Position { get; set; } = Vector3.zero;
+        public virtual Quaternion Rotation { get; set; } = Quaternion.identity;
 
         // Calculated
         public Vector3 Forward => Position + LocalForward;

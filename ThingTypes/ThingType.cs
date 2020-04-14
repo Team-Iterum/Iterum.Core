@@ -28,12 +28,21 @@ namespace Magistr.New.ThingTypes
 
         public float GetFloat(string attr)
         {
-            if (float.TryParse(GetAttr(attr), out float result))
-                return result;
-            return 0;
+            return float.TryParse(GetAttr(attr), out float result) ? result : 0;
         }
 
+        public float[] GetFloat2(string attr)
+        {
+            var str = GetAttr(attr).Split(' ');
+            return new[] {float.Parse(str[0]), float.Parse(str[1])};
+        }
 
+        public int GetInt(string attr)
+        {
+            return int.TryParse(GetAttr(attr), out int result) ? result : 0;
+        }
+        
+        
         public bool HasFlag(string flag)
         {
             return Flags != null && Flags.Contains(flag);
@@ -43,6 +52,7 @@ namespace Magistr.New.ThingTypes
         {
             return $"ThingType {Category}/{Name}";
         }
+
     }
     
 }

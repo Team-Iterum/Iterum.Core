@@ -70,6 +70,11 @@ namespace Magistr.Physics.PhysXImpl
         {
             api.setRigidDynamicKinematicTarget(Ref, position, rotation);
         }
+        
+        public void SetKinematicTarget(Transform transform)
+        {
+            api.setRigidDynamicKinematicTarget(Ref, transform.Position, transform.Rotation);
+        }
 
         public void AddForce(Vector3 force, ForceMode mode)
         {

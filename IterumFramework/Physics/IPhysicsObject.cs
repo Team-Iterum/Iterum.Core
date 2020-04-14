@@ -29,6 +29,7 @@ namespace Magistr.Physics
         float AngularDamping { set; }
 
         void SetKinematicTarget(Vector3 position, Quaternion rotation);
+        void SetKinematicTarget(Transform transform);
         void AddForce(Vector3 force, ForceMode mode);
         void AddTorque(Vector3 torque, ForceMode mode);
     }

@@ -25,7 +25,7 @@ namespace Magistr.Physics.PhysXImpl
 
             API.initLog(LogDebug, LogError);
 
-            const bool isCreatePvd = true;
+            bool isCreatePvd = true;
 
             #if !DEBUG
             isCreatePvd = false;

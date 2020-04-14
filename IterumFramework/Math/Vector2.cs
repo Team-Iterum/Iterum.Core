@@ -300,5 +300,8 @@ namespace Magistr.Math
         {
             return new Vector3(v.x, v.y, 0f);
         }
+        
+        public static implicit  operator float[](Vector2 p) => new []{p.x, p.y};
+        public static implicit operator Vector2(float[] p) => new Vector2(p[0], p[1]);
     }
 }
