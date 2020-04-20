@@ -18,7 +18,7 @@ namespace Iterum.Physics.PhysXImpl
 
         public IPhysicsAPI API { get; private set; }
 
-        public void Init(float toleranceLength = 1, float toleranceSpeed = 5,
+        public void Init(bool isCreatePvd = true, float toleranceLength = 1, float toleranceSpeed = 5,
             float staticFriction = 0.5f, float dynamicFriction = 0.5f, float restitution = 0.5f)
         {
             if (isCreated) return;
@@ -30,12 +30,7 @@ namespace Iterum.Physics.PhysXImpl
 
             API.initLog(LogDebug, LogError);
 
-            bool isCreatePvd = true;
-
-#if !DEBUG
-            isCreatePvd = false;
-#endif
-
+            
             API.initPhysics(isCreatePvd, Environment.ProcessorCount, toleranceLength, toleranceSpeed, LogCritical);
 
             API.initGlobalMaterial(staticFriction, dynamicFriction, restitution);

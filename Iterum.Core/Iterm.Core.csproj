@@ -11,7 +11,7 @@
     <PackageId>Iterum.Core</PackageId>
     <Authors>Team Iterum</Authors>
     <RepositoryUrl>https://github.com/Team-Iterum/Iterum.Core</RepositoryUrl>
-    <PackageVersion>1.0.6</PackageVersion>
+    <PackageVersion>1.0.7</PackageVersion>
     <Title>Iterum.Core</Title>
     <Description>Core framework</Description>
   

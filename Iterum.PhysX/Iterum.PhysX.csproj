@@ -9,7 +9,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Authors>Team Iterum</Authors>
     <Description>PhysX server simulation</Description>
-    <PackageVersion>1.0.3</PackageVersion>
+    <PackageVersion>1.0.4</PackageVersion>
     <Title>Iterum.PhysX</Title>
   </PropertyGroup>
   

@@ -4,7 +4,7 @@ namespace Iterum.Physics
 {
     public interface IPhysics
     {
-        void Init(float toleranceLength, float toleranceSpeed,
+        void Init(bool isCreatePvd, float toleranceLength, float toleranceSpeed,
             float staticFriction, float dynamicFriction, float restitution);
 
         // Model geometry
