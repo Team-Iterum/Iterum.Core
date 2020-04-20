@@ -1,27 +1,27 @@
-﻿using Magistr.Math;
-using Magistr.Things;
+﻿using Iterum.Math;
+using Iterum.Things;
+using static Iterum.Physics.PhysXImpl.PhysicsAlias;
 
-namespace Magistr.Physics.PhysXImpl
+namespace Iterum.Physics.PhysXImpl
 {
     public class StaticObject : IStaticObject
     {
         public long Ref { get; }
-
-        private readonly IPhysicsAPI api;
+        
         private readonly Scene scene;
 
         #region IPhysicsObject
 
         public Vector3 Position
         {
-            get => api.getRigidStaticPosition(Ref);
-            set => api.setRigidStaticPosition(Ref, value);
+            get => API.getRigidStaticPosition(Ref);
+            set => API.setRigidStaticPosition(Ref, value);
         }
 
         public Quaternion Rotation
         {
-            get => api.getRigidStaticRotation(Ref);
-            set => api.setRigidStaticRotation(Ref, value);
+            get => API.getRigidStaticRotation(Ref);
+            set => API.setRigidStaticRotation(Ref, value);
         }
         public bool IsDestroyed { get; private set; }
 
@@ -35,12 +35,12 @@ namespace Magistr.Physics.PhysXImpl
         }
         #endregion
 
-        public StaticObject(IGeometry geometry, Scene scene, IPhysicsAPI api, bool isTrigger)
+        public StaticObject(IGeometry geometry, PhysicsObjectFlags flags, Transform transform, Scene scene)
         {
-            this.api = api;
             this.scene = scene;
 
-            Ref = api.createRigidStatic((int) geometry.GeoType, (long)geometry.GetInternalGeometry(), scene.Ref, Vector3.zero, Quaternion.identity, isTrigger);
+            Ref = API.createRigidStatic((int) geometry.GeoType, (long)geometry.GetInternalGeometry(), scene.Ref, 
+                transform.Position, transform.Rotation, flags.HasFlag(PhysicsObjectFlags.Trigger));
         }
 
     }

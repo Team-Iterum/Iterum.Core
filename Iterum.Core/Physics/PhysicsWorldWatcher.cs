@@ -1,15 +1,13 @@
-﻿using Magistr.Log;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
+using Iterum.Log;
 
-namespace Magistr.Physics
+namespace Iterum.Physics
 {
     public class PhysicsWorldWatcher
     {
         private Timer WatchTimer { get; set; }
-        private static readonly StringBuilder Builder = new StringBuilder();
         private readonly List<IPhysicsWorld> worlds;
 
         public PhysicsWorldWatcher(List<IPhysicsWorld> worlds)
@@ -25,42 +23,45 @@ namespace Magistr.Physics
 
         private static void Watch(object obj)
         {
-            List<IPhysicsWorld> worlds = ((List<IPhysicsWorld>)obj);
+            var worlds = ((List<IPhysicsWorld>)obj);
 
             if (worlds.Count == 0) return;
 
-            var header = "\n";
+            const string header = "\n";
 
             foreach (var w in worlds)
             {
                 var color = ConsoleColor.Black;
                 var backColor = ConsoleColor.DarkGreen;
 
-                if(!w.IsCreated)
+                if(w.State == IPhysicsWorld.WorldState.None)
                 {
                     Debug.Back(ConsoleColor.Gray);
                     var s = $"#{worlds.IndexOf(w)} not yet created";
-                    s += Space(header.Length - s.Length);
+                    s += PhysicsWorldWatcher.s(header.Length - s.Length);
 
                     Debug.Log(s);
                     Debug.ResetBack();
                     continue;
                 }
-                if (w.IsDestroyed)
+                
+                if(w.State == IPhysicsWorld.WorldState.Destroyed)
                 {
                     Debug.Back(ConsoleColor.Black);
-                    var s = $"#{worlds.IndexOf(w)} is destroyed";
-                    s += Space(header.Length - s.Length);
+                    string s = $"#{worlds.IndexOf(w)} is destroyed";
+                    s += PhysicsWorldWatcher.s(header.Length - s.Length);
 
                     Debug.Log(s);
                     Debug.ResetBack();
                     continue;
                 }
-                if (!w.IsRunning)
+                
+                if(w.State != IPhysicsWorld.WorldState.Running)
                 {
                     Debug.Back(ConsoleColor.Gray);
-                    var s = $"#{worlds.IndexOf(w)} stopped";
-                    s += Space(header.Length - s.Length);
+                    
+                    string s = $"#{worlds.IndexOf(w)} stopped";
+                    s += PhysicsWorldWatcher.s(header.Length - s.Length);
 
                     Debug.Log(s, color);
                     Debug.ResetBack();
@@ -91,7 +92,7 @@ namespace Magistr.Physics
                     draw = true;
                 }
 
-                if (!w.IsRunning)
+                if (!w.State.HasFlag(IPhysicsWorld.WorldState.Running))
                 {
                     backColor = ConsoleColor.Gray;
                     infoText = "(Stopped) ";
@@ -100,15 +101,14 @@ namespace Magistr.Physics
                 
                 if (draw)
                 {
-                    var str =
+                    string str =
                         $"{infoText}#{worlds.IndexOf(w)} dt: {w.DeltaTime}ms frame: {w.SceneFrame}ms timestamp: {w.Timestamp}";
-                    str += Space(header.Length - str.Length);
+                    str += s(header.Length - str.Length);
 
                     var foreground = Console.ForegroundColor;
                     Console.ForegroundColor = ConsoleColor.DarkGray;
                     Console.Write($"[Watcher] ");
                     Console.ForegroundColor = foreground;
-
                     Debug.Back(backColor);
 
                     Console.ForegroundColor = color;
@@ -121,17 +121,13 @@ namespace Magistr.Physics
             }
             Console.ResetColor();
         }
-        
 
-        private static string Space(int count)
+        // ReSharper disable once InconsistentNaming
+        private static string s(int count)
         {
-            Builder.Clear();
-            for (int i = 0; i < count; i++)
-            {
-                Builder.Append(" ");
-            }
-            return Builder.ToString();
-
+            StringSpaces.Create(count);
+            return StringSpaces.s(count);
+            
         }
     }
 }

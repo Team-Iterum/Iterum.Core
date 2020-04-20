@@ -23,7 +23,7 @@
 using System;
 
 #if !(ENABLE_MONO || ENABLE_IL2CPP)
-	using Magistr.Math;
+	using Iterum.Math;
 #else
 	using UnityEngine;
 #endif

@@ -1,44 +1,35 @@
 ﻿using System;
-using Magistr.Log;
-using Magistr.Math;
-using Magistr.Things;
+using Iterum.Log;
+using Iterum.Math;
+using Iterum.Things;
 using System.Collections.Generic;
-using static Magistr.Physics.PhysXImpl.PhysicsAlias;
+using static Iterum.Physics.PhysXImpl.PhysicsAlias;
 
-namespace Magistr.Physics.PhysXImpl
+namespace Iterum.Physics.PhysXImpl
 {
     public class Scene
     {
-        private readonly IPhysicsWorld world;
-        public long Ref { get; }
+        public long Ref { get; private set; }
+        public int Timestamp => (int) API.getSceneTimestamp(Ref);
+        public Vector3 Gravity;
+
+        private string LogGroup => $"Scene ({Ref})";
         
         private readonly Dictionary<long, IPhysicsObject> refs = new Dictionary<long, IPhysicsObject>();
-
-        public int Timestamp => (int) API.getSceneTimestamp(Ref);
-
-        private SphereGeometry overlapSphere;
-        private float overlapSphereRadius = 150;
-        public float OverlapSphereRadius
-        {
-            get => overlapSphereRadius;
-            set
-            {
-                overlapSphereRadius = value;
-                overlapSphere = new SphereGeometry(OverlapSphereRadius);
-            }
-        }
-
-        public Scene(IPhysicsWorld world, ContactReportCallbackFunc contactReportCallback, TriggerReportCallbackFunc triggerCallback)
-        {
-            this.world = world;
-            
-            Ref = API.createScene(world.Gravity, contactReportCallback, triggerCallback);
-
-        }
         
+        public void Create(ContactReportCallbackFunc contactReport, TriggerReportCallbackFunc trigger)
+        {
+            Ref = API.createScene(Gravity, contactReport, trigger);
+            
+            Debug.LogV(LogGroup, $"Create. Gravity: {Gravity}");
+        }
+
         public IPhysicsObject GetObject(in long nRef)
         {
             if (!refs.ContainsKey(nRef)) return null;
+            
+            Debug.LogV(LogGroup, $"GetObject with Ref: {nRef}");
+            
             return refs[nRef];
         }
 
@@ -51,30 +42,34 @@ namespace Magistr.Physics.PhysXImpl
         internal void Cleanup()
         {
             API.cleanupScene(Ref);
+            
+            Debug.LogV(LogGroup, $"Cleanup");
         }
 
         #region Destroy objects
 
-        public void Destroy(StaticObject obj)
+        public void Destroy(StaticObject e)
         {
-            refs.Remove(obj.Ref);
+            refs.Remove(e.Ref);
             
-            API.destroyRigidStatic(obj.Ref);
-
+            API.destroyRigidStatic(e.Ref);
+            
+            Debug.LogV(LogGroup, $"StaticObject Ref: ({e.Ref}) destroyed", ConsoleColor.Red);
         }
-        public void Destroy(DynamicObject obj)
+        public void Destroy(DynamicObject e)
         {
-            refs.Remove(obj.Ref);
-            API.destroyRigidDynamic(obj.Ref);
+            refs.Remove(e.Ref);
+            API.destroyRigidDynamic(e.Ref);
             
-            Debug.LogV($"DynamicObject ({obj.Ref})", $"Destroyed", ConsoleColor.Red);
-
+            Debug.LogV(LogGroup, $"DynamicObject Ref: ({e.Ref}) destroyed", ConsoleColor.Red);
         }
-        public void Destroy(PhysicsCharacter obj)
+        public void Destroy(PhysicsCharacter e)
         {
-            refs.Remove(obj.Ref);
+            refs.Remove(e.Ref);
             
-            API.destroyController(obj.Ref);
+            API.destroyController(e.Ref);
+            
+            Debug.LogV(LogGroup, $"PhysicsCharacter Ref: ({e.Ref}) destroyed", ConsoleColor.Red);
 
         } 
 
@@ -82,51 +77,47 @@ namespace Magistr.Physics.PhysXImpl
 
         #region Create objects
         
-        public IStaticObject CreateStatic(IGeometry geometry, Transform transform, bool isTrigger)
+        public IStaticObject CreateStatic(IGeometry geometry, Transform transform, PhysicsObjectFlags flags)
         {
-            var obj = new StaticObject(geometry, this, API, isTrigger)
-            {
-                Position = transform.Position,
-                Rotation = transform.Rotation
-            };
+            var obj = new StaticObject(geometry, flags, transform, this);
             refs.Add(obj.Ref, obj);
             
+            Debug.LogV(LogGroup, $"StaticObject Ref: ({obj.Ref}) created", ConsoleColor.DarkGreen);
             return obj;
         }
 
-        public IDynamicObject CreateDynamic(IGeometry geometry, bool kinematic, bool isTrigger, bool disableGravity, float mass, Transform transform)
+        public IDynamicObject CreateDynamic(IGeometry geometry, Transform transform, PhysicsObjectFlags flags, float mass)
         {
-            var obj = new DynamicObject(geometry, kinematic, isTrigger, disableGravity, mass, this, API)
-            {
-                Position = transform.Position,
-                Rotation = transform.Rotation
-            };
+            var obj = new DynamicObject(geometry, flags, mass, transform, this);
             refs.Add(obj.Ref, obj);
-
+            
+            Debug.LogV(LogGroup, $"DynamicObject Ref: ({obj.Ref}) created", ConsoleColor.DarkGreen);
+            
             return obj;
         }
 
         public IPhysicsCharacter CreateCapsuleCharacter(Vector3 position, Vector3 up, float height, float radius)
         {
-            var obj = new PhysicsCharacter(position, up, height, radius, this, world, API);
+            var obj = new PhysicsCharacter(position, up, height, radius, this);
             refs.Add(obj.Ref, obj);
 
+            Debug.LogV(LogGroup, $"CapsuleCharacter Ref: ({obj.Ref}) created", ConsoleColor.DarkGreen);
             return obj;
         }
         
         #endregion
 
-        public List<IThing> Overlap(Vector3 position)
+        public List<IThing> Overlap(IGeometry geometry, Vector3 position)
         {
             var hits = new List<IThing>();  
 
-            int unused = API.sceneOverlap(Ref, (long)overlapSphere.GetInternalGeometry(), position, (nRef) =>
+            int count = API.sceneOverlap(Ref, (long)geometry.GetInternalGeometry(), position, (nRef) =>
             {
                 if (refs.ContainsKey(nRef))
                 {
                     if (refs[nRef] == null)
                     {
-                        Debug.LogError("Scene Overlap", $"Ref: {nRef} == null");
+                        Debug.LogError(LogGroup, $"Overlap. Ref: {nRef} == null");
                         return;
                     }
                     
@@ -134,10 +125,12 @@ namespace Magistr.Physics.PhysXImpl
                 }
                 else
                 {
-                    Debug.LogError("Scene Overlap", $"No reference: {nRef}");
+                    Debug.LogError(LogGroup, $"Overlap. No reference: {nRef}");
                 }
             });
 
+            Debug.LogV(LogGroup, $"Overlap count: {count} hits: {hits.Count}");
+            
             return hits;
         }
     }

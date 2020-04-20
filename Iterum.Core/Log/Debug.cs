@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using ShellProgressBar;
 
-namespace Magistr.Log
+namespace Iterum.Log
 {
     public static class Debug
     {
-        private static ConsoleColor BackColor;
+        private static ConsoleColor backColor;
         
         public static ProgressBarOptions ProgressBarOptions = new ProgressBarOptions
         {
@@ -26,13 +24,13 @@ namespace Magistr.Log
 
         public static void Back(ConsoleColor consoleColor)
         {
-            BackColor = Console.BackgroundColor;
+            backColor = Console.BackgroundColor;
             Console.BackgroundColor = consoleColor;
         }
         
         public static void ResetBack()
         {
-            Console.BackgroundColor = BackColor;
+            Console.BackgroundColor = backColor;
         }
 
         public static void EmptyLine()
@@ -174,35 +172,6 @@ namespace Magistr.Log
         private static void OnLogCallback(DateTime time, string msg, ConsoleColor color)
         {
             LogCallback?.Invoke(time, msg, color);
-        }
-    }
-
-    public static class StringSpaces
-    {
-        private static char space = ' ';
-        private static Dictionary<int, string> spaces = new Dictionary<int, string>();
-
-        static StringSpaces()
-        {
-            for (int i = 5; i < 40; i++)
-            {
-                Create(i);
-            }
-        }
-
-        private static void Create(int count)
-        {
-            StringBuilder str = new StringBuilder(count);
-            for (int i = 0; i < count; i++)
-            {
-                str.Append(space);
-            }
-            spaces.Add(count, str.ToString());
-        }
-        
-        public static string s(int count)
-        {
-            return spaces[count];
         }
     }
 }

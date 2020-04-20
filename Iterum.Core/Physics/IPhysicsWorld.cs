@@ -1,50 +1,63 @@
 ﻿using System;
-using Magistr.Math;
-using Magistr.Things;
 using System.Collections.Generic;
+using Iterum.Math;
+using Iterum.Things;
 
-namespace Magistr.Physics
+// ReSharper disable UnusedMember.Global
+// ReSharper disable EventNeverSubscribedTo.Global
+
+namespace Iterum.Physics
 {
     public interface IPhysicsWorld
     {
+        public enum WorldState
+        {
+            None,
+            Created,
+            Destroyed,
+            Running,
+        }
+        
         void Create();
         void Destroy();
+        
         void Start();
         void Stop();
 
-        bool IsDestroyed { get; }
-        bool IsCreated { get; }
-        bool IsRunning { get; }
+        public WorldState State { get; }
 
+        int TPS { get; }
         int Timestamp { get; }
         float SceneFrame { get; }
         float DeltaTime { get; }
 
-        int TPS { get; set; }
-
-        float OverlapSphereRadius { get; set; }
-
-        Vector3 Gravity { get; set; }
-
         event EventHandler<ContactReport> ContactReport;
         
-        AddRemoveThings Overlap(Vector3 position, List<IThing> except);
+        AddRemoveThings Overlap(Vector3 position, IGeometry overlapGeometry, List<IThing> except);
+        
+        IEnumerable<IThing> Raycast(Vector3 position, Vector3 direction);
 
-        IStaticObject CreateStatic(IGeometry geometry, Transform transform, bool isTrigger);
-        IDynamicObject CreateDynamic(IGeometry geometry, bool kinematic, bool isTrigger, bool disableGravity, float mass, Transform transform);
-        IPhysicsCharacter CreateCapsuleCharacter(Vector3 position, Vector3 up, float height, float radius);
-
+        IStaticObject CreateStatic(IGeometry geometry, Transform transform, PhysicsObjectFlags flags);
+        IDynamicObject CreateDynamic(IGeometry geometry, Transform transform, PhysicsObjectFlags flags, float mass);
+        IPhysicsCharacter CreateCapsuleCharacter(Transform transform, Vector3 up, float height, float radius);
     }
 
     public struct ContactReport
     {
+        // ReSharper disable InconsistentNaming
+        
         public IThing obj0;
         public IThing obj1;
+        
         public Vector3 normal;
         public Vector3 position;
         public Vector3 impulse;
+        
         public float separation;
-        public bool IsTrigger;
+        
+        public bool isTrigger;
+        
+        // ReSharper restore InconsistentNaming
     }
 
     public struct AddRemoveThings

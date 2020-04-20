@@ -1,12 +1,17 @@
-using Magistr.Math;
+using Iterum.Math;
 
-namespace Magistr.Physics
+namespace Iterum.Physics
 {
     public interface IPhysics
     {
-        void InitPhysics(float toleranceLength, float toleranceSpeed);
+        void Init(float toleranceLength, float toleranceSpeed,
+            float staticFriction, float dynamicFriction, float restitution);
+
+        // Model geometry
         IGeometry CreateTriangleMeshGeometry(IModelData modelData);
         IGeometry CreateConvexMeshGeometry(IModelData modelData);
+
+        // Simple geometry
         IGeometry CreateSphereGeometry(float radius);
         IGeometry CreateBoxGeometry(Vector3 size);
     }

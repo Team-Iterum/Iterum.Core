@@ -1,7 +1,7 @@
 ﻿
-using Magistr.Math;
+using Iterum.Math;
 
-namespace Magistr.Physics
+namespace Iterum.Physics
 {
     public interface IModelData
     {

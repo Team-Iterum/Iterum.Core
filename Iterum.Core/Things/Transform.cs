@@ -1,6 +1,6 @@
-﻿using Magistr.Math;
+﻿using Iterum.Math;
 
-namespace Magistr.Things
+namespace Iterum.Things
 {
     public class Transform
     {

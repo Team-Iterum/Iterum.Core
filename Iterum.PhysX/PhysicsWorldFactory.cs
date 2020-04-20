@@ -1,9 +1,10 @@
-﻿using Magistr.Physics.PhysXImpl;
+﻿using Iterum.Math;
+using Iterum.Physics.PhysXImpl;
 
-namespace Magistr.Physics
+namespace Iterum.Physics
 {
     /// <summary>
-    /// USE PHYSX
+    /// PhysX Factory
     /// </summary>
     public static class PhysicsWorldFactory
     {
@@ -11,13 +12,12 @@ namespace Magistr.Physics
         {
             // PhysX
             PhysicsAlias.GlobalPhysics = new PhysXImpl.Physics();
-            PhysicsAlias.GlobalPhysics.InitPhysics(toleranceLength, toleranceSpeed);
+            PhysicsAlias.GlobalPhysics.Init(toleranceLength, toleranceSpeed);
         }
-        public static IPhysicsWorld CreateWorld(int tps)
+        public static IPhysicsWorld CreateWorld(Vector3 gravity, int tps)
         {
             // PhysX
-            var world = new PhysicsWorld {TPS = tps};
-            return world;
+            return new PhysicsWorld(gravity, tps);
         }
     }
 }

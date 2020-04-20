@@ -1,6 +1,6 @@
-﻿using static Magistr.Physics.PhysXImpl.PhysicsAlias;
+﻿using static Iterum.Physics.PhysXImpl.PhysicsAlias;
 
-namespace Magistr.Physics.PhysXImpl
+namespace Iterum.Physics.PhysXImpl
 {
     internal class SphereGeometry : IGeometry
     {

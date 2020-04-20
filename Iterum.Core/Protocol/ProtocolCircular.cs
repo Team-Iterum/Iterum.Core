@@ -1,9 +1,9 @@
 ﻿using CircularBuffer;
-using Magistr.Network;
 using System;
 using System.Threading;
+using Iterum.Network;
 
-namespace Magistr.Protocol
+namespace Iterum.Protocol
 {
     public class ProtocolCircular : IComparable<ProtocolCircular>
     {

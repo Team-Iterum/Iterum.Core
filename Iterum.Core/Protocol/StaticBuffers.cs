@@ -2,8 +2,7 @@
 using NetStack.Serialization;
 using NetStack.Threading;
 
-
-namespace Magistr.Buffers
+namespace Iterum.Buffers
 {
     public static class StaticBuffers
     {

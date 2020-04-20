@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 
-namespace Magistr.Network
+namespace Iterum.Network
 {
     public struct NetworkMessage
     {

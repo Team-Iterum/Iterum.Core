@@ -1,4 +1,4 @@
-﻿namespace Magistr.Physics
+﻿namespace Iterum.Physics
 {
     public enum GeoType
     {

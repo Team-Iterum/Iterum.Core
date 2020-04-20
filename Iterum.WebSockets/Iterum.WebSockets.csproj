@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <RootNamespace>Iterum</RootNamespace>
+    <Platforms>x64</Platforms>
+    <Configurations>Debug;Release</Configurations>
+    <AssemblyName>Iterum.WebSockets</AssemblyName>
+    <PackageId>Iterum.WebSockets</PackageId>
+    <Title>Iterum.WebSockets</Title>
+    <Authors>Team Iterum</Authors>
+    <Description>WebSockets Network</Description>
+    <RepositoryUrl>https://github.com/Team-Iterum/Iterum.Core</RepositoryUrl>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="deniszykov.WebSocketListener" Version="4.2.8-beta" />
+    <PackageReference Include="Iterum.Core" Version="*" />
+  </ItemGroup>
+
+</Project>

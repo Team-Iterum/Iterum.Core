@@ -1,8 +1,8 @@
-﻿using Magistr.Math;
-using Magistr.Things;
-using System;
+﻿using Iterum.Math;
+using Iterum.Things;
+using static Iterum.Physics.PhysXImpl.PhysicsAlias;
 
-namespace Magistr.Physics.PhysXImpl
+namespace Iterum.Physics.PhysXImpl
 {
     public class PhysicsCharacter : IPhysicsCharacter
     {
@@ -10,7 +10,6 @@ namespace Magistr.Physics.PhysXImpl
         public readonly long Ref;
 
         private readonly Scene scene;
-        private readonly IPhysicsAPI api;
         public float JumpHeight { get; } = 11f;
 
         #region IPhysicsCharacter
@@ -21,8 +20,8 @@ namespace Magistr.Physics.PhysXImpl
 
         public Vector3 FootPosition
         {
-            get => (Vector3)(DVector3)api.getControllerFootPosition(Ref);
-            set => api.setControllerFootPosition(Ref, value);
+            get => (Vector3)(DVector3)API.getControllerFootPosition(Ref);
+            set => API.setControllerFootPosition(Ref, value);
         }
 
         public void Destroy()
@@ -37,36 +36,34 @@ namespace Magistr.Physics.PhysXImpl
         
         public Vector3 Position
         {
-            get => (Vector3)(DVector3)api.getControllerPosition(Ref);
-            set => api.setControllerPosition(Ref, value);
+            get => (Vector3)(DVector3)API.getControllerPosition(Ref);
+            set => API.setControllerPosition(Ref, value);
         }
         
         public Quaternion Rotation { get; set; }
         public bool IsDestroyed { get; private set; }
-        public IPhysicsWorld World { get; }
+        
         public IThing Thing { get; set; }
 
         #endregion
 
-        internal PhysicsCharacter(Vector3 pos, Vector3 up, float height, float radius, Scene scene, IPhysicsWorld world, IPhysicsAPI api)
+        internal PhysicsCharacter(Vector3 pos, Vector3 up, float height, float radius, Scene scene)
         {
             this.scene = scene;
-            this.api = api;
-            World = world;
-            
-            Ref = api.createCapsuleCharacter(this.scene.Ref, pos, up.normalized, height, radius, 0.05f);
 
-            Move(Vector3.zero + world.Gravity);
+            Ref = API.createCapsuleCharacter(this.scene.Ref, pos, up.normalized, height, radius, 0.05f);
+
+            Move(Vector3.zero + scene.Gravity);
         }
 
         public void Move(Vector3 direction)
         {
             Direction = direction;
             
-            api.setControllerDirection(Ref, Direction);
+            API.setControllerDirection(Ref, Direction);
         }
 
-        public void Move(MoveDirection directions)
+        public void Move(MoveDirection dirs)
         {
 
             var rotation = Quaternion.Euler(0, CharacterRotation, 0);
@@ -77,19 +74,19 @@ namespace Magistr.Physics.PhysXImpl
 
             var moveDelta = Vector3.zero;
 
-            if (directions.HasFlag(MoveDirection.Forward)) moveDelta += forward;
-            else if (directions.HasFlag(MoveDirection.Backward)) moveDelta += -forward;
+            if (dirs.HasFlag(MoveDirection.Forward)) moveDelta += forward;
+            else if (dirs.HasFlag(MoveDirection.Backward)) moveDelta += -forward;
             
-            if (directions.HasFlag(MoveDirection.Left)) moveDelta += -right;
-            else if (directions.HasFlag(MoveDirection.Right)) moveDelta += right;
+            if (dirs.HasFlag(MoveDirection.Left)) moveDelta += -right;
+            else if (dirs.HasFlag(MoveDirection.Right)) moveDelta += right;
             
-            if (directions.HasFlag(MoveDirection.Up)) moveDelta += up * World.Gravity.magnitude * JumpHeight;
-            else if (directions.HasFlag(MoveDirection.Down)) moveDelta += -up;
+            if (dirs.HasFlag(MoveDirection.Up)) moveDelta += up * scene.Gravity.magnitude * JumpHeight;
+            else if (dirs.HasFlag(MoveDirection.Down)) moveDelta += -up;
 
 
-            Direction = moveDelta * Speed + World.Gravity;
+            Direction = moveDelta * Speed + scene.Gravity;
 
-            api.setControllerDirection(Ref, Direction);
+            API.setControllerDirection(Ref, Direction);
 
         }
 

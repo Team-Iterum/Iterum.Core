@@ -11,11 +11,14 @@
     <PackageId>Iterum.Core</PackageId>
     <Authors>Team Iterum</Authors>
     <RepositoryUrl>https://github.com/Team-Iterum/Iterum.Core</RepositoryUrl>
-    <PackageVersion>1.0.1</PackageVersion>
+    <PackageVersion>1.0.6</PackageVersion>
+    <Title>Iterum.Core</Title>
+    <Description>Core framework</Description>
   
   </PropertyGroup>
   
   <ItemGroup>
+    <PackageReference Include="Iterum.Math" Version="*" />
     <PackageReference Include="ShellProgressBar" Version="5.0.0" />
     <PackageReference Include="System.Memory" Version="4.5.3" />
   </ItemGroup>

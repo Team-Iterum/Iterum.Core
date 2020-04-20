@@ -1,30 +1,29 @@
 ﻿using System;
-using Magistr.Log;
-using Magistr.Math;
-using Magistr.Things;
+using Iterum.Log;
+using Iterum.Math;
+using Iterum.Things;
+using static Iterum.Physics.PhysXImpl.PhysicsAlias;
 
-
-namespace Magistr.Physics.PhysXImpl
+namespace Iterum.Physics.PhysXImpl
 {
     public class DynamicObject : IDynamicObject
     {
         public long Ref { get; }
-
-        private readonly IPhysicsAPI api;
+        
         private readonly Scene scene;
 
         #region IPhysicsObject
 
         public Vector3 Position
         {
-            get => api.getRigidDynamicPosition(Ref);
-            set => api.setRigidDynamicTransform(Ref, value, Rotation);
+            get => API.getRigidDynamicPosition(Ref);
+            set => API.setRigidDynamicTransform(Ref, value, Rotation);
         }
 
         public Quaternion Rotation
         {
-            get => api.getRigidDynamicRotation(Ref);
-            set => api.setRigidDynamicTransform(Ref, Position, value);
+            get => API.getRigidDynamicRotation(Ref);
+            set => API.setRigidDynamicTransform(Ref, Position, value);
         }
 
 
@@ -32,58 +31,58 @@ namespace Magistr.Physics.PhysXImpl
 
         public float MaxLinearVelocity
         {
-            get => api.getRigidDynamicMaxLinearVelocity(Ref);
-            set => api.setRigidDynamicMaxLinearVelocity(Ref, value);
+            get => API.getRigidDynamicMaxLinearVelocity(Ref);
+            set => API.setRigidDynamicMaxLinearVelocity(Ref, value);
         }
 
 
         public Vector3 LinearVelocity
         {
-            get => api.getRigidDynamicLinearVelocity(Ref);
-            set => api.setRigidDynamicLinearVelocity(Ref, value);
+            get => API.getRigidDynamicLinearVelocity(Ref);
+            set => API.setRigidDynamicLinearVelocity(Ref, value);
         }
 
         public float MaxAngularVelocity
         {
-            get => api.getRigidDynamicMaxAngularVelocity(Ref);
-            set => api.setRigidDynamicMaxAngularVelocity(Ref, value);
+            get => API.getRigidDynamicMaxAngularVelocity(Ref);
+            set => API.setRigidDynamicMaxAngularVelocity(Ref, value);
         }
 
 
         public Vector3 AngularVelocity
         {
-            get => api.getRigidDynamicAngularVelocity(Ref);
-            set => api.setRigidDynamicAngularVelocity(Ref, value);
+            get => API.getRigidDynamicAngularVelocity(Ref);
+            set => API.setRigidDynamicAngularVelocity(Ref, value);
         }
 
         public float LinearDamping
         {
-            set => api.setRigidDynamicLinearDamping(Ref, value);
+            set => API.setRigidDynamicLinearDamping(Ref, value);
         }
 
         public float AngularDamping
         {
-            set => api.setRigidDynamicAngularDamping(Ref, value);
+            set => API.setRigidDynamicAngularDamping(Ref, value);
         }
 
         public void SetKinematicTarget(Vector3 position, Quaternion rotation)
         {
-            api.setRigidDynamicKinematicTarget(Ref, position, rotation);
+            API.setRigidDynamicKinematicTarget(Ref, position, rotation);
         }
         
         public void SetKinematicTarget(Transform transform)
         {
-            api.setRigidDynamicKinematicTarget(Ref, transform.Position, transform.Rotation);
+            API.setRigidDynamicKinematicTarget(Ref, transform.Position, transform.Rotation);
         }
 
         public void AddForce(Vector3 force, ForceMode mode)
         {
-            api.addRigidDynamicForce(Ref, force, mode);
+            API.addRigidDynamicForce(Ref, force, mode);
         }
 
         public void AddTorque(Vector3 torque, ForceMode mode)
         {
-            api.addRigidDynamicTorque(Ref, torque, mode);
+            API.addRigidDynamicTorque(Ref, torque, mode);
         }
 
         public IThing Thing { get; set; }
@@ -98,12 +97,17 @@ namespace Magistr.Physics.PhysXImpl
         }
         #endregion
 
-        internal DynamicObject(IGeometry geometry, bool kinematic, bool isTrigger, bool disableGravity, float mass, Scene scene, IPhysicsAPI api)
+        internal DynamicObject(IGeometry geometry, PhysicsObjectFlags flags, float mass, Transform transform, Scene scene)
         {
-            this.api = api;
             this.scene = scene;
 
-            Ref = api.createRigidDynamic((int) geometry.GeoType,(long)geometry.GetInternalGeometry(), scene.Ref, kinematic, false, false, disableGravity, isTrigger, mass, Vector3.zero, Quaternion.identity);
+            Ref = API.createRigidDynamic((int) geometry.GeoType, (long)geometry.GetInternalGeometry(), scene.Ref, 
+                flags.HasFlag(PhysicsObjectFlags.Kinematic), 
+                false, false, 
+                flags.HasFlag(PhysicsObjectFlags.DisableGravity), 
+                flags.HasFlag(PhysicsObjectFlags.Trigger), 
+                mass, 
+                transform.Position, transform.Rotation);
         }
 
 

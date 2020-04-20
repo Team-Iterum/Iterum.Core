@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <RootNamespace>Iterum</RootNamespace>
+        <Authors>Team Iterum</Authors>
+        <RepositoryUrl>https://github.com/Team-Iterum/Iterum.Core</RepositoryUrl>
+        <Title>Iterum.ThingTypes</Title>
+        <Description>ThingTypes (and maps) library</Description>
+        <PackageVersion>1.0.1</PackageVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <None Remove="YamlDotNet.dll" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Iterum.Core" Version="*" />
+      <PackageReference Include="YamlDotNet" Version="8.1.0" />
+    </ItemGroup>
+
+</Project>

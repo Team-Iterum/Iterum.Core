@@ -1,9 +1,9 @@
-﻿using Magistr.Network;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Iterum.Network;
 
-namespace Magistr.Protocol
+namespace Iterum.Protocol
 {
     public class ProtocolCircularManager
     {

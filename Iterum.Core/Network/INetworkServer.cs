@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Magistr.Network
+namespace Iterum.Network
 {
     public interface INetworkServer
     {
