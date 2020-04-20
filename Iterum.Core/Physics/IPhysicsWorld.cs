@@ -30,11 +30,9 @@ namespace Magistr.Physics
         
         AddRemoveThings Overlap(Vector3 position, List<IThing> except);
 
-        public IStaticObject CreateStatic(IGeometry geometry, Transform transform, bool isTrigger);
-
-        public IDynamicObject CreateDynamic(IGeometry geometry, bool kinematic, bool isTrigger, bool disableGravity,
-            float mass, Transform transform);
-        public IPhysicsCharacter CreateCapsuleCharacter(Vector3 position, Vector3 up, float height, float radius);
+        IStaticObject CreateStatic(IGeometry geometry, Transform transform, bool isTrigger);
+        IDynamicObject CreateDynamic(IGeometry geometry, bool kinematic, bool isTrigger, bool disableGravity, float mass, Transform transform);
+        IPhysicsCharacter CreateCapsuleCharacter(Vector3 position, Vector3 up, float height, float radius);
 
     }
 

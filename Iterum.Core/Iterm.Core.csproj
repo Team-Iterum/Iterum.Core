@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <RootNamespace>Iterum</RootNamespace>
+    
+    <Platforms>AnyCPU;x64</Platforms>
+    
+    <DefineConstants>TRACE;NETSTACK_INLINING</DefineConstants>
+    
+    <PackageId>Iterum.Core</PackageId>
+    <Authors>Team Iterum</Authors>
+    <RepositoryUrl>https://github.com/Team-Iterum/Iterum.Core</RepositoryUrl>
+  
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="ShellProgressBar" Version="5.0.0" />
+    <PackageReference Include="System.Memory" Version="4.5.3" />
+  </ItemGroup>
+
+</Project>

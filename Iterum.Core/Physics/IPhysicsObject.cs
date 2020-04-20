@@ -62,6 +62,6 @@ namespace Magistr.Physics
         float CharacterRotation { get; set; }
         float JumpHeight { get; }
         void Move(MoveDirection directions);
-        public void Move(Vector3 direction);
+        void Move(Vector3 direction);
     }
 }
