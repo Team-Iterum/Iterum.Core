@@ -2,26 +2,17 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <RootNamespace>Magistr</RootNamespace>
+    <RootNamespace>Iterum</RootNamespace>
     <Platforms>x64</Platforms>
     <Configurations>Debug;Release</Configurations>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <RepositoryUrl>https://github.com/Team-Iterum/Iterum.Core</RepositoryUrl>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-
+  
   <ItemGroup>
     <PackageReference Include="AdvancedDLSupport" Version="3.1.0" />
+    <PackageReference Include="Iterum.Core" Version="1.0.1" />
     <PackageReference Include="StrictEmit" Version="2.8.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\IterumFramework\IterumFramework.csproj" />
   </ItemGroup>
 
 </Project>
