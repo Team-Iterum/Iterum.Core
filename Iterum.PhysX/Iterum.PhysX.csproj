@@ -9,12 +9,12 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Authors>Team Iterum</Authors>
     <Description>PhysX server simulation</Description>
-    <PackageVersion>1.2.0</PackageVersion>
+    <PackageVersion>1.2.1</PackageVersion>
     <Title>Iterum.PhysX</Title>
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="AdvancedDLSupport" Version="3.1.0" />
+    <PackageReference Include="AdvancedDLSupport" Version="3.2.0" />
     <PackageReference Include="Iterum.Core" Version="*" />
     <PackageReference Include="StrictEmit" Version="2.8.0" />
   </ItemGroup>
