@@ -11,7 +11,7 @@
     <PackageId>Iterum.Core</PackageId>
     <Authors>Team Iterum</Authors>
     <RepositoryUrl>https://github.com/Team-Iterum/Iterum.Core</RepositoryUrl>
-    <PackageVersion>1.0.7</PackageVersion>
+    <PackageVersion>1.1.0-$(Configuration)-$(Platform)-$([System.DateTime]::UtcNow.ToString(yyyyMMdd-HHmmss))</PackageVersion>
     <Title>Iterum.Core</Title>
     <Description>Core framework</Description>
   
