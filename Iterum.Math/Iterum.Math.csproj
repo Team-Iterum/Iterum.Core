@@ -11,7 +11,7 @@
     <PackageId>Iterum.Math</PackageId>
     <Authors>Team Iterum</Authors>
     <RepositoryUrl>https://github.com/Team-Iterum/Iterum.Core</RepositoryUrl>
-    <PackageVersion>1.1.0-$(Configuration)-$(Platform)-$([System.DateTime]::UtcNow.ToString(yyyyMMdd-HHmmss))</PackageVersion>
+    <PackageVersion>1.2.0</PackageVersion>
     <Title>Iterum.Math</Title>
     <Description>Math library</Description>
   

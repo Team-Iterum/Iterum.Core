@@ -7,7 +7,7 @@
         <RepositoryUrl>https://github.com/Team-Iterum/Iterum.Core</RepositoryUrl>
         <Title>Iterum.ThingTypes</Title>
         <Description>ThingTypes (and maps) library</Description>
-        <PackageVersion>1.1.0-$(Configuration)-$(Platform)-$([System.DateTime]::UtcNow.ToString(yyyyMMdd-HHmmss))</PackageVersion>
+        <PackageVersion>1.2.0</PackageVersion>
     </PropertyGroup>
 
     <ItemGroup>

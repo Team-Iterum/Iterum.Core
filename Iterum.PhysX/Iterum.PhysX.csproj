@@ -9,7 +9,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Authors>Team Iterum</Authors>
     <Description>PhysX server simulation</Description>
-    <PackageVersion>1.1.0-$(Configuration)-$(Platform)-$([System.DateTime]::UtcNow.ToString(yyyyMMdd-HHmmss))</PackageVersion>
+    <PackageVersion>1.2.0</PackageVersion>
     <Title>Iterum.PhysX</Title>
   </PropertyGroup>
   
