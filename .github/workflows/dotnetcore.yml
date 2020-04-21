@@ -20,7 +20,7 @@ jobs:
     - name: Pack Iterum.Core
       run: dotnet pack Iterum.Core/Iterm.Core.csproj --configuration Release
     - name: Pack Iterum.Math
-      run: dotnet pack Iterum.Math/Iterm.Math.csproj --configuration Release
+      run: dotnet pack Iterum.Math/Iterum.Math.csproj --configuration Release
     - name: Pack Iterum.PhysX
       run: dotnet pack Iterum.PhysX/Iterm.PhysX.csproj --configuration Release
     - name: Pack Iterum.ThingTypes
