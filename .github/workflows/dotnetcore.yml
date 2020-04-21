@@ -17,15 +17,19 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
-    - name: Pack Iterum.Core
-      run: dotnet pack Iterum.Core/Iterum.Core.csproj --configuration Release
     - name: Pack Iterum.Math
-      run: dotnet pack Iterum.Math/Iterum.Math.csproj --configuration Release
+      run: |
+        dotnet pack Iterum.Math/Iterum.Math.csproj --configuration Release
+        dotnet push Iterum.Math/**/.nupkg --source "github" --skip-duplicate
+    - name: Pack Iterum.Core
+      run: |
+        dotnet pack Iterum.Core/Iterum.Core.csproj --configuration Release
+        dotnet push Iterum.Core/**/.nupkg --source "github" --skip-duplicate
     - name: Pack Iterum.PhysX
-      run: dotnet pack Iterum.PhysX/Iterum.PhysX.csproj --configuration Release
+      run: |
+        dotnet pack Iterum.PhysX/Iterum.PhysX.csproj --configuration Release
+        dotnet push Iterum.PhysX/**/.nupkg --source "github" --skip-duplicate
     - name: Pack Iterum.ThingTypes
-      run: dotnet pack Iterum.ThingTypes/Iterum.ThingTypes.csproj --configuration Release
-    - name: Pack Iterum.ThingTypes
-      run: dotnet pack Iterum.WebSockets/Iterum.WebSockets.csproj --configuration Release
-    - name: Push all
-      run: dotnet nuget push **/*.nupkg --source "github" --skip-duplicate
+      run: |
+        dotnet pack Iterum.ThingTypes/Iterum.ThingTypes.csproj --configuration Release
+        dotnet push Iterum.ThingTypes/**/.nupkg --source "github" --skip-duplicate

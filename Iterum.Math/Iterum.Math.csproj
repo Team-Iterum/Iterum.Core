@@ -4,16 +4,19 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <RootNamespace>Iterum</RootNamespace>
     
-    <Platforms>AnyCPU;x64</Platforms>
+    <Platforms>x64</Platforms>
     
-    <DefineConstants>TRACE;NETSTACK_INLINING</DefineConstants>
+
     
     <PackageId>Iterum.Math</PackageId>
-    <Authors>Team Iterum</Authors>
-    <RepositoryUrl>https://github.com/Team-Iterum/Iterum.Core</RepositoryUrl>
-    <PackageVersion>1.2.0</PackageVersion>
+    
     <Title>Iterum.Math</Title>
     <Description>Math library</Description>
-  
+    <Authors>Team Iterum</Authors>
+
+    <RepositoryUrl>https://github.com/Team-Iterum/Iterum.Core</RepositoryUrl>
+
+
+    <PackageVersion>1.2.2</PackageVersion>
   </PropertyGroup>
 </Project>
