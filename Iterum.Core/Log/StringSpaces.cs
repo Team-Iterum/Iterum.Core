@@ -31,7 +31,7 @@ namespace Iterum.Log
         // ReSharper disable once InconsistentNaming
         public static string s(int count)
         {
-            return spaces[count];
+            return count <= 0 ? string.Empty : spaces[count];
         }
     }
 }
