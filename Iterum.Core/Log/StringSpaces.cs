@@ -18,6 +18,7 @@ namespace Iterum.Log
 
         public static void Create(int count)
         {
+            if (count <= 0) return;
             if(spaces.ContainsKey(count)) return;
             
             StringBuilder str = new StringBuilder(count);
