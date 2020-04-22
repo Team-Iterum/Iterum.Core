@@ -17,23 +17,40 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
+
+
     - name: Pack Iterum.Math
+      if: always()
       run: |
         dotnet pack Iterum.Math/Iterum.Math.csproj --configuration Release
         dotnet nuget push Iterum.Math/**/*.nupkg --source "github" --skip-duplicate
     - name: Pack Iterum.Core
+      if: always()
       run: |
         dotnet pack Iterum.Core/Iterum.Core.csproj --configuration Release
         dotnet nuget push Iterum.Core/**/*.nupkg --source "github" --skip-duplicate
+
     - name: Pack Iterum.PhysX
+      if: always()
       run: |
         dotnet pack Iterum.PhysX/Iterum.PhysX.csproj --configuration Release
         dotnet nuget push Iterum.PhysX/**/*.nupkg --source "github" --skip-duplicate
+
     - name: Pack Iterum.ThingTypes
+      if: always()
       run: |
         dotnet pack Iterum.ThingTypes/Iterum.ThingTypes.csproj --configuration Release
         dotnet nuget push Iterum.ThingTypes/**/*.nupkg --source "github" --skip-duplicate
+
     - name: Pack Iterum.WebSockets
+      if: always()
       run: |
         dotnet pack Iterum.WebSockets/Iterum.WebSockets.csproj --configuration Release
         dotnet nuget push Iterum.WebSockets/**/*.nupkg --source "github" --skip-duplicate
+
+    - name: Pack Iterum.Telepathy
+      if: always()
+      run: |
+        dotnet pack Iterum.Telepathy/Iterum.Telepathy.csproj --configuration Release
+        dotnet nuget push Iterum.Telepathy/**/*.nupkg --source "github" --skip-duplicate
+
