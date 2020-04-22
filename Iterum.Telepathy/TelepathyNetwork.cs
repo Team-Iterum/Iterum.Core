@@ -11,6 +11,14 @@ namespace Iterum.Network
         private Server server;
         private Thread workerThread;
 
+        public TelepathyNetwork()
+        {
+            server = new Server();
+
+            Logger.Log = (s) => Debug.Log(nameof(TelepathyNetwork), s);
+            Logger.LogWarning = (s) => Debug.Log(nameof(TelepathyNetwork), $"(Warning) {s}", ConsoleColor.Yellow);
+            Logger.LogWarning = (s) => Debug.LogError(nameof(TelepathyNetwork), $"(Error) {s}");
+        }
         public void Stop()
         {
             server.Stop();
@@ -18,7 +26,6 @@ namespace Iterum.Network
 
         public void StartServer(string host, int port)
         {
-            server = new Server();
             server.Start(port);
             
             workerThread = new Thread(Update)
@@ -66,22 +73,22 @@ namespace Iterum.Network
                         }
                         case EventType.Disconnected:
                         {
-                            string address = server.GetClientAddress(msg.connectionId);
 
                             ConnectionData connection = new ConnectionData()
                             {
                                 connection = (uint) msg.connectionId,
-                                address = new IPEndPoint(IPAddress.Parse(address), 0)
                             };
                             Disconnected?.Invoke(connection);
 
                             Debug.Log(nameof(TelepathyNetwork),
-                                $"Client disconnected - ID: {msg.connectionId} IP: {address}", ConsoleColor.Magenta);
+                                $"Client disconnected - ID: {msg.connectionId}", ConsoleColor.Magenta);
 
                             break;
                         }
                     }
                 }
+                
+                Thread.Sleep(1);
             }
         }
 
