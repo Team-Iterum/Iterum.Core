@@ -32,8 +32,9 @@ namespace Iterum.ThingTypes
         public static float[] GetFloat3(this IThingType tt, string attr)
         {
             var str = tt.GetAttr(attr).Split(' ');
-            return new[] {float.Parse(str[0]), float.Parse(str[1]), float.Parse(str[3])};
+            return new[] {float.Parse(str[0]), float.Parse(str[1]), float.Parse(str[2])};
         }
+        
         #endregion
         
         
