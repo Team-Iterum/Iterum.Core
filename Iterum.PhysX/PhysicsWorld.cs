@@ -171,6 +171,8 @@ namespace Iterum.Physics.PhysXImpl
             var obj0 = scene.GetObject(ref0);
             var obj1 = scene.GetObject(ref1);
 
+            if (obj0 == null || obj1 == null) return;
+            
             ContactReport?.Invoke(this, new ContactReport()
             {
                 obj0 = obj0.Thing,
@@ -183,6 +185,7 @@ namespace Iterum.Physics.PhysXImpl
         {
             var obj0 = scene.GetObject(ref0);
             var obj1 = scene.GetObject(ref1);
+            
             if (obj0 == null || obj1 == null) return;
             
             ContactReport?.Invoke(this, new ContactReport()

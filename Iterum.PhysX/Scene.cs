@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using Iterum.Log;
 using Iterum.Math;
 using Iterum.Things;
@@ -15,7 +16,7 @@ namespace Iterum.Physics.PhysXImpl
 
         private string LogGroup => $"Scene ({Ref})";
         
-        private readonly Dictionary<long, IPhysicsObject> refs = new Dictionary<long, IPhysicsObject>();
+        private Dictionary<long, IPhysicsObject> refs = new Dictionary<long, IPhysicsObject>();
         
         public void Create(ContactReportCallbackFunc contactReport, TriggerReportCallbackFunc trigger)
         {
@@ -26,11 +27,8 @@ namespace Iterum.Physics.PhysXImpl
 
         public IPhysicsObject GetObject(in long nRef)
         {
-            if (!refs.ContainsKey(nRef)) return null;
-            
-            Debug.LogV(LogGroup, $"GetObject with Ref: {nRef}");
-            
-            return refs[nRef];
+            refs.TryGetValue(nRef, out var obj);
+            return obj;
         }
 
         public void StepPhysics(in float dt)
