@@ -103,7 +103,8 @@ namespace Iterum.Physics.PhysXImpl
 
             Ref = API.createRigidDynamic((int) geometry.GeoType, (long)geometry.GetInternalGeometry(), scene.Ref, 
                 flags.HasFlag(PhysicsObjectFlags.Kinematic), 
-                false, false, 
+                flags.HasFlag(PhysicsObjectFlags.CCD), 
+                flags.HasFlag(PhysicsObjectFlags.Retain), 
                 flags.HasFlag(PhysicsObjectFlags.DisableGravity), 
                 flags.HasFlag(PhysicsObjectFlags.Trigger), 
                 mass, 
