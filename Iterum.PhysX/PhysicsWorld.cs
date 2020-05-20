@@ -69,7 +69,7 @@ namespace Iterum.Physics.PhysXImpl
                 Thread.Sleep(sleep);
             }
             
-            Debug.LogV(LogGroup, $"Exit EtepPhysics");
+            Debug.LogV(LogGroup, $"Exit StepPhysics");
         }
         
         public void Create()
@@ -132,14 +132,14 @@ namespace Iterum.Physics.PhysXImpl
             var remove = except.Where(e => !hits.Contains(e));
             var add = hits.Where(e => !except.Contains(e));
 
-            Debug.LogV(LogGroup, $"Overlap. Position: {position} Geo: {geometry.GeoType}");
+            if(PhysicsAlias.ExtendedVerbose) Debug.LogV(LogGroup, $"Overlap. Position: {position} Geo: {geometry.GeoType}");
             
             return new AddRemoveThings { Add = add, Remove = remove };
         }
 
         public IEnumerable<IThing> Raycast(Vector3 position, Vector3 direction)
         {
-            Debug.LogV(LogGroup, $"Raycast. Position: {position} Direction: {direction}");
+            if(PhysicsAlias.ExtendedVerbose) Debug.LogV(LogGroup, $"Raycast. Position: {position} Direction: {direction}");
             throw new NotImplementedException();
         }
 

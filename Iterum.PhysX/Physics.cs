@@ -1,6 +1,5 @@
 ﻿using System;
 using AdvancedDLSupport;
-using Iterum.Physics;
 using Iterum.Log;
 using Iterum.Math;
 
@@ -9,6 +8,7 @@ namespace Iterum.Physics.PhysXImpl
     public static class PhysicsAlias
     {
         public static Physics GlobalPhysics;
+        public static bool ExtendedVerbose => GlobalPhysics.ExtendedVerbose;
         public static IPhysicsAPI API => GlobalPhysics.API;
     }
 
@@ -17,6 +17,8 @@ namespace Iterum.Physics.PhysXImpl
         private bool isCreated;
 
         public IPhysicsAPI API { get; private set; }
+
+        public bool ExtendedVerbose = false;
 
         public void Init(bool isCreatePvd = true, float toleranceLength = 1, float toleranceSpeed = 5,
             float staticFriction = 0.5f, float dynamicFriction = 0.5f, float restitution = 0.5f)
@@ -29,7 +31,6 @@ namespace Iterum.Physics.PhysXImpl
             API = builder.ActivateInterface<IPhysicsAPI>("PhysXSharpNative");
 
             API.initLog(LogDebug, LogError);
-
             
             API.initPhysics(isCreatePvd, Environment.ProcessorCount, toleranceLength, toleranceSpeed, LogCritical);
 

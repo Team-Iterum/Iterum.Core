@@ -52,14 +52,14 @@ namespace Iterum.Physics.PhysXImpl
             
             API.destroyRigidStatic(e.Ref);
             
-            Debug.LogV(LogGroup, $"StaticObject Ref: ({e.Ref}) destroyed", ConsoleColor.Red);
+            if(ExtendedVerbose) Debug.LogV(LogGroup, $"StaticObject Ref: ({e.Ref}) destroyed", ConsoleColor.Red);
         }
         public void Destroy(DynamicObject e)
         {
             refs.Remove(e.Ref);
             API.destroyRigidDynamic(e.Ref);
             
-            Debug.LogV(LogGroup, $"DynamicObject Ref: ({e.Ref}) destroyed", ConsoleColor.Red);
+            if(ExtendedVerbose) Debug.LogV(LogGroup, $"DynamicObject Ref: ({e.Ref}) destroyed", ConsoleColor.Red);
         }
         public void Destroy(PhysicsCharacter e)
         {
@@ -67,7 +67,7 @@ namespace Iterum.Physics.PhysXImpl
             
             API.destroyController(e.Ref);
             
-            Debug.LogV(LogGroup, $"PhysicsCharacter Ref: ({e.Ref}) destroyed", ConsoleColor.Red);
+            if(ExtendedVerbose) Debug.LogV(LogGroup, $"PhysicsCharacter Ref: ({e.Ref}) destroyed", ConsoleColor.Red);
 
         } 
 
@@ -80,7 +80,7 @@ namespace Iterum.Physics.PhysXImpl
             var obj = new StaticObject(geometry, flags, transform, this);
             refs.Add(obj.Ref, obj);
             
-            Debug.LogV(LogGroup, $"StaticObject Ref: ({obj.Ref}) created", ConsoleColor.DarkGreen);
+            if(ExtendedVerbose) Debug.LogV(LogGroup, $"StaticObject Ref: ({obj.Ref}) created", ConsoleColor.DarkGreen);
             return obj;
         }
 
@@ -89,7 +89,7 @@ namespace Iterum.Physics.PhysXImpl
             var obj = new DynamicObject(geometry, flags, mass, transform, this);
             refs.Add(obj.Ref, obj);
             
-            Debug.LogV(LogGroup, $"DynamicObject Ref: ({obj.Ref}) created", ConsoleColor.DarkGreen);
+            if(ExtendedVerbose) Debug.LogV(LogGroup, $"DynamicObject Ref: ({obj.Ref}) created", ConsoleColor.DarkGreen);
             
             return obj;
         }
@@ -99,7 +99,7 @@ namespace Iterum.Physics.PhysXImpl
             var obj = new PhysicsCharacter(position, up, height, radius, this);
             refs.Add(obj.Ref, obj);
 
-            Debug.LogV(LogGroup, $"CapsuleCharacter Ref: ({obj.Ref}) created", ConsoleColor.DarkGreen);
+            if(ExtendedVerbose) Debug.LogV(LogGroup, $"CapsuleCharacter Ref: ({obj.Ref}) created", ConsoleColor.DarkGreen);
             return obj;
         }
         
@@ -127,7 +127,7 @@ namespace Iterum.Physics.PhysXImpl
                 }
             });
 
-            Debug.LogV(LogGroup, $"Overlap count: {count} hits: {hits.Count}");
+            if(ExtendedVerbose) Debug.LogV(LogGroup, $"Overlap count: {count} hits: {hits.Count}");
             
             return hits;
         }
