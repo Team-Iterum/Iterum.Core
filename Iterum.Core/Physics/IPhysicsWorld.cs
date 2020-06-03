@@ -36,9 +36,10 @@ namespace Iterum.Physics
         AddRemoveThings Overlap(Vector3 position, IGeometry overlapGeometry, List<IThing> except);
         
         IEnumerable<IThing> Raycast(Vector3 position, Vector3 direction);
+        IEnumerable<IThing> SphereCast(Vector3 position, IGeometry geometry);
 
         IStaticObject CreateStatic(IGeometry geometry, Transform transform, PhysicsObjectFlags flags);
-        IDynamicObject CreateDynamic(IGeometry geometry, Transform transform, PhysicsObjectFlags flags, float mass);
+        IDynamicObject CreateDynamic(IGeometry geometry, Transform transform, PhysicsObjectFlags flags, float mass, uint word);
         IPhysicsCharacter CreateCapsuleCharacter(Transform transform, Vector3 up, float height, float radius);
     }
 
