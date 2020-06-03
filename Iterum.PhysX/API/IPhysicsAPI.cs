@@ -49,7 +49,7 @@ namespace Iterum.Physics.PhysXImpl
 
 
         long createRigidDynamic(int geoType, long nRefGeo, long nRefScene, bool kinematic, bool ccd, bool retain,
-            bool disableGravity, bool isTrigger, float mass, APIVec3 pos, APIQuat quat);
+            bool disableGravity, bool isTrigger, float mass, uint word, APIVec3 pos, APIQuat quat);
 
         void destroyRigidDynamic(long nRef);
 

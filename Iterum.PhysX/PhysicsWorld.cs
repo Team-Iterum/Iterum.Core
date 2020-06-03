@@ -143,6 +143,12 @@ namespace Iterum.Physics.PhysXImpl
             throw new NotImplementedException();
         }
 
+        public IEnumerable<IThing> SphereCast(Vector3 position, IGeometry geometry)
+        {
+            if(PhysicsAlias.ExtendedVerbose) Debug.LogV(LogGroup, $"SphereCast. Position: {position} Geometry: {geometry.GetInternalGeometry()}");
+            throw new NotImplementedException();
+        }
+
         public string LogGroup => $"PhysicsWorld ({scene.Ref})";
 
         #endregion
@@ -153,9 +159,9 @@ namespace Iterum.Physics.PhysXImpl
         {
             return scene.CreateStatic(geometry, transform, flags);
         }
-        public IDynamicObject CreateDynamic(IGeometry geometry, Transform transform, PhysicsObjectFlags flags, float mass)
+        public IDynamicObject CreateDynamic(IGeometry geometry, Transform transform, PhysicsObjectFlags flags, float mass, uint word)
         {
-            return scene.CreateDynamic(geometry, transform, flags, mass);
+            return scene.CreateDynamic(geometry, transform, flags, mass, word);
         }
         public IPhysicsCharacter CreateCapsuleCharacter(Transform transform, Vector3 up, float height, float radius)
         {

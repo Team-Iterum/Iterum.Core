@@ -84,9 +84,9 @@ namespace Iterum.Physics.PhysXImpl
             return obj;
         }
 
-        public IDynamicObject CreateDynamic(IGeometry geometry, Transform transform, PhysicsObjectFlags flags, float mass)
+        public IDynamicObject CreateDynamic(IGeometry geometry, Transform transform, PhysicsObjectFlags flags, float mass, uint word)
         {
-            var obj = new DynamicObject(geometry, flags, mass, transform, this);
+            var obj = new DynamicObject(geometry, flags, mass, word, transform,  this);
             refs.Add(obj.Ref, obj);
             
             if(ExtendedVerbose) Debug.LogV(LogGroup, $"DynamicObject Ref: ({obj.Ref}) created", ConsoleColor.DarkGreen);

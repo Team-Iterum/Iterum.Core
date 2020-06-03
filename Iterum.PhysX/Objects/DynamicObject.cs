@@ -89,7 +89,9 @@ namespace Iterum.Physics.PhysXImpl
 
         public void Destroy()
         {
-            Debug.LogV($"DynamicObject ({Ref})", $"Destroy invoked...", ConsoleColor.DarkRed);
+            if (IsDestroyed) return;
+            
+            if(ExtendedVerbose) Debug.LogV($"DynamicObject ({Ref})", $"Destroy invoked...", ConsoleColor.DarkRed);
             
             scene.Destroy(this);
             IsDestroyed = true;
@@ -97,7 +99,7 @@ namespace Iterum.Physics.PhysXImpl
         }
         #endregion
 
-        internal DynamicObject(IGeometry geometry, PhysicsObjectFlags flags, float mass, Transform transform, Scene scene)
+        internal DynamicObject(IGeometry geometry, PhysicsObjectFlags flags, float mass, uint word, Transform transform, Scene scene)
         {
             this.scene = scene;
 
@@ -108,6 +110,7 @@ namespace Iterum.Physics.PhysXImpl
                 flags.HasFlag(PhysicsObjectFlags.DisableGravity), 
                 flags.HasFlag(PhysicsObjectFlags.Trigger), 
                 mass, 
+                word,
                 transform.Position, transform.Rotation);
         }
 
