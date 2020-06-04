@@ -39,7 +39,7 @@ namespace Iterum.Physics
         IEnumerable<IThing> SphereCast(Vector3 position, IGeometry geometry);
 
         IStaticObject CreateStatic(IGeometry geometry, Transform transform, PhysicsObjectFlags flags);
-        IDynamicObject CreateDynamic(IGeometry geometry, Transform transform, PhysicsObjectFlags flags, float mass, uint word);
+        IDynamicObject CreateDynamic(IGeometry[] geometries, Transform transform, PhysicsObjectFlags flags, float mass, uint word);
         IPhysicsCharacter CreateCapsuleCharacter(Transform transform, Vector3 up, float height, float radius);
     }
 
