@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Iterum.Log;
 using Iterum.Math;
 using Iterum.Things;
@@ -99,11 +100,13 @@ namespace Iterum.Physics.PhysXImpl
         }
         #endregion
 
-        internal DynamicObject(IGeometry geometry, PhysicsObjectFlags flags, float mass, uint word, Transform transform, Scene scene)
+        internal DynamicObject(IGeometry[] geometries, PhysicsObjectFlags flags, float mass, uint word, Transform transform, Scene scene)
         {
             this.scene = scene;
 
-            Ref = API.createRigidDynamic((int) geometry.GeoType, (long)geometry.GetInternalGeometry(), scene.Ref, 
+            Ref = API.createRigidDynamic((int) geometries[0].GeoType, 
+                geometries.Length, 
+                geometries.Select(e=> (long)e.GetInternalGeometry()).ToArray(), scene.Ref, 
                 flags.HasFlag(PhysicsObjectFlags.Kinematic), 
                 flags.HasFlag(PhysicsObjectFlags.CCD), 
                 flags.HasFlag(PhysicsObjectFlags.Retain), 

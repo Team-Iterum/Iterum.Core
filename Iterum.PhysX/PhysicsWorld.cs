@@ -159,9 +159,9 @@ namespace Iterum.Physics.PhysXImpl
         {
             return scene.CreateStatic(geometry, transform, flags);
         }
-        public IDynamicObject CreateDynamic(IGeometry geometry, Transform transform, PhysicsObjectFlags flags, float mass, uint word)
+        public IDynamicObject CreateDynamic(IGeometry[] geometries, Transform transform, PhysicsObjectFlags flags, float mass, uint word)
         {
-            return scene.CreateDynamic(geometry, transform, flags, mass, word);
+            return scene.CreateDynamic(geometries, transform, flags, mass, word);
         }
         public IPhysicsCharacter CreateCapsuleCharacter(Transform transform, Vector3 up, float height, float radius)
         {

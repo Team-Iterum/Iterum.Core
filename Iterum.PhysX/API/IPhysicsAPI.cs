@@ -48,7 +48,7 @@ namespace Iterum.Physics.PhysXImpl
         void setRigidStaticRotation(long nRef, APIQuat q);
 
 
-        long createRigidDynamic(int geoType, long nRefGeo, long nRefScene, bool kinematic, bool ccd, bool retain,
+        long createRigidDynamic(int geoType, int refGeoCount, long[] refGeo, long nRefScene, bool kinematic, bool ccd, bool retain,
             bool disableGravity, bool isTrigger, float mass, uint word, APIVec3 pos, APIQuat quat);
 
         void destroyRigidDynamic(long nRef);
