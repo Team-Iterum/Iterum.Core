@@ -1,4 +1,4 @@
-﻿using CircularBuffer;
+﻿using Iterum.CircularBuffer;
 using System;
 using System.Threading;
 using Iterum.Network;

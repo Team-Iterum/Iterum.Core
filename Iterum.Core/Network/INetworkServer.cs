@@ -12,6 +12,7 @@ namespace Iterum.Network
         void Stop();
         void StartServer(string host, int port);
         void Disconnect(uint connection);
+        
         void Send(uint connection, ISerializablePacket packet);
     }
 }

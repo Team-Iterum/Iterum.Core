@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Collections;
 
-namespace CircularBuffer
+namespace Iterum.CircularBuffer
 {
     /// <inheritdoc/>
     /// <summary>
