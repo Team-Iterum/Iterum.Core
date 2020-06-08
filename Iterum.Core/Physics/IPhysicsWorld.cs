@@ -15,21 +15,14 @@ namespace Iterum.Physics
             None,
             Created,
             Destroyed,
-            Running,
         }
         
         void Create();
         void Destroy();
-        
-        void Start();
-        void Stop();
 
         public WorldState State { get; }
-
-        int TPS { get; }
+        
         int Timestamp { get; }
-        float SceneFrame { get; }
-        float DeltaTime { get; }
 
         event EventHandler<ContactReport> ContactReport;
         
@@ -38,8 +31,8 @@ namespace Iterum.Physics
         IEnumerable<IThing> Raycast(Vector3 position, Vector3 direction);
         IEnumerable<IThing> SphereCast(Vector3 position, IGeometry geometry);
 
-        IStaticObject CreateStatic(IGeometry geometry, Transform transform, PhysicsObjectFlags flags);
-        IDynamicObject CreateDynamic(IGeometry[] geometries, Transform transform, PhysicsObjectFlags flags, float mass, uint word);
+        IStaticObject     CreateStatic(IGeometry geometry, Transform transform, PhysicsObjectFlags flags);
+        IDynamicObject    CreateDynamic(IGeometry[] geometries, Transform transform, PhysicsObjectFlags flags, float mass, uint word);
         IPhysicsCharacter CreateCapsuleCharacter(Transform transform, Vector3 up, float height, float radius);
     }
 
