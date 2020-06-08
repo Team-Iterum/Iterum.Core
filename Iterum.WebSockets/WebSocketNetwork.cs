@@ -86,10 +86,10 @@ namespace Iterum.Network
                 {
                     WebSocket ws = await server.AcceptWebSocketAsync(stopAcceptToken).ConfigureAwait(false);
 
-                    uint connection = (uint) (connectionCounter++);
+                    uint conn = (uint) (connectionCounter++);
 
                     if (Connecting != null && Connecting.Invoke(new ConnectionData
-                        {address = (IPEndPoint) ws.RemoteEndpoint, connection = connection}))
+                        {address = (IPEndPoint) ws.RemoteEndpoint, conn = conn}))
                     {
                         var disconnectTokenSource = new CancellationTokenSource();
 
@@ -97,10 +97,10 @@ namespace Iterum.Network
                         {
                             Ws = ws,
                             Token = disconnectTokenSource,
-                            Connection = connection
+                            Connection = conn
                         };
 
-                        connections.Add(connection, wsc);
+                        connections.Add(conn, wsc);
 
                         _ = Task.Run(() => HandleConnectionAsync(ws, wsc, disconnectTokenSource.Token),
                             disconnectTokenSource.Token);
@@ -141,7 +141,7 @@ namespace Iterum.Network
                     ConsoleColor.Magenta);
 
                 Connected?.Invoke(
-                    new ConnectionData {address = (IPEndPoint) ws.RemoteEndpoint, connection = conn});
+                    new ConnectionData {address = (IPEndPoint) ws.RemoteEndpoint, conn = conn});
 
                 while (ws.IsConnected && (!disconnectToken.IsCancellationRequested))
                 {
@@ -160,12 +160,7 @@ namespace Iterum.Network
                     var msg = new NetworkMessage
                     {
                         data = buffer,
-                        channel = buffer[0],
-                        connection = conn,
-                        length = buffer.Length,
-                        messageNumber = 0,
-                        timeReceived = 0,
-                        userData = 0
+                        conn = conn,
                     };
 
                     Received?.Invoke(msg);
@@ -183,7 +178,7 @@ namespace Iterum.Network
                 ws.Dispose();
 
                 Disconnected?.Invoke(new ConnectionData
-                    {address = (IPEndPoint) ws.RemoteEndpoint, connection = conn});
+                    {address = (IPEndPoint) ws.RemoteEndpoint, conn = conn});
 
                 Debug.Log(nameof(WebSocketNetwork),
                     $"Client disconnected - ID: {conn} IP: {((IPEndPoint) ws.RemoteEndpoint).Address}", ConsoleColor.Magenta);

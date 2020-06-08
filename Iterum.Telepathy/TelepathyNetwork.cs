@@ -9,7 +9,7 @@ namespace Iterum.Network
 {
     public sealed class TelepathyNetwork : INetworkServer
     {
-        public int ThreadSleepTime = 1;
+        public int ThreadSleepTime = 0;
         
         private Server server;
         private Thread workerThread;
@@ -62,7 +62,7 @@ namespace Iterum.Network
 
                             ConnectionData conData = new ConnectionData()
                             {
-                                connection = (uint) msg.connectionId,
+                                conn = (uint) msg.connectionId,
                                 address = new IPEndPoint(IPAddress.Parse(address), 0)
                             };
                             connections.Add((uint) msg.connectionId, conData);
@@ -78,7 +78,7 @@ namespace Iterum.Network
                         {
                             Received?.Invoke(new NetworkMessage
                             {
-                                connection = (uint) msg.connectionId,
+                                conn = (uint) msg.connectionId,
                                 data = msg.data
                             });
 
@@ -89,7 +89,7 @@ namespace Iterum.Network
 
                             ConnectionData conData = new ConnectionData()
                             {
-                                connection = (uint) msg.connectionId,
+                                conn = (uint) msg.connectionId,
                             };
                             Disconnected?.Invoke(conData);
                             connections.Remove((uint) msg.connectionId);
