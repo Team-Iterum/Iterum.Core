@@ -25,6 +25,8 @@ namespace Iterum.Physics
         int Timestamp { get; }
 
         event EventHandler<ContactReport> ContactReport;
+
+        void Step(float dt, float subSteps = 1);
         
         AddRemoveThings Overlap(Vector3 position, IGeometry overlapGeometry, List<IThing> except);
         
