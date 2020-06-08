@@ -4,7 +4,7 @@ using static Iterum.Physics.PhysXImpl.PhysicsAlias;
 
 namespace Iterum.Physics.PhysXImpl
 {
-    public class PhysicsCharacter : IPhysicsCharacter
+    internal class PhysicsCharacter : IPhysicsCharacter
     {
 
         public readonly long Ref;

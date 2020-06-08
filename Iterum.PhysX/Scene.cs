@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using Iterum.Log;
 using Iterum.Math;
 using Iterum.Things;
@@ -8,7 +7,7 @@ using static Iterum.Physics.PhysXImpl.PhysicsAlias;
 
 namespace Iterum.Physics.PhysXImpl
 {
-    public class Scene
+    internal class Scene
     {
         public long Ref { get; private set; }
         public int Timestamp => (int) API.getSceneTimestamp(Ref);
@@ -34,7 +33,6 @@ namespace Iterum.Physics.PhysXImpl
         public void StepPhysics(in float dt)
         {
             API.stepPhysics(Ref, dt);
-            API.charactersUpdate(dt, 0.01f);
         }
 
         internal void Cleanup()
@@ -90,7 +88,6 @@ namespace Iterum.Physics.PhysXImpl
             refs.Add(obj.Ref, obj);
             
             if(ExtendedVerbose) Debug.LogV(LogGroup, $"DynamicObject Ref: ({obj.Ref}) created", ConsoleColor.DarkGreen);
-            
             return obj;
         }
 
@@ -109,7 +106,7 @@ namespace Iterum.Physics.PhysXImpl
         {
             var hits = new List<IThing>();  
 
-            int count = API.sceneOverlap(Ref, (long)geometry.GetInternalGeometry(), position, (nRef) =>
+            int count = API.sceneOverlap(Ref, (long)geometry.GetInternalGeometry(), position, nRef =>
             {
                 if (refs.ContainsKey(nRef))
                 {

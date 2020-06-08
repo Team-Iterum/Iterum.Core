@@ -15,61 +15,24 @@ namespace Iterum.Physics.PhysXImpl
 {
     public sealed class PhysicsWorld : IPhysicsWorld
     {
-        public IPhysicsWorld.WorldState State { get; private set; }
-        
-        public float SceneFrame { get; private set; }
+        public IPhysicsWorld.WorldState State { get; set; } = IPhysicsWorld.WorldState.None;
+            
         public int Timestamp { get; private set; }
-        public float DeltaTime { get; private set; }
-        public int TPS { get; }
-        
-        
+
         public event EventHandler<ContactReport> ContactReport;
-        
-        private Thread workerThread;
-        private long last;
         
         private Scene scene;
         
-        public PhysicsWorld(Vector3 gravity, int tps)
+        public PhysicsWorld(Vector3 gravity)
         {
             scene = new Scene { Gravity = gravity };
-            TPS = tps;
-            
-            Debug.LogV(LogGroup, $"Constructor. Gravity: {scene.Gravity} TPS: {TPS}");
+
+            Debug.LogV(LogGroup, $"Constructor. Gravity: {scene.Gravity}");
         }
-        private void StepPhysics()
+
+        public void Step(float dt, float subSteps = 1)
         {
-            Debug.LogV(LogGroup, $"Enter StepPhysics");
-            
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
-
-            last = stopwatch.ElapsedTicks;
-            
-            while (State == IPhysicsWorld.WorldState.Running)
-            {
-                int sleep = TPS;
-
-                float dt = (float) TimeConvert.TicksToSeconds(stopwatch.ElapsedTicks - last);
-                last = stopwatch.ElapsedTicks;
-
-                // Information
-                DeltaTime = TimeConvert.SecondsToMs(dt);
-                Timestamp = scene.Timestamp;
-
-                // Simulate
-                scene.StepPhysics(dt);
-
-                // Calculate remaining time
-                SceneFrame = (float)TimeConvert.TicksToMs(stopwatch.ElapsedTicks - last);
-                
-                sleep -= Mathf.CeilToInt(SceneFrame);
-                if (sleep < 0) sleep = 1;
-                
-                Thread.Sleep(sleep);
-            }
-            
-            Debug.LogV(LogGroup, $"Exit StepPhysics");
+            scene.StepPhysics(dt);
         }
         
         public void Create()
@@ -77,51 +40,23 @@ namespace Iterum.Physics.PhysXImpl
             if (State != IPhysicsWorld.WorldState.None) return;
             
             scene.Create(OnContactReport, OnTriggerReport);
-
+            
             State = IPhysicsWorld.WorldState.Created;
             
             Debug.LogV(LogGroup, $"Created");
         }
 
-
-
         public void Destroy()
         {
             if (State != IPhysicsWorld.WorldState.Created) return;
             
-            State = IPhysicsWorld.WorldState.Destroyed;
-
-            Stop();
             scene.Cleanup();
+            
+            State = IPhysicsWorld.WorldState.Destroyed;
             
             Debug.LogV(LogGroup, $"Destroyed");
         }
-
-        public void Start()
-        {
-            if (State != IPhysicsWorld.WorldState.Created) return;
-            
-            workerThread = new Thread(StepPhysics)
-            {
-                Name = $"PhysicsWorld Thread #{scene.Ref}",
-                Priority = ThreadPriority.Highest,
-                IsBackground = false,
-            };
-
-            workerThread.Start();
-
-            State = IPhysicsWorld.WorldState.Running;
-
-            Debug.LogV(LogGroup, $"Started");
-        }
-
-        public void Stop()
-        {
-            workerThread = null;
-            State = IPhysicsWorld.WorldState.None;
-            
-            Debug.LogV(LogGroup, $"Stop");
-        }
+        
 
         #region Overlaps / Raycasts
 

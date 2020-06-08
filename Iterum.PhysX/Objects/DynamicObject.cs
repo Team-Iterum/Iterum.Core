@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Iterum.Log;
 using Iterum.Math;
@@ -7,7 +8,7 @@ using static Iterum.Physics.PhysXImpl.PhysicsAlias;
 
 namespace Iterum.Physics.PhysXImpl
 {
-    public class DynamicObject : IDynamicObject
+    internal class DynamicObject : IDynamicObject
     {
         public long Ref { get; }
         
@@ -15,6 +16,7 @@ namespace Iterum.Physics.PhysXImpl
 
         #region IPhysicsObject
 
+        public IThing Thing { get; set; }
         public Vector3 Position
         {
             get => API.getRigidDynamicPosition(Ref);
@@ -26,8 +28,7 @@ namespace Iterum.Physics.PhysXImpl
             get => API.getRigidDynamicRotation(Ref);
             set => API.setRigidDynamicTransform(Ref, Position, value);
         }
-
-
+        
         public bool IsDestroyed { get; private set; }
 
         public float MaxLinearVelocity
@@ -35,8 +36,6 @@ namespace Iterum.Physics.PhysXImpl
             get => API.getRigidDynamicMaxLinearVelocity(Ref);
             set => API.setRigidDynamicMaxLinearVelocity(Ref, value);
         }
-
-
         public Vector3 LinearVelocity
         {
             get => API.getRigidDynamicLinearVelocity(Ref);
@@ -48,8 +47,6 @@ namespace Iterum.Physics.PhysXImpl
             get => API.getRigidDynamicMaxAngularVelocity(Ref);
             set => API.setRigidDynamicMaxAngularVelocity(Ref, value);
         }
-
-
         public Vector3 AngularVelocity
         {
             get => API.getRigidDynamicAngularVelocity(Ref);
@@ -60,33 +57,20 @@ namespace Iterum.Physics.PhysXImpl
         {
             set => API.setRigidDynamicLinearDamping(Ref, value);
         }
-
         public float AngularDamping
         {
             set => API.setRigidDynamicAngularDamping(Ref, value);
         }
 
-        public void SetKinematicTarget(Vector3 position, Quaternion rotation)
-        {
+        public void SetKinematicTarget(Vector3 position, Quaternion rotation) =>
             API.setRigidDynamicKinematicTarget(Ref, position, rotation);
-        }
-        
-        public void SetKinematicTarget(Transform transform)
-        {
+        public void SetKinematicTarget(Transform transform) =>
             API.setRigidDynamicKinematicTarget(Ref, transform.Position, transform.Rotation);
-        }
 
-        public void AddForce(Vector3 force, ForceMode mode)
-        {
-            API.addRigidDynamicForce(Ref, force, mode);
-        }
+        public void AddForce(Vector3 force, ForceMode mode) => API.addRigidDynamicForce(Ref, force, mode);
+        public void AddTorque(Vector3 torque, ForceMode mode) => API.addRigidDynamicTorque(Ref, torque, mode);
 
-        public void AddTorque(Vector3 torque, ForceMode mode)
-        {
-            API.addRigidDynamicTorque(Ref, torque, mode);
-        }
-
-        public IThing Thing { get; set; }
+        
 
         public void Destroy()
         {
@@ -100,12 +84,12 @@ namespace Iterum.Physics.PhysXImpl
         }
         #endregion
 
-        internal DynamicObject(IGeometry[] geometries, PhysicsObjectFlags flags, float mass, uint word, Transform transform, Scene scene)
+        internal DynamicObject(IReadOnlyList<IGeometry> geometries, PhysicsObjectFlags flags, float mass, uint word, Transform transform, Scene scene)
         {
             this.scene = scene;
 
             Ref = API.createRigidDynamic((int) geometries[0].GeoType, 
-                geometries.Length, 
+                geometries.Count, 
                 geometries.Select(e=> (long)e.GetInternalGeometry()).ToArray(), scene.Ref, 
                 flags.HasFlag(PhysicsObjectFlags.Kinematic), 
                 flags.HasFlag(PhysicsObjectFlags.CCD), 

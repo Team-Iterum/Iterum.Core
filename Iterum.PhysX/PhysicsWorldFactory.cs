@@ -16,10 +16,10 @@ namespace Iterum.Physics
             PhysicsAlias.GlobalPhysics.Init(isCreatePvd, toleranceLength, toleranceSpeed, 
                 staticFriction, dynamicFriction, restitution);
         }
-        public static IPhysicsWorld CreateWorld(Vector3 gravity, int tps)
+        public static IPhysicsWorld CreateWorld(Vector3 gravity)
         {
             // PhysX
-            return new PhysicsWorld(gravity, tps);
+            return new PhysicsWorld(gravity);
         }
     }
 }

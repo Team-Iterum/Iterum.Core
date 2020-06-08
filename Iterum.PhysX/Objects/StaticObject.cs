@@ -4,7 +4,7 @@ using static Iterum.Physics.PhysXImpl.PhysicsAlias;
 
 namespace Iterum.Physics.PhysXImpl
 {
-    public class StaticObject : IStaticObject
+    internal class StaticObject : IStaticObject
     {
         public long Ref { get; }
         
@@ -29,13 +29,15 @@ namespace Iterum.Physics.PhysXImpl
 
         public void Destroy()
         {
+            if (IsDestroyed) return;
+            
             scene.Destroy(this);
             IsDestroyed = true;
 
         }
         #endregion
 
-        public StaticObject(IGeometry geometry, PhysicsObjectFlags flags, Transform transform, Scene scene)
+        internal StaticObject(IGeometry geometry, PhysicsObjectFlags flags, Transform transform, Scene scene)
         {
             this.scene = scene;
 
