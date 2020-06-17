@@ -16,6 +16,7 @@ namespace Iterum.ThingTypes
             var tt = thingTypes.FirstOrDefault(e => e.Name == ttName);
             return tt;
         }
+        
         public static ThingType Find(string path, string ttName)
         {
             var thingTypes = DeserializeAll(path).Values;
@@ -29,9 +30,9 @@ namespace Iterum.ThingTypes
             var tt = thingTypes.FirstOrDefault(e => e.ID == id);
             return tt;
         }
+        
         private static IEnumerable<Type> GetDataBlocksTypes() 
         {
-            // this is making the assumption that all assemblies we need are already loaded.
             foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies()) 
             {
                 foreach (Type type in assembly.GetTypes())
@@ -45,35 +46,42 @@ namespace Iterum.ThingTypes
         public static Dictionary<int, ThingType> DeserializeAll(string directory)
         {
             var things = new Dictionary<int, ThingType>();
-            var builder = new DeserializerBuilder();
-
-            foreach (var dataBlock in GetDataBlocksTypes())
-            {
-                builder.WithTagMapping($"!{dataBlock.Name}", dataBlock);
-            }
-            var serializer =  builder.Build();
 
             var files = Directory.EnumerateFiles(directory, "*.yml", SearchOption.AllDirectories);
             foreach (string fileName in files)
             {
-                var tt = serializer.Deserialize<ThingType>(File.ReadAllText(fileName));
+                var tt = Deserialize(fileName);
+                if(tt.Name == null) continue;
+                
                 things.Add(tt.ID, tt);
             }
 
             return things;
         }
+
+        public static ThingType Deserialize(string fileName)
+        {
+            if (!File.Exists(fileName)) return default;
+
+            var builder = new DeserializerBuilder();
+
+            foreach (var dataBlock in GetDataBlocksTypes()) 
+                builder.WithTagMapping($"!{dataBlock.Name}", dataBlock);
+            
+            var serializer =  builder.Build();
+            
+            return serializer.Deserialize<ThingType>(File.ReadAllText(fileName));
+        }
         
-        public static  void Serialize(string fileName, ThingType tt, bool overwrite = true, bool outputFlags = true)
+        public static void Serialize(string fileName, ThingType tt, bool overwrite = true, bool outputFlags = true)
         {
             var builder = new SerializerBuilder();
             builder.DisableAliases();
-            builder.WithEventEmitter(e => new FlowStyleFloatSequences(e));
-            
-            foreach (var dataBlock in GetDataBlocksTypes())
-            {
+            builder.WithEventEmitter(e => new FlowFloatSequences(e));
+            builder.WithEventEmitter(e => new FlowIntSequences(e));
+
+            foreach (var dataBlock in GetDataBlocksTypes()) 
                 builder.WithTagMapping($"!{dataBlock.Name}", dataBlock);
-            }
-            
 
             var serializer = builder.Build();
             
@@ -82,15 +90,14 @@ namespace Iterum.ThingTypes
                 if(overwrite) File.Delete(fileName);
             }
 
-            using (StreamWriter w = File.AppendText(fileName))
-            {
-                w.Write($"---\n" +
-                        $"# ThingType #{tt.ID} {tt.Category}/{tt.Name}\n" +
-                        $"# Created: {DateTime.Now.ToShortDateString()} {DateTime.Now.ToLongTimeString()}\n" +
-                        $"\n");
+            using StreamWriter w = File.AppendText(fileName);
+            
+            w.Write($"---\n" +
+                    $"# ThingType #{tt.ID} {tt.Category}/{tt.Name}\n" +
+                    $"# Created: {DateTime.Now.ToShortDateString()} {DateTime.Now.ToLongTimeString()}\n" +
+                    $"\n");
                 
-                serializer.Serialize(w, tt);
-            }
+            serializer.Serialize(w, tt);
         }
     }
 }

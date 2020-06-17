@@ -21,7 +21,8 @@ namespace Iterum.ThingTypes
         {
             var builder = new SerializerBuilder();
             builder.DisableAliases();
-            builder.WithEventEmitter(e => new FlowStyleFloatSequences(e));
+            builder.WithEventEmitter(e => new FlowFloatSequences(e));
+            builder.WithEventEmitter(e => new FlowIntSequences(e));
 
             var serializer = builder.Build();
             
@@ -30,15 +31,14 @@ namespace Iterum.ThingTypes
                 if(overwrite) File.Delete(fileName);
             }
 
-            using (StreamWriter w = File.AppendText(fileName))
-            {
-                w.Write($"---\n" +
-                        $"# MapData {mapData.Name}\n" +
-                        $"# Created: {DateTime.Now.ToShortDateString()} {DateTime.Now.ToLongTimeString()}\n" +
-                        $"\n");
+            using StreamWriter w = File.AppendText(fileName);
+            
+            w.Write($"---\n" +
+                    $"# MapData {mapData.Name}\n" +
+                    $"# Created: {DateTime.Now.ToShortDateString()} {DateTime.Now.ToLongTimeString()}\n" +
+                    $"\n");
                 
-                serializer.Serialize(w, mapData);
-            }
+            serializer.Serialize(w, mapData);
         }
     }
 }
