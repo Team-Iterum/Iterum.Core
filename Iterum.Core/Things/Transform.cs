@@ -15,6 +15,6 @@ namespace Iterum.Things
         
         public Vector3 LocalForward => Rotation * Vector3.forward;
         public Vector3 LocalUp => Rotation * Vector3.up;
-        public Vector3 LocalRight => Rotation * Vector3.up;
+        public Vector3 LocalRight => Rotation * Vector3.right;
     }
 }
