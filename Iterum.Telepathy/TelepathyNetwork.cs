@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Threading;
-using Iterum.Log;
 using Telepathy;
+using Debug = Iterum.Log.Debug;
 
 namespace Iterum.Network
 {
     public sealed class TelepathyNetwork : INetworkServer
     {
-        public int ThreadSleepTime = 0;
+        public int ServerFrequency = 60;
+        public bool IsReport = true;
         
         private Server server;
         private Thread workerThread;
@@ -50,6 +52,10 @@ namespace Iterum.Network
 
         private void Update()
         {
+            long messagesReceived = 0;
+            long dataReceived = 0;
+            Stopwatch sw = Stopwatch.StartNew();
+            
             while (server.Active)
             {
                 while (server.GetNextMessage(out Message msg))
@@ -101,11 +107,28 @@ namespace Iterum.Network
                         }
                     }
                 }
+
                 
-                Thread.Sleep(ThreadSleepTime);
+                // sleep
+                Thread.Sleep(1000 / ServerFrequency);
+
+                if (IsReport)
+                {
+                    // report every 10 seconds
+                    if (sw.ElapsedMilliseconds > 1000 * 2)
+                    {
+                        Debug.Log($"Thread {Thread.CurrentThread.ManagedThreadId}", string.Format("In={0} ({1} KB/s)  Out={0} ({1} KB/s) ReceiveQueue={2}", 
+                            messagesReceived, dataReceived * 1000 / (sw.ElapsedMilliseconds * 1024), server.ReceiveQueueCount.ToString()), ConsoleColor.DarkGray);
+                    
+                        sw.Stop();
+                        sw = Stopwatch.StartNew();
+                        messagesReceived = 0;
+                        dataReceived = 0;
+                    }
+                }
+                
             }
         }
-
         
 
         public void Disconnect(uint con)
