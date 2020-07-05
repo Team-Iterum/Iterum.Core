@@ -28,10 +28,10 @@ namespace Iterum.Physics
 
         void Step(float dt, float subSteps = 1);
         
-        AddRemoveThings Overlap(Vector3 position, IGeometry overlapGeometry, List<IThing> except);
+        AddRemoveThings Overlap(long refBuffer, Vector3 position, IGeometry overlapGeometry, List<IThing> except);
         
-        IEnumerable<IThing> Raycast(Vector3 position, Vector3 direction);
-        IEnumerable<IThing> SphereCast(Vector3 position, IGeometry geometry);
+        IEnumerable<IThing> Raycast(long refBuffer, Vector3 position, Vector3 direction);
+        IEnumerable<IThing> SphereCast(long refBuffer, Vector3 position, IGeometry geometry);
 
         IStaticObject     CreateStatic(IGeometry geometry, Transform transform, PhysicsObjectFlags flags);
         IDynamicObject    CreateDynamic(IGeometry[] geometries, Transform transform, PhysicsObjectFlags flags, float mass, uint word);
