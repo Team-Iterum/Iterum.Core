@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Iterum.Math;
 using Iterum.Things;
 
@@ -28,10 +27,8 @@ namespace Iterum.Physics
 
         void Step(float dt, float subSteps = 1);
         
-        AddRemoveThings Overlap(long refBuffer, Vector3 position, IGeometry overlapGeometry, List<IThing> except);
-        
-        IEnumerable<IThing> Raycast(long refBuffer, Vector3 position, Vector3 direction);
-        IEnumerable<IThing> SphereCast(long refBuffer, Vector3 position, IGeometry geometry);
+        int Raycast(Buffer refBuffer, Vector3 position, Vector3 direction, float maxDist);
+        int SphereCast(Buffer buffer, Vector3 position, IGeometry geometry);
 
         IStaticObject     CreateStatic(IGeometry geometry, Transform transform, PhysicsObjectFlags flags);
         IDynamicObject    CreateDynamic(IGeometry[] geometries, Transform transform, PhysicsObjectFlags flags, float mass, uint word);
@@ -55,10 +52,4 @@ namespace Iterum.Physics
         
         // ReSharper restore InconsistentNaming
     }
-
-    public struct AddRemoveThings
-    {
-        public IEnumerable<IThing> Add;
-        public IEnumerable<IThing> Remove;
-    } 
 }
