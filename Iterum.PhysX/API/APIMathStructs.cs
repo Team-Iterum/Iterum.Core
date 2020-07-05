@@ -1,4 +1,6 @@
 ﻿using Iterum.Math;
+using Iterum.Things;
+
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable InconsistentNaming
 
@@ -18,6 +20,18 @@ namespace Iterum.Physics.PhysXImpl
         public static implicit operator Vector3(APIVec3 p)
         {
             return new Vector3(p.x, p.y, p.z);
+        }
+    }
+    
+    public struct APITrans
+    {
+        public APIQuat q;
+        public APIVec3 p;
+
+        public APITrans(Vector3 p, Quaternion q)
+        {
+            this.p = p;
+            this.q = q;
         }
     }
 

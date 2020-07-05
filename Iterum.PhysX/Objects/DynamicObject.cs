@@ -17,16 +17,22 @@ namespace Iterum.Physics.PhysXImpl
         #region IPhysicsObject
 
         public IThing Thing { get; set; }
+        
+        public APITrans Transform
+        {
+            get => API.getRigidDynamicTransform(Ref);
+            set => API.setRigidDynamicTransform(Ref, value);
+        }
         public Vector3 Position
         {
-            get => API.getRigidDynamicPosition(Ref);
-            set => API.setRigidDynamicTransform(Ref, value, Rotation);
+            get => API.getRigidDynamicTransform(Ref).p;
+            set => API.setRigidDynamicTransform(Ref, new APITrans(value, Rotation));
         }
 
         public Quaternion Rotation
         {
-            get => API.getRigidDynamicRotation(Ref);
-            set => API.setRigidDynamicTransform(Ref, Position, value);
+            get => API.getRigidDynamicTransform(Ref).q;
+            set => API.setRigidDynamicTransform(Ref, new APITrans(Position, value));
         }
         
         public bool IsDestroyed { get; private set; }
@@ -63,15 +69,17 @@ namespace Iterum.Physics.PhysXImpl
         }
 
         public void SetKinematicTarget(Vector3 position, Quaternion rotation) =>
-            API.setRigidDynamicKinematicTarget(Ref, position, rotation);
+            API.setRigidDynamicKinematicTarget(Ref, new APITrans(position, rotation));
+        
+        public void SetKinematicTarget(APITrans transform) => API.setRigidDynamicKinematicTarget(Ref, transform);
+        
         public void SetKinematicTarget(Transform transform) =>
-            API.setRigidDynamicKinematicTarget(Ref, transform.Position, transform.Rotation);
+            API.setRigidDynamicKinematicTarget(Ref, new APITrans(transform.Position, transform.Rotation));
 
         public void AddForce(Vector3 force, ForceMode mode) => API.addRigidDynamicForce(Ref, force, mode);
         public void AddTorque(Vector3 torque, ForceMode mode) => API.addRigidDynamicTorque(Ref, torque, mode);
 
         
-
         public void Destroy()
         {
             if (IsDestroyed) return;

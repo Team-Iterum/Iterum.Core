@@ -101,32 +101,26 @@ namespace Iterum.Physics.PhysXImpl
         }
         
         #endregion
-
-        public List<IThing> Overlap(IGeometry geometry, Vector3 position)
+        
+        public int Raycast(Buffer buffer, Vector3 position,  Vector3 direction, float maxDist)
         {
-            var hits = new List<IThing>();  
-
-            int count = API.sceneOverlap(Ref, (long)geometry.GetInternalGeometry(), position, nRef =>
+            int count = API.sceneRaycast(Ref, buffer.Ref,
+                position, direction, maxDist, (i, nRef) =>
+                {
+                    buffer.Things[i] = GetObject(nRef).Thing;
+                });
+            return count;
+        }
+        
+        public int SphereCast(Buffer buffer, IGeometry geometry, Vector3 position)
+        {
+            int count = API.sceneOverlap(Ref, buffer.Ref, 
+                (long)geometry.GetInternalGeometry(), position, (i, nRef) =>
             {
-                if (refs.ContainsKey(nRef))
-                {
-                    if (refs[nRef] == null)
-                    {
-                        Debug.LogError(LogGroup, $"Overlap. Ref: {nRef} == null");
-                        return;
-                    }
-                    
-                    hits.Add(refs[nRef].Thing);
-                }
-                else
-                {
-                    Debug.LogError(LogGroup, $"Overlap. No reference: {nRef}");
-                }
+                buffer.Things[i] = GetObject(nRef).Thing;
             });
-
-            if(ExtendedVerbose) Debug.LogV(LogGroup, $"Overlap count: {count} hits: {hits.Count}");
             
-            return hits;
+            return count;
         }
     }
 }

@@ -5,7 +5,8 @@ using AdvancedDLSupport;
 namespace Iterum.Physics.PhysXImpl
 {
 
-    public delegate void OverlapCallback(int t1);
+    public delegate void OverlapCallback(int index, long nRef);
+    public delegate void RaycastCallback(int index, long nRef);
 
     public delegate void ErrorCallbackFunc(string message);
 
@@ -22,8 +23,11 @@ namespace Iterum.Physics.PhysXImpl
     {
         void charactersUpdate(float elapsed, float minDist);
         void setControllerDirection(long nRef, APIVec3 dir);
-        int sceneOverlap(long nRefScene, long nRefGeo, APIVec3 pos, OverlapCallback callback);
-
+        long createRaycastBuffer10();
+        long createOverlapBuffer1000();
+        int sceneOverlap(long refScene, long refOverlapBuffer, long refGeo, APIVec3 pos, OverlapCallback callback);
+        int sceneRaycast(long refScene, long refRaycastBuffer, APIVec3 origin, APIVec3 unitDir, float distance,
+            RaycastCallback callback);
 
         long createConvexMesh(APIVec3[] vertices, int pointsCount);
         void cleanupConvexMesh(long nRef);
@@ -37,9 +41,8 @@ namespace Iterum.Physics.PhysXImpl
         long createRigidStatic(int geoType, long nRefGeo, long nRefScene, APIVec3 pos, APIQuat quat, bool isTrigger);
         void destroyRigidStatic(long nRef);
 
-        APIVec3 getRigidDynamicPosition(long nRef);
-        APIQuat getRigidDynamicRotation(long nRef);
-        void setRigidDynamicTransform(long nRef, APIVec3 p, APIQuat q);
+        APITrans getRigidDynamicTransform(long nRef);
+        void setRigidDynamicTransform(long nRef, APITrans t);
 
 
         APIVec3 getRigidStaticPosition(long nRef);
@@ -53,7 +56,7 @@ namespace Iterum.Physics.PhysXImpl
 
         void destroyRigidDynamic(long nRef);
 
-        void setRigidDynamicKinematicTarget(long nRef, APIVec3 p, APIQuat q);
+        void setRigidDynamicKinematicTarget(long nRef, APITrans t);
 
         void setRigidDynamicLinearVelocity(long nRef, APIVec3 v);
         void setRigidDynamicAngularVelocity(long nRef, APIVec3 v);

@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading;
 using Iterum.Math;
 using Iterum.Things;
-using Iterum.Utils;
 using Debug = Iterum.Log.Debug;
 
 
@@ -60,28 +55,20 @@ namespace Iterum.Physics.PhysXImpl
 
         #region Overlaps / Raycasts
 
-        public AddRemoveThings Overlap(Vector3 position, IGeometry geometry, List<IThing> except)
-        {
-            var hits = scene.Overlap(geometry, position);
-
-            var remove = except.Where(e => !hits.Contains(e));
-            var add = hits.Where(e => !except.Contains(e));
-
-            if(PhysicsAlias.ExtendedVerbose) Debug.LogV(LogGroup, $"Overlap. Position: {position} Geo: {geometry.GeoType}");
-            
-            return new AddRemoveThings { Add = add, Remove = remove };
-        }
-
-        public IEnumerable<IThing> Raycast(Vector3 position, Vector3 direction)
+        public int Raycast(Buffer refBuffer, Vector3 position, Vector3 direction, float maxDist)
         {
             if(PhysicsAlias.ExtendedVerbose) Debug.LogV(LogGroup, $"Raycast. Position: {position} Direction: {direction}");
-            throw new NotImplementedException();
+            
+            int count = scene.Raycast(refBuffer, position, direction, maxDist);
+            return count;
         }
 
-        public IEnumerable<IThing> SphereCast(Vector3 position, IGeometry geometry)
+        public int SphereCast(Buffer buffer, Vector3 position, IGeometry geometry)
         {
             if(PhysicsAlias.ExtendedVerbose) Debug.LogV(LogGroup, $"SphereCast. Position: {position} Geometry: {geometry.GetInternalGeometry()}");
-            throw new NotImplementedException();
+            
+            int count = scene.SphereCast(buffer, geometry, position);
+            return count;
         }
 
         public string LogGroup => $"PhysicsWorld ({scene.Ref})";
