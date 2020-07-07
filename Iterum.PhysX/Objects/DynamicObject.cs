@@ -95,7 +95,7 @@ namespace Iterum.Physics.PhysXImpl
         internal DynamicObject(IReadOnlyList<IGeometry> geometries, PhysicsObjectFlags flags, float mass, uint word, Transform transform, Scene scene)
         {
             this.scene = scene;
-
+            
             Ref = API.createRigidDynamic((int) geometries[0].GeoType, 
                 geometries.Count, 
                 geometries.Select(e=> (long)e.GetInternalGeometry()).ToArray(), scene.Ref, 
@@ -107,6 +107,9 @@ namespace Iterum.Physics.PhysXImpl
                 mass, 
                 word,
                 transform.Position, transform.Rotation);
+            
+            var trans = Transform;
+            Transform = trans;
         }
 
 

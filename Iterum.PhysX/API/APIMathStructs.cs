@@ -1,5 +1,4 @@
 ﻿using Iterum.Math;
-using Iterum.Things;
 
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable InconsistentNaming
