@@ -8,7 +8,7 @@ using static Iterum.Physics.PhysXImpl.PhysicsAlias;
 
 namespace Iterum.Physics.PhysXImpl
 {
-    internal class DynamicObject : IDynamicObject
+    public class DynamicObject : IDynamicObject
     {
         public long Ref { get; }
         
