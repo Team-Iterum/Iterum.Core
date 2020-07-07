@@ -141,6 +141,5 @@ namespace Iterum.Physics.PhysXImpl
             Word = Word;
         }
 
-
     }
 }

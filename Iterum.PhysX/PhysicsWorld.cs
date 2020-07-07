@@ -131,5 +131,7 @@ namespace Iterum.Physics.PhysXImpl
         }
 
         #endregion
+
+        public override string ToString() => LogGroup;
     }
 }
