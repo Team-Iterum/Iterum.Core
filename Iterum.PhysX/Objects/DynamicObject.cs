@@ -78,7 +78,9 @@ namespace Iterum.Physics.PhysXImpl
 
         public void AddForce(Vector3 force, ForceMode mode) => API.addRigidDynamicForce(Ref, force, mode);
         public void AddTorque(Vector3 torque, ForceMode mode) => API.addRigidDynamicTorque(Ref, torque, mode);
-
+        
+        public void SetEnabled(bool enabled) => API.setRigidDynamicDisable(Ref, !enabled);
+        public void SetWord(uint word) => API.setRigidDynamicWord(Ref, word);
         
         public void Destroy()
         {

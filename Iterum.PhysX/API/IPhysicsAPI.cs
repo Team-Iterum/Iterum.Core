@@ -49,6 +49,8 @@ namespace Iterum.Physics.PhysXImpl
         APIQuat getRigidStaticRotation(long nRef);
         void setRigidStaticPosition(long nRef, APIVec3 p);
         void setRigidStaticRotation(long nRef, APIQuat q);
+        void setRigidDynamicDisable(long nRef, bool disabled);
+        void setRigidDynamicWord(long nRef, uint word);
 
 
         long createRigidDynamic(int geoType, int refGeoCount, long[] refGeo, long nRefScene, bool kinematic, bool ccd, bool retain,
