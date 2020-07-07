@@ -136,8 +136,9 @@ namespace Iterum.Physics.PhysXImpl
                 word,
                 transform.Position, transform.Rotation);
             
-            var trans = Transform;
-            Transform = trans;
+            Transform = Transform;
+            DisabledSimulation = DisabledSimulation;
+            Word = Word;
         }
 
 
