@@ -13,6 +13,8 @@ namespace Iterum.Physics.PhysXImpl
         public long Ref { get; }
         
         private readonly Scene scene;
+        private bool disabledSimulation;
+        private uint word;
 
         #region IPhysicsObject
 
@@ -78,9 +80,32 @@ namespace Iterum.Physics.PhysXImpl
 
         public void AddForce(Vector3 force, ForceMode mode) => API.addRigidDynamicForce(Ref, force, mode);
         public void AddTorque(Vector3 torque, ForceMode mode) => API.addRigidDynamicTorque(Ref, torque, mode);
-        
-        public void SetEnabled(bool enabled) => API.setRigidDynamicDisable(Ref, !enabled);
-        public void SetWord(uint word) => API.setRigidDynamicWord(Ref, word);
+
+        public bool DisabledSimulation
+        {
+            set
+            {
+                if (disabledSimulation != value)
+                {
+                    API.setRigidDynamicDisable(Ref, value);
+                    disabledSimulation = value;
+                }
+            }
+            get => disabledSimulation;
+        }
+
+        public uint Word
+        {
+            set
+            {
+                if (word != value)
+                {
+                    API.setRigidDynamicWord(Ref, value);
+                    word = value;
+                }
+            }
+            get => word;
+        }
         
         public void Destroy()
         {
@@ -97,6 +122,7 @@ namespace Iterum.Physics.PhysXImpl
         internal DynamicObject(IReadOnlyList<IGeometry> geometries, PhysicsObjectFlags flags, float mass, uint word, Transform transform, Scene scene)
         {
             this.scene = scene;
+            this.word = word;
             
             Ref = API.createRigidDynamic((int) geometries[0].GeoType, 
                 geometries.Count, 
