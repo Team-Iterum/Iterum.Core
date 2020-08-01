@@ -11,8 +11,8 @@ namespace Iterum.Network
         
         void Stop();
         void StartServer(string host, int port);
-        void Disconnect(uint connection);
+        void Disconnect(int connection);
         
-        void Send(uint connection, ISerializablePacket packet);
+        void Send<T>(int con, T packet) where T : struct, ISerializablePacket;
     }
 }

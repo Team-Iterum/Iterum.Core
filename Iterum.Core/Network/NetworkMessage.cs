@@ -5,12 +5,12 @@ namespace Iterum.Network
     public struct NetworkMessage
     {
         public byte[] data;
-        public uint conn;
+        public int conn;
     }
 
     public struct ConnectionData
     {
-        public uint conn;
+        public int conn;
         public IPEndPoint address;
     }
 }
