@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Threading;
+using Iterum.Buffers;
 using Telepathy;
 using Debug = Iterum.Log.Debug;
 
@@ -16,7 +17,7 @@ namespace Iterum.Network
         private Server server;
         private Thread workerThread;
 
-        private Dictionary<uint, ConnectionData> connections = new Dictionary<uint, ConnectionData>();
+        private Dictionary<int, ConnectionData> connections = new Dictionary<int, ConnectionData>();
 
         public TelepathyNetwork()
         {
@@ -68,11 +69,11 @@ namespace Iterum.Network
 
                             ConnectionData conData = new ConnectionData()
                             {
-                                conn = (uint) msg.connectionId,
+                                conn = msg.connectionId,
                                 address = new IPEndPoint(IPAddress.Parse(address), 0)
                             };
-                            connections.Add((uint) msg.connectionId, conData);
-                            
+                            connections.Add(msg.connectionId, conData);
+
                             Connecting?.Invoke(conData);
                             Connected?.Invoke(conData);
 
@@ -84,7 +85,7 @@ namespace Iterum.Network
                         {
                             Received?.Invoke(new NetworkMessage
                             {
-                                conn = (uint) msg.connectionId,
+                                conn = msg.connectionId,
                                 data = msg.data
                             });
 
@@ -95,10 +96,10 @@ namespace Iterum.Network
 
                             ConnectionData conData = new ConnectionData()
                             {
-                                conn = (uint) msg.connectionId,
+                                conn = msg.connectionId,
                             };
                             Disconnected?.Invoke(conData);
-                            connections.Remove((uint) msg.connectionId);
+                            connections.Remove(msg.connectionId);
 
                             Debug.Log(nameof(TelepathyNetwork),
                                 $"Client disconnected - ID: {msg.connectionId}", ConsoleColor.Magenta);
@@ -131,17 +132,17 @@ namespace Iterum.Network
         }
         
 
-        public void Disconnect(uint con)
+        public void Disconnect(int con)
         {
-            server.Disconnect((int) con);
+            server.Disconnect(con);
             connections.Remove(con);
         }
-
-        public void Send(uint con, ISerializablePacket packet)
+        
+        public void Send<T>(int con, T packet) where T : struct, ISerializablePacket
         {
-            if (!connections.ContainsKey( con)) return;
-            
-            server.Send((int) con, packet.Serialize());
+            var data = packet.Serialize();
+            server.Send(con, data);
+            StaticBuffers.Release(data);
         }
 
         public event Action<NetworkMessage> Received;
