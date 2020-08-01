@@ -423,6 +423,27 @@ namespace Iterum.Math
             return Mathf.Sqrt(vector.x * vector.x + vector.y * vector.y + vector.z * vector.z);
         }
 
+        //Projects a vector onto a plane. The output is not normalized.
+        public static Vector3 ProjectVectorOnPlane(Vector3 planeNormal, Vector3 vector)
+        {
+            return vector - (Vector3.Dot(vector, planeNormal)*planeNormal);
+        }
+
+        public static float SignedVectorAngle(Vector3 referenceVector, Vector3 otherVector, Vector3 normal)
+        {
+            Vector3 perpVector;
+            float angle;
+
+            //Use the geometry object normal and one of the input vectors to calculate the perpendicular vector
+            perpVector = Vector3.Cross(normal, referenceVector);
+
+            //Now calculate the dot product between the perpendicular vector (perpVector) and the other input vector
+            angle = Vector3.Angle(referenceVector, otherVector);
+            angle *= Mathf.Sign(Vector3.Dot(perpVector, otherVector));
+
+            return angle;
+        }
+        
         /// <summary>
         ///   <para>Returns a copy of vector with its magnitude clamped to maxLength.</para>
         /// </summary>
@@ -551,5 +572,6 @@ namespace Iterum.Math
 
         public static implicit  operator float[](Vector3 p) => new []{p.x, p.y, p.z};
         public static implicit operator Vector3(float[] p) => new Vector3(p[0], p[1], p[2]);
+        
     }
 }
