@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Threading;
-using Iterum.Buffers;
 using Telepathy;
 using Debug = Iterum.Log.Debug;
 
@@ -140,9 +139,7 @@ namespace Iterum.Network
         
         public void Send<T>(int con, T packet) where T : struct, ISerializablePacket
         {
-            var data = packet.Serialize();
-            server.Send(con, data);
-            StaticBuffers.Release(data);
+            server.Send(con, packet.Serialize());
         }
 
         public event Action<NetworkMessage> Received;
