@@ -26,8 +26,7 @@ namespace Iterum.Physics.PhysXImpl
 
         public IPhysicsObject GetObject(in long nRef)
         {
-            refs.TryGetValue(nRef, out var obj);
-            return obj;
+            return refs.TryGetValue(nRef, out var obj) ? obj : null;
         }
 
         public void StepPhysics(in float dt)
@@ -117,7 +116,11 @@ namespace Iterum.Physics.PhysXImpl
             int count = API.sceneOverlap(Ref, buffer.Ref, 
                 (long)geometry.GetInternalGeometry(), position, (i, nRef) =>
             {
-                buffer.Things[i] = GetObject(nRef).Thing;
+                var physicsObject = GetObject(nRef);
+                if (physicsObject != null)
+                {
+                    buffer.Things[i] = physicsObject.Thing;
+                }
             });
             
             return count;

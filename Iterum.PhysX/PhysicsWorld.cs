@@ -10,8 +10,8 @@ namespace Iterum.Physics.PhysXImpl
 {
     public sealed class PhysicsWorld : IPhysicsWorld
     {
-        public IPhysicsWorld.WorldState State { get; set; } = IPhysicsWorld.WorldState.None;
-            
+        public IPhysicsWorld.WorldState State { get; private set; } = IPhysicsWorld.WorldState.None;
+
         public int Timestamp { get; private set; }
 
         public event EventHandler<ContactReport> ContactReport;
@@ -28,6 +28,7 @@ namespace Iterum.Physics.PhysXImpl
         public void Step(float dt, float subSteps = 1)
         {
             scene.StepPhysics(dt);
+            Timestamp = scene.Timestamp;
         }
         
         public void Create()

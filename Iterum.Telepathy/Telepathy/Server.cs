@@ -272,7 +272,7 @@ namespace Telepathy
             ClientToken token;
             if (clients.TryGetValue(connectionId, out token))
             {
-                return ((IPEndPoint)token.client.Client.RemoteEndPoint).Address.ToString();
+                return ((IPEndPoint) token.client.Client?.RemoteEndPoint)?.Address.ToString();
             }
             return "";
         }

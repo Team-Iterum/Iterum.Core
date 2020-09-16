@@ -66,7 +66,9 @@ namespace Iterum.Network
                         {
                             string address = server.GetClientAddress(msg.connectionId);
 
-                            ConnectionData conData = new ConnectionData()
+                            if (string.IsNullOrEmpty(address)) return;
+                            
+                            var conData = new ConnectionData()
                             {
                                 conn = msg.connectionId,
                                 address = new IPEndPoint(IPAddress.Parse(address), 0)
@@ -92,8 +94,7 @@ namespace Iterum.Network
                         }
                         case EventType.Disconnected:
                         {
-
-                            ConnectionData conData = new ConnectionData()
+                            var conData = new ConnectionData()
                             {
                                 conn = msg.connectionId,
                             };
