@@ -49,12 +49,6 @@ jobs:
         dotnet pack Iterum.ThingTypes/Iterum.ThingTypes.csproj --configuration Release
         dotnet nuget push Iterum.ThingTypes/**/*.nupkg --source "github" --skip-duplicate
 
-    - name: Pack Iterum.WebSockets
-      if: always()
-      run: |
-        dotnet pack Iterum.WebSockets/Iterum.WebSockets.csproj --configuration Release
-        dotnet nuget push Iterum.WebSockets/**/*.nupkg --source "github" --skip-duplicate
-
     - name: Pack Iterum.Telepathy
       if: always()
       run: |
