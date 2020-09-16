@@ -17,13 +17,11 @@
     <RepositoryUrl>https://github.com/Team-Iterum/Iterum.Core</RepositoryUrl>
     
 
-    <PackageVersion>3.0.1</PackageVersion>
+    <PackageVersion>3.1.0</PackageVersion>
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="ShellProgressBar" Version="5.0.0" />
     <PackageReference Include="System.Memory" Version="4.5.3" />
-
     <PackageReference Include="Iterum.Math" Version="*" />
   </ItemGroup>
 

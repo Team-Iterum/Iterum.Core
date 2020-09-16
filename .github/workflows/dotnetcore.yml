@@ -19,11 +19,18 @@ jobs:
         dotnet-version: 3.1.101
 
 
+    - name: Pack Iterum.Log
+      if: always()
+      run: |
+        dotnet pack Iterum.Log/Iterum.Log.csproj --configuration Release
+        dotnet nuget push Iterum.Log/**/*.nupkg --source "github" --skip-duplicate
+        
     - name: Pack Iterum.Math
       if: always()
       run: |
         dotnet pack Iterum.Math/Iterum.Math.csproj --configuration Release
         dotnet nuget push Iterum.Math/**/*.nupkg --source "github" --skip-duplicate
+
     - name: Pack Iterum.Core
       if: always()
       run: |
