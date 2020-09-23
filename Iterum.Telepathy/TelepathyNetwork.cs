@@ -66,9 +66,14 @@ namespace Iterum.Network
                         {
                             string address = server.GetClientAddress(msg.connectionId);
 
-                            if (string.IsNullOrEmpty(address)) return;
+                            if (string.IsNullOrEmpty(address))
+                            {
+                                Debug.Log(nameof(TelepathyNetwork),
+                                    $"Client empty address - ID: {msg.connectionId}", ConsoleColor.Magenta);
+                                break;
+                            };
                             
-                            var conData = new ConnectionData()
+                            var conData = new ConnectionData
                             {
                                 conn = msg.connectionId,
                                 address = new IPEndPoint(IPAddress.Parse(address), 0)
