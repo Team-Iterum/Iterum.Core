@@ -28,6 +28,7 @@ namespace Iterum.ThingTypes
             return Refs.Where(e => e.tag == tag);
         }
         
+        
         public string GetString(string key)
         {
             return Attrs[key];
@@ -48,6 +49,7 @@ namespace Iterum.ThingTypes
     public class MapRef
     {
         public int ID;
+        public int record;
         public string tag;
         public float[] position;
         public float[] rotation;
