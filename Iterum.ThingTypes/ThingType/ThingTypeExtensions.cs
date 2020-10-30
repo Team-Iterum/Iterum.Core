@@ -91,6 +91,11 @@ namespace Iterum.ThingTypes
         {
             return Enum.Parse<T>(tt.GetAttr(attr), true);
         }
+        
+        public static T GetEnum<T>(this IThingType tt) where T : struct, Enum
+        {
+            return Enum.Parse<T>(tt.GetAttr(typeof(T).Name), true);
+        }
 
         public static T GetData<T>(this IThingType tt) where T : class, IDataBlock
         {
