@@ -17,11 +17,10 @@
     <RepositoryUrl>https://github.com/Team-Iterum/Iterum.Core</RepositoryUrl>
     
 
-    <PackageVersion>3.2.2</PackageVersion>
+    <PackageVersion>3.2.3</PackageVersion>
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="Iterum.Core" Version="*" />
     <PackageReference Include="Iterum.Network" Version="*" />
     <PackageReference Include="Iterum.Log" Version="*" />
   </ItemGroup>

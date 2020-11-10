@@ -16,15 +16,16 @@ namespace Iterum.Network
         private Server server;
         private Thread workerThread;
 
-        private Dictionary<int, ConnectionData> connections = new Dictionary<int, ConnectionData>();
+        private const string LogGroup = "TelepathyNetwork";
+        
 
         public TelepathyNetwork()
         {
             server = new Server();
 
-            Logger.Log = (s) => Debug.Log(nameof(TelepathyNetwork), s);
-            Logger.LogWarning = (s) => Debug.Log(nameof(TelepathyNetwork), $"(Warning) {s}", ConsoleColor.Yellow);
-            Logger.LogWarning = (s) => Debug.LogError(nameof(TelepathyNetwork), $"(Error) {s}");
+            Logger.Log = s => Console.WriteLine("[{0}] {1}", LogGroup, s);
+            Logger.LogWarning = s => Console.WriteLine("[{0}] {1}", LogGroup, $"(Warning) {s}");
+            Logger.LogWarning = s => Console.WriteLine("[{0}] {1}", LogGroup, $"(Error) {s}");
         }
         
         public void Stop()
@@ -36,25 +37,23 @@ namespace Iterum.Network
         public void StartServer(string host, int port)
         {
             if (server.Active) return;
-            
-            connections.Clear();
-            
+
             server.Start(port);
             
-            workerThread = new Thread(Update)
-            {
-                Name = $"{nameof(TelepathyNetwork)} Thread"
-            };
+            workerThread = new Thread(Update);
+            #if DEBUG
+            workerThread.Name = $"{LogGroup} Thread";
+            #endif
             workerThread.Start();
             
-            Debug.LogSuccess(nameof(TelepathyNetwork), $"Started at {host}:{port}");
+            Debug.LogSuccess(LogGroup, $"Started at {host}:{port}");
         }
 
         private void Update()
         {
             long messagesReceived = 0;
             long dataReceived = 0;
-            Stopwatch sw = Stopwatch.StartNew();
+            var sw = Stopwatch.StartNew();
             
             while (server.Active)
             {
@@ -68,7 +67,7 @@ namespace Iterum.Network
 
                             if (string.IsNullOrEmpty(address))
                             {
-                                Debug.Log(nameof(TelepathyNetwork),
+                                Debug.Log(LogGroup,
                                     $"Client empty address - ID: {msg.connectionId}", ConsoleColor.Magenta);
                                 break;
                             };
@@ -78,12 +77,10 @@ namespace Iterum.Network
                                 conn = msg.connectionId,
                                 address = new IPEndPoint(IPAddress.Parse(address), 0)
                             };
-                            connections.Add(msg.connectionId, conData);
-
-                            Connecting?.Invoke(conData);
+                            
                             Connected?.Invoke(conData);
 
-                            Debug.Log(nameof(TelepathyNetwork),
+                            Debug.Log(LogGroup,
                                 $"Client connected - ID: {msg.connectionId} IP: {address}", ConsoleColor.Magenta);
                             break;
                         }
@@ -104,9 +101,8 @@ namespace Iterum.Network
                                 conn = msg.connectionId,
                             };
                             Disconnected?.Invoke(conData);
-                            connections.Remove(msg.connectionId);
 
-                            Debug.Log(nameof(TelepathyNetwork),
+                            Debug.Log(LogGroup,
                                 $"Client disconnected - ID: {msg.connectionId}", ConsoleColor.Magenta);
 
                             break;
@@ -140,7 +136,6 @@ namespace Iterum.Network
         public void Disconnect(int con)
         {
             server.Disconnect(con);
-            connections.Remove(con);
         }
         
         public void Send<T>(int con, T packet) where T : struct, ISerializablePacket
@@ -149,10 +144,8 @@ namespace Iterum.Network
         }
 
         public event Action<NetworkMessage> Received;
-        
         public event Func<ConnectionData, bool> Connecting;
         public event Action<ConnectionData> Connected;
-        
         public event Action<ConnectionData> Disconnected;
     }
 }
