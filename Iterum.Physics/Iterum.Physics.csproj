@@ -8,10 +8,10 @@
     
     <DefineConstants>TRACE;NETSTACK_INLINING</DefineConstants>
     
-    <PackageId>Iterum.Core</PackageId>
+    <PackageId>Iterum.Physics</PackageId>
     
-    <Title>Iterum.Core</Title>
-    <Description>Core framework</Description>
+    <Title>Iterum.Physics</Title>
+    <Description>Core physics</Description>
     <Authors>Team Iterum</Authors>
     
     <RepositoryUrl>https://github.com/Team-Iterum/Iterum.Core</RepositoryUrl>
@@ -21,6 +21,7 @@
   </PropertyGroup>
   
   <ItemGroup>
+      <PackageReference Include="Iterum.Math" Version="*" />
   </ItemGroup>
 
 </Project>

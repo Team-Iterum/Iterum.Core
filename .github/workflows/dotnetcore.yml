@@ -31,11 +31,29 @@ jobs:
         dotnet pack Iterum.Math/Iterum.Math.csproj --configuration Release
         dotnet nuget push Iterum.Math/**/*.nupkg --source "github" --skip-duplicate
 
+    - name: Pack Iterum.Math2
+      if: always()
+      run: |
+        dotnet pack Iterum.Math2/Iterum.Math2.csproj --configuration Release
+        dotnet nuget push Iterum.Math2/**/*.nupkg --source "github" --skip-duplicate
+
     - name: Pack Iterum.Core
       if: always()
       run: |
         dotnet pack Iterum.Core/Iterum.Core.csproj --configuration Release
         dotnet nuget push Iterum.Core/**/*.nupkg --source "github" --skip-duplicate
+
+    - name: Pack Iterum.Physics
+      if: always()
+      run: |
+        dotnet pack Iterum.Physics/Iterum.Physics.csproj --configuration Release
+        dotnet nuget push Iterum.Physics/**/*.nupkg --source "github" --skip-duplicate
+
+    - name: Pack Iterum.Network
+      if: always()
+      run: |
+        dotnet pack Iterum.Network/Iterum.Network.csproj --configuration Release
+        dotnet nuget push Iterum.Network/**/*.nupkg --source "github" --skip-duplicate
 
     - name: Pack Iterum.PhysX
       if: always()

@@ -6,12 +6,12 @@
     
     <Platforms>x64</Platforms>
     
-    <DefineConstants>TRACE;NETSTACK_INLINING</DefineConstants>
+    <DefineConstants>TRACE</DefineConstants>
     
-    <PackageId>Iterum.Core</PackageId>
+    <PackageId>Iterum.Network</PackageId>
     
-    <Title>Iterum.Core</Title>
-    <Description>Core framework</Description>
+    <Title>Iterum.Network</Title>
+    <Description>Core network</Description>
     <Authors>Team Iterum</Authors>
     
     <RepositoryUrl>https://github.com/Team-Iterum/Iterum.Core</RepositoryUrl>
@@ -21,6 +21,8 @@
   </PropertyGroup>
   
   <ItemGroup>
+    <PackageReference Include="System.Memory" Version="4.5.3" />
+    <PackageReference Include="Iterum.Math" Version="*" />
   </ItemGroup>
 
 </Project>
