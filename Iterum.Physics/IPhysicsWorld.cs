@@ -30,9 +30,9 @@ namespace Iterum.Physics
         int Raycast(Buffer refBuffer, Vector3 position, Vector3 direction, float maxDist);
         int SphereCast(Buffer buffer, Vector3 position, IGeometry geometry);
 
-        IStaticObject     CreateStatic(IGeometry geometry, Transform transform, PhysicsObjectFlags flags);
-        IDynamicObject    CreateDynamic(IGeometry[] geometries, Transform transform, PhysicsObjectFlags flags, float mass, uint word);
-        IPhysicsCharacter CreateCapsuleCharacter(Transform transform, Vector3 up, float height, float radius);
+        IStaticObject     CreateStatic(IGeometry geometry, Vector3 pos, Quaternion quat, PhysicsObjectFlags flags);
+        IDynamicObject    CreateDynamic(IGeometry[] geometries, Vector3 pos, Quaternion quat, PhysicsObjectFlags flags, float mass, uint word);
+        IPhysicsCharacter CreateCapsuleCharacter(Vector3 pos, Vector3 up, float height, float radius);
     }
 
     public struct ContactReport

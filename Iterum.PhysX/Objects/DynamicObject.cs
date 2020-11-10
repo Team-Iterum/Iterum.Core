@@ -119,7 +119,7 @@ namespace Iterum.Physics.PhysXImpl
         }
         #endregion
 
-        internal DynamicObject(IReadOnlyList<IGeometry> geometries, PhysicsObjectFlags flags, float mass, uint word, Transform transform, Scene scene)
+        internal DynamicObject(IReadOnlyList<IGeometry> geometries, PhysicsObjectFlags flags, float mass, uint word, Vector3 pos, Quaternion quat, Scene scene)
         {
             this.scene = scene;
             this.word = word;
@@ -134,7 +134,7 @@ namespace Iterum.Physics.PhysXImpl
                 flags.HasFlag(PhysicsObjectFlags.Trigger), 
                 mass, 
                 word,
-                transform.Position, transform.Rotation);
+                pos, quat);
             
             Transform = Transform;
             DisabledSimulation = DisabledSimulation;

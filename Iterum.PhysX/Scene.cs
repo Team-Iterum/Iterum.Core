@@ -1,8 +1,9 @@
 ﻿using System;
 using Iterum.Log;
-using Iterum.Math;
 using Iterum.Things;
+using Iterum.Physics;
 using System.Collections.Generic;
+using Iterum.Math;
 using static Iterum.Physics.PhysXImpl.PhysicsAlias;
 
 namespace Iterum.Physics.PhysXImpl
@@ -72,27 +73,27 @@ namespace Iterum.Physics.PhysXImpl
 
         #region Create objects
         
-        public IStaticObject CreateStatic(IGeometry geometry, Transform transform, PhysicsObjectFlags flags)
+        public IStaticObject CreateStatic(IGeometry geometry, Vector3 pos, Quaternion quat, PhysicsObjectFlags flags)
         {
-            var obj = new StaticObject(geometry, flags, transform, this);
+            var obj = new StaticObject(geometry, flags, pos, quat, this);
             refs.Add(obj.Ref, obj);
             
             if(ExtendedVerbose) Debug.LogV(LogGroup, $"StaticObject Ref: ({obj.Ref}) created", ConsoleColor.DarkGreen);
             return obj;
         }
 
-        public IDynamicObject CreateDynamic(IGeometry[] geometries, Transform transform, PhysicsObjectFlags flags, float mass, uint word)
+        public IDynamicObject CreateDynamic(IGeometry[] geometries, Vector3 pos, Quaternion quat, PhysicsObjectFlags flags, float mass, uint word)
         {
-            var obj = new DynamicObject(geometries, flags, mass, word, transform,  this);
+            var obj = new DynamicObject(geometries, flags, mass, word, pos, quat,  this);
             refs.Add(obj.Ref, obj);
             
             if(ExtendedVerbose) Debug.LogV(LogGroup, $"DynamicObject Ref: ({obj.Ref}) created", ConsoleColor.DarkGreen);
             return obj;
         }
 
-        public IPhysicsCharacter CreateCapsuleCharacter(Vector3 position, Vector3 up, float height, float radius)
+        public IPhysicsCharacter CreateCapsuleCharacter(Vector3 pos, Vector3 up, float height, float radius)
         {
-            var obj = new PhysicsCharacter(position, up, height, radius, this);
+            var obj = new PhysicsCharacter(pos, up, height, radius, this);
             refs.Add(obj.Ref, obj);
 
             if(ExtendedVerbose) Debug.LogV(LogGroup, $"CapsuleCharacter Ref: ({obj.Ref}) created", ConsoleColor.DarkGreen);

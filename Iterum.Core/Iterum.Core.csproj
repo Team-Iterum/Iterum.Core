@@ -19,8 +19,5 @@
 
     <PackageVersion>3.3.0</PackageVersion>
   </PropertyGroup>
-  
-  <ItemGroup>
-  </ItemGroup>
 
 </Project>

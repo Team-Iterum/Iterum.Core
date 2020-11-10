@@ -78,17 +78,17 @@ namespace Iterum.Physics.PhysXImpl
 
         #region Create objects
 
-        public IStaticObject CreateStatic(IGeometry geometry, Transform transform, PhysicsObjectFlags flags)
+        public IStaticObject CreateStatic(IGeometry geometry, Vector3 pos, Quaternion quat, PhysicsObjectFlags flags)
         {
-            return scene.CreateStatic(geometry, transform, flags);
+            return scene.CreateStatic(geometry, pos, quat, flags);
         }
-        public IDynamicObject CreateDynamic(IGeometry[] geometries, Transform transform, PhysicsObjectFlags flags, float mass, uint word)
+        public IDynamicObject CreateDynamic(IGeometry[] geometries, Vector3 pos, Quaternion quat, PhysicsObjectFlags flags, float mass, uint word)
         {
-            return scene.CreateDynamic(geometries, transform, flags, mass, word);
+            return scene.CreateDynamic(geometries, pos, quat, flags, mass, word);
         }
-        public IPhysicsCharacter CreateCapsuleCharacter(Transform transform, Vector3 up, float height, float radius)
+        public IPhysicsCharacter CreateCapsuleCharacter(Vector3 pos, Vector3 up, float height, float radius)
         {
-            return scene.CreateCapsuleCharacter(transform.Position, up, height, radius);
+            return scene.CreateCapsuleCharacter(pos,  up, height, radius);
         }
 
         #endregion
