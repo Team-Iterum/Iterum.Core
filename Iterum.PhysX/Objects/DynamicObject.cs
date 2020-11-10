@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using Iterum.Log;
 using Iterum.Math;
 using Iterum.Things;
 using static Iterum.Physics.PhysXImpl.PhysicsAlias;
@@ -108,9 +106,9 @@ namespace Iterum.Physics.PhysXImpl
         public void Destroy()
         {
             if (IsDestroyed) return;
-            
-            if(ExtendedVerbose) Debug.LogV($"DynamicObject ({Ref})", $"Destroy invoked...", ConsoleColor.DarkRed);
-            
+#if PHYSICS_DEBUG_LEVEL
+            Console.WriteLine($"DynamicObject ({Ref})", $"Destroy invoked...");
+#endif
             scene.Destroy(this);
             IsDestroyed = true;
 

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using Iterum.Math;
-using Iterum.Things;
-using Debug = Iterum.Log.Debug;
 
 
 [assembly: InternalsVisibleTo("AdvancedDLSupport")]
@@ -22,7 +20,10 @@ namespace Iterum.Physics.PhysXImpl
         {
             scene = new Scene { Gravity = gravity };
 
-            Debug.LogV(LogGroup, $"Constructor. Gravity: {scene.Gravity}");
+
+#if PHYSICS_DEBUG_LEVEL
+            Console.WriteLine($"Constructor. Gravity: {scene.Gravity}");
+#endif
         }
 
         public void Step(float dt, float subSteps = 1)
@@ -39,7 +40,7 @@ namespace Iterum.Physics.PhysXImpl
             
             State = IPhysicsWorld.WorldState.Created;
             
-            Debug.LogV(LogGroup, $"Created");
+            Console.WriteLine($"{LogGroup} Created");
         }
 
         public void Destroy()
@@ -50,7 +51,7 @@ namespace Iterum.Physics.PhysXImpl
             
             State = IPhysicsWorld.WorldState.Destroyed;
             
-            Debug.LogV(LogGroup, $"Destroyed");
+            Console.WriteLine($"{LogGroup} Destroyed");
         }
         
 
@@ -58,7 +59,9 @@ namespace Iterum.Physics.PhysXImpl
 
         public int Raycast(Buffer refBuffer, Vector3 position, Vector3 direction, float maxDist)
         {
-            if(PhysicsAlias.ExtendedVerbose) Debug.LogV(LogGroup, $"Raycast. Position: {position} Direction: {direction}");
+#if PHYSICS_DEBUG_LEVEL
+            Console.WriteLine($"{LogGroup} Raycast. Position: {position} Direction: {direction}");
+#endif
             
             int count = scene.Raycast(refBuffer, position, direction, maxDist);
             return count;
@@ -66,13 +69,15 @@ namespace Iterum.Physics.PhysXImpl
 
         public int SphereCast(Buffer buffer, Vector3 position, IGeometry geometry)
         {
-            if(PhysicsAlias.ExtendedVerbose) Debug.LogV(LogGroup, $"SphereCast. Position: {position} Geometry: {geometry.GetInternalGeometry()}");
+#if PHYSICS_DEBUG_LEVEL
+            Console.WriteLine($"{LogGroup} SphereCast. Position: {position} Geometry: {geometry.GetInternalGeometry()}");
+#endif
             
             int count = scene.SphereCast(buffer, geometry, position);
             return count;
         }
 
-        public string LogGroup => $"PhysicsWorld ({scene.Ref})";
+        private string LogGroup => $"[PhysicsWorld ({scene.Ref})]";
 
         #endregion
 

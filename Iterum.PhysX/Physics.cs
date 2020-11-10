@@ -1,6 +1,5 @@
 ﻿using System;
 using AdvancedDLSupport;
-using Iterum.Log;
 using Iterum.Math;
 
 namespace Iterum.Physics.PhysXImpl
@@ -8,7 +7,6 @@ namespace Iterum.Physics.PhysXImpl
     public static class PhysicsAlias
     {
         public static Physics GlobalPhysics;
-        public static bool ExtendedVerbose => GlobalPhysics.ExtendedVerbose;
         public static IPhysicsAPI API => GlobalPhysics.API;
     }
 
@@ -17,8 +15,6 @@ namespace Iterum.Physics.PhysXImpl
         private bool isCreated;
 
         public IPhysicsAPI API { get; private set; }
-
-        public bool ExtendedVerbose = false;
 
         public void Init(bool isCreatePvd = true, float toleranceLength = 1, float toleranceSpeed = 5,
             float staticFriction = 0.5f, float dynamicFriction = 0.5f, float restitution = 0.5f)
@@ -40,9 +36,9 @@ namespace Iterum.Physics.PhysXImpl
         }
 
         #region Logs
-        private static void LogDebug(string message) => Debug.Log("PhysX Debug", message, ConsoleColor.Yellow);
-        private static void LogCritical(string message) => Debug.LogError("PhysX Critical", message);
-        private static void LogError(string message) => Debug.LogError("PhysX Error", message);
+        private static void LogDebug(string message) => Console.WriteLine($"[PhysX Debug] {message}");
+        private static void LogCritical(string message) => Console.WriteLine($"[PhysX Critical] {message}");
+        private static void LogError(string message) => Console.WriteLine($"[PhysX Error] {message}");
 
         #endregion
 

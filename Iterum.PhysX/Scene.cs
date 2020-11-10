@@ -1,8 +1,4 @@
-﻿using System;
-using Iterum.Log;
-using Iterum.Things;
-using Iterum.Physics;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Iterum.Math;
 using static Iterum.Physics.PhysXImpl.PhysicsAlias;
 
@@ -14,7 +10,7 @@ namespace Iterum.Physics.PhysXImpl
         public int Timestamp => (int) API.getSceneTimestamp(Ref);
         public Vector3 Gravity;
 
-        private string LogGroup => $"Scene ({Ref})";
+        private string LogGroup => $"[Scene ({Ref})]";
         
         private Dictionary<long, IPhysicsObject> refs = new Dictionary<long, IPhysicsObject>();
         
@@ -22,7 +18,9 @@ namespace Iterum.Physics.PhysXImpl
         {
             Ref = API.createScene(Gravity, contactReport, trigger);
             
-            Debug.LogV(LogGroup, $"Create. Gravity: {Gravity}");
+#if PHYSICS_DEBUG_LEVEL
+            Console.WriteLine($"{LogGroup} Create. Gravity: {Gravity}");
+#endif
         }
 
         public IPhysicsObject GetObject(in long nRef)
@@ -39,7 +37,9 @@ namespace Iterum.Physics.PhysXImpl
         {
             API.cleanupScene(Ref);
             
-            Debug.LogV(LogGroup, $"Cleanup");
+#if PHYSICS_DEBUG_LEVEL
+            Console.WriteLine($"{LogGroup} Cleanup");
+#endif
         }
 
         #region Destroy objects
@@ -49,23 +49,26 @@ namespace Iterum.Physics.PhysXImpl
             refs.Remove(e.Ref);
             
             API.destroyRigidStatic(e.Ref);
-            
-            if(ExtendedVerbose) Debug.LogV(LogGroup, $"StaticObject Ref: ({e.Ref}) destroyed", ConsoleColor.Red);
+#if PHYSICS_DEBUG_LEVEL            
+            Console.WriteLine($"{LogGroup} StaticObject Ref: ({e.Ref}) destroyed");
+#endif
         }
         public void Destroy(DynamicObject e)
         {
             refs.Remove(e.Ref);
             API.destroyRigidDynamic(e.Ref);
-            
-            if(ExtendedVerbose) Debug.LogV(LogGroup, $"DynamicObject Ref: ({e.Ref}) destroyed", ConsoleColor.Red);
+#if PHYSICS_DEBUG_LEVEL            
+            Console.WriteLine($"{LogGroup} DynamicObject Ref: ({e.Ref}) destroyed");
+#endif
         }
         public void Destroy(PhysicsCharacter e)
         {
             refs.Remove(e.Ref);
             
             API.destroyController(e.Ref);
-            
-            if(ExtendedVerbose) Debug.LogV(LogGroup, $"PhysicsCharacter Ref: ({e.Ref}) destroyed", ConsoleColor.Red);
+#if PHYSICS_DEBUG_LEVEL            
+            Console.WriteLine($"{LogGroup} PhysicsCharacter Ref: ({e.Ref}) destroyed");
+#endif
 
         } 
 
@@ -77,8 +80,9 @@ namespace Iterum.Physics.PhysXImpl
         {
             var obj = new StaticObject(geometry, flags, pos, quat, this);
             refs.Add(obj.Ref, obj);
-            
-            if(ExtendedVerbose) Debug.LogV(LogGroup, $"StaticObject Ref: ({obj.Ref}) created", ConsoleColor.DarkGreen);
+#if PHYSICS_DEBUG_LEVEL            
+            Console.WriteLine($"{LogGroup} StaticObject Ref: ({obj.Ref}) created");
+#endif
             return obj;
         }
 
@@ -86,8 +90,9 @@ namespace Iterum.Physics.PhysXImpl
         {
             var obj = new DynamicObject(geometries, flags, mass, word, pos, quat,  this);
             refs.Add(obj.Ref, obj);
-            
-            if(ExtendedVerbose) Debug.LogV(LogGroup, $"DynamicObject Ref: ({obj.Ref}) created", ConsoleColor.DarkGreen);
+#if PHYSICS_DEBUG_LEVEL            
+            Console.WriteLine($"{LogGroup} DynamicObject Ref: ({obj.Ref}) created");
+#endif
             return obj;
         }
 
@@ -95,8 +100,9 @@ namespace Iterum.Physics.PhysXImpl
         {
             var obj = new PhysicsCharacter(pos, up, height, radius, this);
             refs.Add(obj.Ref, obj);
-
-            if(ExtendedVerbose) Debug.LogV(LogGroup, $"CapsuleCharacter Ref: ({obj.Ref}) created", ConsoleColor.DarkGreen);
+#if PHYSICS_DEBUG_LEVEL
+            Console.WriteLine($"{LogGroup} CapsuleCharacter Ref: ({obj.Ref}) created");
+#endif
             return obj;
         }
         
