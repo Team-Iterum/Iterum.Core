@@ -75,8 +75,6 @@ namespace Iterum.Physics.PhysXImpl
         
         public void SetKinematicTarget(APITrans transform) => API.setRigidDynamicKinematicTarget(Ref, transform);
         
-        public void SetKinematicTarget(Transform transform) =>
-            API.setRigidDynamicKinematicTarget(Ref, new APITrans(transform.Position, transform.Rotation));
 
         public void AddForce(Vector3 force, ForceMode mode) => API.addRigidDynamicForce(Ref, force, mode);
         public void AddTorque(Vector3 torque, ForceMode mode) => API.addRigidDynamicTorque(Ref, torque, mode);
