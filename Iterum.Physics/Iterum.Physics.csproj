@@ -21,6 +21,8 @@
   </PropertyGroup>
   
   <ItemGroup>
+      <PackageReference Include="Iterum.Core" Version="*" />
+      <PackageReference Include="Iterum.Physics" Version="*" />
       <PackageReference Include="Iterum.Math" Version="*" />
   </ItemGroup>
 
