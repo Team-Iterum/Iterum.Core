@@ -40,7 +40,9 @@ namespace Iterum.Physics.PhysXImpl
             
             State = IPhysicsWorld.WorldState.Created;
             
+#if PHYSICS_DEBUG_LEVEL
             Console.WriteLine($"{LogGroup} Created");
+#endif
         }
 
         public void Destroy()
@@ -50,8 +52,9 @@ namespace Iterum.Physics.PhysXImpl
             scene.Cleanup();
             
             State = IPhysicsWorld.WorldState.Destroyed;
-            
+#if PHYSICS_DEBUG_LEVEL
             Console.WriteLine($"{LogGroup} Destroyed");
+#endif
         }
         
 
@@ -76,6 +79,7 @@ namespace Iterum.Physics.PhysXImpl
             int count = scene.SphereCast(buffer, geometry, position);
             return count;
         }
+
 
         private string LogGroup => $"[PhysicsWorld ({scene.Ref})]";
 
@@ -138,6 +142,7 @@ namespace Iterum.Physics.PhysXImpl
 
         #endregion
 
+        
         public override string ToString() => LogGroup;
     }
 }
