@@ -127,11 +127,7 @@ namespace Iterum.Physics.PhysXImpl
             this.scene = scene;
             this.word = word;
             long[] array = geometries.Select(e => (long) e.GetInternalGeometry()).ToArray();
-            foreach (long nRef in array)
-            {
-                Console.WriteLine(nRef);
-            }
-            
+
             Ref = API.createRigidDynamic((int) geometries[0].GeoType, 
                 geometries.Count, 
                 array,
@@ -145,9 +141,9 @@ namespace Iterum.Physics.PhysXImpl
                 word,
                 pos, quat);
             
-            Transform = Transform;
-            DisabledSimulation = DisabledSimulation;
-            Word = Word;
+            // Transform = Transform;
+            // DisabledSimulation = DisabledSimulation;
+            // Word = Word;
         }
 
     }
