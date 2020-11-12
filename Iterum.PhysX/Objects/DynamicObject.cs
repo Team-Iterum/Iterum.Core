@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Iterum.Math;
 using Iterum.Things;
@@ -125,10 +126,16 @@ namespace Iterum.Physics.PhysXImpl
         {
             this.scene = scene;
             this.word = word;
+            long[] array = geometries.Select(e => (long) e.GetInternalGeometry()).ToArray();
+            foreach (long nRef in array)
+            {
+                Console.WriteLine(nRef);
+            }
             
             Ref = API.createRigidDynamic((int) geometries[0].GeoType, 
                 geometries.Count, 
-                geometries.Select(e=> (long)e.GetInternalGeometry()).ToArray(), scene.Ref, 
+                array,
+                scene.Ref, 
                 flags.HasFlag(PhysicsObjectFlags.Kinematic), 
                 flags.HasFlag(PhysicsObjectFlags.CCD), 
                 flags.HasFlag(PhysicsObjectFlags.Retain), 
