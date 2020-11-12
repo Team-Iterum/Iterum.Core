@@ -16,7 +16,13 @@ namespace Iterum.Physics.PhysXImpl
 
         #region IPhysicsObject
 
-        public IThing Thing { get; set; }
+        public IThing Thing
+        {
+            get => UserData as IThing;
+            set => UserData = value;
+        }
+
+        public object UserData { get; set; }
         
         public APITrans Transform
         {
