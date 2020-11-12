@@ -141,9 +141,9 @@ namespace Iterum.Physics.PhysXImpl
                 word,
                 pos, quat);
             
-            // Transform = Transform;
-            // DisabledSimulation = DisabledSimulation;
-            // Word = Word;
+            Transform = Transform;
+            DisabledSimulation = DisabledSimulation;
+            Word = Word;
         }
 
     }
