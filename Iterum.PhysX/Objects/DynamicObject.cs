@@ -140,10 +140,7 @@ namespace Iterum.Physics.PhysXImpl
                 mass, 
                 word,
                 pos, quat);
-            
-            Transform = Transform;
-            DisabledSimulation = DisabledSimulation;
-            Word = Word;
+           
         }
 
     }
