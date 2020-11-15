@@ -18,7 +18,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
     <IsTrimmable>false</IsTrimmable>
-    <PackageVersion>3.3.2</PackageVersion>  
+    <PackageVersion>3.3.3</PackageVersion>  
   </PropertyGroup>
   
   <ItemGroup>
@@ -34,15 +34,6 @@
       <HintPath>StrictEmit.dll</HintPath>
     </Reference>
   </ItemGroup>
-
-  <Target Name="ConfigureTrimming"
-          BeforeTargets="PrepareForILLink">>
-    <ItemGroup>
-      <ManagedAssemblyToLink Condition="'%(Filename)' == 'AdvancedDLSupport'">
-        <IsTrimmable>false</IsTrimmable>
-      </ManagedAssemblyToLink>
-    </ItemGroup>
-  </Target>
   
   <ItemGroup>
     <None Update="StrictEmit.dll">
@@ -55,5 +46,14 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+
+  <Target Name="ConfigureTrimming"
+          BeforeTargets="PrepareForILLink">
+    <ItemGroup>
+      <ManagedAssemblyToLink Condition="'%(Filename)' == 'AdvancedDLSupport'">
+        <IsTrimmable>false</IsTrimmable>
+      </ManagedAssemblyToLink>
+    </ItemGroup>
+  </Target>
 
 </Project>
