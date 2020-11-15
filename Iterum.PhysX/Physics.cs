@@ -24,6 +24,7 @@ namespace Iterum.Physics.PhysXImpl
             var builder =
                 new NativeLibraryBuilder(ImplementationOptions.UseIndirectCalls |
                                          ImplementationOptions.EnableOptimizations);
+            
             API = builder.ActivateInterface<IPhysicsAPI>("PhysXSharpNative");
 
             API.initLog(LogDebug, LogError);

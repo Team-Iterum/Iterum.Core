@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>Iterum</RootNamespace>
     
     <Platforms>x64</Platforms>
@@ -17,14 +17,21 @@
     <RepositoryUrl>https://github.com/Team-Iterum/Iterum.Core</RepositoryUrl>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     
-    <PackageVersion>3.2.8</PackageVersion>  
+    <PackageVersion>3.3.1</PackageVersion>  
   </PropertyGroup>
   
   <ItemGroup>
     <PackageReference Include="Iterum.Math" Version="*" />
     <PackageReference Include="Iterum.Physics" Version="*" />
-    <PackageReference Include="AdvancedDLSupport" Version="3.2.0" />
-    <PackageReference Include="StrictEmit" Version="2.8.0" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Reference Include="AdvancedDLSupport, Version=3.2.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>AdvancedDLSupport.dll</HintPath>
+    </Reference>
+    <Reference Include="StrictEmit, Version=2.8.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>StrictEmit.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

@@ -23,9 +23,9 @@ namespace Iterum.Network
         {
             server = new Server();
 
-            Logger.Log = s => Console.WriteLine("[{0}] {1}", LogGroup, s);
-            Logger.LogWarning = s => Console.WriteLine("[{0}] {1}", LogGroup, $"(Warning) {s}");
-            Logger.LogWarning = s => Console.WriteLine("[{0}] {1}", LogGroup, $"(Error) {s}");
+            Logger.Log = s => Debug.Log(LogGroup, s);
+            Logger.LogWarning = s => Debug.Log(LogGroup, $"(Warning) {s}");
+            Logger.LogWarning = s => Debug.Log(LogGroup, $"(Error) {s}");
         }
         
         public void Stop()
