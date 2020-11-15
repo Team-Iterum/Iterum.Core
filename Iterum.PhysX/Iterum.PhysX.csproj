@@ -16,8 +16,9 @@
 
     <RepositoryUrl>https://github.com/Team-Iterum/Iterum.Core</RepositoryUrl>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    
-    <PackageVersion>3.3.1</PackageVersion>  
+
+    <IsTrimmable>false</IsTrimmable>
+    <PackageVersion>3.3.2</PackageVersion>  
   </PropertyGroup>
   
   <ItemGroup>
@@ -32,6 +33,27 @@
     <Reference Include="StrictEmit, Version=2.8.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>StrictEmit.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <Target Name="ConfigureTrimming"
+          BeforeTargets="PrepareForILLink">>
+    <ItemGroup>
+      <ManagedAssemblyToLink Condition="'%(Filename)' == 'AdvancedDLSupport'">
+        <IsTrimmable>false</IsTrimmable>
+      </ManagedAssemblyToLink>
+    </ItemGroup>
+  </Target>
+  
+  <ItemGroup>
+    <None Update="StrictEmit.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="AdvancedDLSupport.pdb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="AdvancedDLSupport.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
