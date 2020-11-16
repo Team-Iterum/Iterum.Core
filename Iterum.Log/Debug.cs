@@ -171,6 +171,12 @@ namespace Iterum.Logs
                 _ => "#fff"
             };
 
+
+            return $"<{textColor}>text</{textColor}>";
+        }
+
+
+
             return $"<{textColor}>text</{textColor}>";
         }
 
