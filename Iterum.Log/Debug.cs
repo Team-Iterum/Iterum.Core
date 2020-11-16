@@ -42,6 +42,7 @@ namespace Iterum.Logs
         }
         #endregion
         
+        // ReSharper disable Unity.PerformanceAnalysis
         private static void Send(Level level, string group, string s, 
             ConsoleColor color = ConsoleColor.White, ConsoleColor groupColor = ConsoleColor.Gray, 
             bool timestamp = true)
