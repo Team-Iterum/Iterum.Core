@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Threading;
 using Telepathy;
-using Debug = Iterum.Log.Debug;
+using Log = Iterum.Logs.Log;
 
 namespace Iterum.Network
 {
@@ -23,9 +22,9 @@ namespace Iterum.Network
         {
             server = new Server();
 
-            Logger.Log = s => Debug.Log(LogGroup, s);
-            Logger.LogWarning = s => Debug.Log(LogGroup, $"(Warning) {s}");
-            Logger.LogWarning = s => Debug.Log(LogGroup, $"(Error) {s}");
+            Logger.Log = s => Log.Info(LogGroup, s);
+            Logger.LogWarning = s => Log.Warn(LogGroup, s);
+            Logger.LogWarning = s => Log.Error(LogGroup, s);
         }
         
         public void Stop()
@@ -46,7 +45,7 @@ namespace Iterum.Network
             #endif
             workerThread.Start();
             
-            Debug.LogSuccess(LogGroup, $"Started at {host}:{port}");
+            Log.Success(LogGroup, $"Started at {host}:{port}");
         }
 
         private void Update()
@@ -67,8 +66,7 @@ namespace Iterum.Network
 
                             if (string.IsNullOrEmpty(address))
                             {
-                                Debug.Log(LogGroup,
-                                    $"Client empty address - ID: {msg.connectionId}", ConsoleColor.Magenta);
+                                Log.Warn(LogGroup, $"Client empty address - ID: {msg.connectionId}");
                                 break;
                             };
                             
@@ -80,8 +78,7 @@ namespace Iterum.Network
                             
                             Connected?.Invoke(conData);
 
-                            Debug.Log(LogGroup,
-                                $"Client connected - ID: {msg.connectionId} IP: {address}", ConsoleColor.Magenta);
+                            Log.Info(LogGroup, $"Client connected - ID: {msg.connectionId} IP: {address}", ConsoleColor.Magenta);
                             break;
                         }
                         case EventType.Data:
@@ -102,7 +99,7 @@ namespace Iterum.Network
                             };
                             Disconnected?.Invoke(conData);
 
-                            Debug.Log(LogGroup,
+                            Log.Info(LogGroup,
                                 $"Client disconnected - ID: {msg.connectionId}", ConsoleColor.Magenta);
 
                             break;
@@ -119,7 +116,7 @@ namespace Iterum.Network
                     // report every 10 seconds
                     if (sw.ElapsedMilliseconds > 1000 * 2)
                     {
-                        Debug.Log($"Thread {Thread.CurrentThread.ManagedThreadId}", string.Format("In={0} ({1} KB/s)  Out={0} ({1} KB/s) ReceiveQueue={2}", 
+                        Log.Debug($"Thread {Thread.CurrentThread.ManagedThreadId}", string.Format("In={0} ({1} KB/s)  Out={0} ({1} KB/s) ReceiveQueue={2}", 
                             messagesReceived, dataReceived * 1000 / (sw.ElapsedMilliseconds * 1024), server.ReceiveQueueCount.ToString()), ConsoleColor.DarkGray);
                     
                         sw.Stop();
