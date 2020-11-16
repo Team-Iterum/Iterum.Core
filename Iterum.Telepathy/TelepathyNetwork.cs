@@ -56,7 +56,7 @@ namespace Iterum.Network
             
             while (server.Active)
             {
-                while (server.GetNextMessage(out Message msg))
+                while (server.GetNextMessage(out var msg))
                 {
                     switch (msg.eventType)
                     {
@@ -130,14 +130,19 @@ namespace Iterum.Network
         }
         
 
-        public void Disconnect(int con)
+        public void Disconnect(int conn)
         {
-            server.Disconnect(con);
+            server.Disconnect(conn);
         }
         
-        public void Send<T>(int con, T packet) where T : struct, ISerializablePacket
+        public void Send<T>(int conn, T packet) where T : struct, ISerializablePacket
         {
-            server.Send(con, packet.Serialize());
+            server.Send(conn, packet.Serialize());
+        }
+        
+        public void Send(int conn, byte[] packet)
+        {
+            server.Send(conn, packet);
         }
 
         public event Action<NetworkMessage> Received;
