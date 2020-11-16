@@ -1,55 +1,28 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
-namespace Iterum.Log
+namespace Iterum.Logs
 {
-    public static partial class Debug
+    public static partial class Log
     {
         
-        public static void LogError(string group, string e)
-        {
-            Log(group, e, ConsoleColor.Red, ConsoleColor.Gray);
-        }
-        public static void LogError(string e)
-        {
-            Log(e, ConsoleColor.Red);
-        }
         
-        public static void LogError(string group, Exception e)
-        {
-            Log(group, e.ToString(), ConsoleColor.Red, ConsoleColor.Gray);
-        }
-        public static void LogError(Exception e)
-        {
-            Log(e, ConsoleColor.Red);
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Error(string group, string e) => Send(Level.Error, group, e, ConsoleColor.Gray);
 
         #region Overloads
         
-        public static void LogError(object e)
-        {
-            LogError(e.ToString());
-        }
-
-        public static void LogError(double e)
-        {
-            LogError(e.ToString("F2"));
-        }
-
-        public static void LogError(float e)
-        {
-            LogError(e.ToString("F2"));
-        }
-
-        public static void LogError(long e)
-        {
-            LogError(e.ToString());
-        }
-
-        public static void LogError(int e)
-        {
-            LogError(e.ToString());
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Exception(string group, Exception e) => Send(Level.Exception, group, e.ToString(), ConsoleColor.Red);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Exception(Exception e) => Send(Level.Exception, null, e.ToString(), ConsoleColor.Red);
         
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] public static void Error(string group, object e) => Error(group, e.ToString());
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] public static void Error(string group, double e) => Error(group, e.ToString("F2"));
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] public static void Error(string group, float e)  => Error(group, e.ToString("F2"));
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] public static void Error(string group, long e)   => Error(group, e.ToString());
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] public static void Error(string group, int e)    => Error(group, e.ToString());
+
         #endregion
     }
 }

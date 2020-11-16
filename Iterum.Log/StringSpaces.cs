@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Iterum.Log
+namespace Iterum.Logs
 {
     public static class StringSpaces
     {

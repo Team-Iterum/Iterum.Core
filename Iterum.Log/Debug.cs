@@ -1,48 +1,54 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
-namespace Iterum.Log
+namespace Iterum.Logs
 {
-    public static partial class Debug
+    [Flags]
+    public enum Level
     {
-        public static event DebugLogDelegate LogCallback;
-        public static bool Verbose { get; set; } = false;
-        
-        /// <summary>
-        /// Filter log by group
-        /// </summary>
-        public static HashSet<string> IgnoreGroups { get; } = new HashSet<string>();
-        
+        None       = 0,
+        Debug      = 1 << 8,
+        Info       = 2 << 8,
+        Success    = 3 << 8,
+        Warn       = 4 << 8,
+        Error      = 5 << 8,
+        Exception  = 6 << 8,
+        Fatal      = 7 << 8,
+    }
 
+    
+    public static partial class Log
+    {
+        public static event LogDelegate LogCallback;
+
+        public static Level Enabled = Level.Debug | Level.Info | Level.Success | Level.Warn | Level.Error |
+                                            Level.Exception | Level.Fatal;
+        
         #region Back Color
         
         private static ConsoleColor backColor;
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Back(ConsoleColor consoleColor)
         {
             backColor = Console.BackgroundColor;
             Console.BackgroundColor = consoleColor;
         }
         
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ResetBack()
         {
             Console.BackgroundColor = backColor;
         }
         #endregion
-
-
-        public static void EmptyLine() => Log(string.Empty, ConsoleColor.Black, false);
         
-        public static void LogSuccess(string group, string e) => Log(@group, e, ConsoleColor.Green, ConsoleColor.Gray);
-
-        private static void Log(string group, string e, 
-            ConsoleColor color = ConsoleColor.White, 
-            ConsoleColor groupColor = ConsoleColor.Gray, 
-            bool timestamp = true,
-            bool verboseGroup = false)
+        private static void Send(Level level, string group, string s, 
+            ConsoleColor color = ConsoleColor.White, ConsoleColor groupColor = ConsoleColor.Gray, 
+            bool timestamp = true)
         {
-            if (verboseGroup && !Verbose) return;
-            if (IgnoreGroups.Contains(group)) return;
-            
+
+            if (!Enabled.HasFlag(level)) return;
+   
             var dateTime = DateTime.Now;
             var finalText = string.Empty;
             
@@ -58,6 +64,19 @@ namespace Iterum.Log
                     Console.ForegroundColor = foreground;
                 }
             }
+            
+            // Level
+            {
+                var foreground = Console.ForegroundColor;
+                if (timestamp)
+                {
+                    var text = $"[{level}] ";
+                    finalText += text;
+                    Console.ForegroundColor = GetColorLevel(level);
+                    Console.Write(text);
+                    Console.ForegroundColor = foreground;
+                }
+            }
 
             // Group
             {
@@ -67,28 +86,45 @@ namespace Iterum.Log
                     var text = $"[{group}] ";
                     finalText += text;
                     Console.ForegroundColor = groupColor;
-                    Console.Write($"[{group}] ");
+                    Console.Write(text);
                     Console.ForegroundColor = foreground;
                 }
             }
 
             // Text
             {
-                finalText += e;
+                finalText += s;
                 var foreground = Console.ForegroundColor;
                 Console.ForegroundColor = color;
-                Console.Write(e);
+                Console.Write(s);
                 Console.ForegroundColor = foreground;
                 Console.Write("\n");
             }
 
-            OnLogCallback(dateTime, group, e, finalText, color);
+            OnLogCallback(dateTime, level, group, s, finalText, color);
         }
-        
-        
-        private static void OnLogCallback(DateTime time, string group, string msg, string fullMessage, ConsoleColor color)
+
+        private static ConsoleColor GetColorLevel(Level level)
         {
-            LogCallback?.Invoke(time, group, msg, fullMessage, color);
+            var color = level switch
+            {
+                Level.Debug     => ConsoleColor.Cyan,
+                Level.Info      => ConsoleColor.White,
+                Level.Success   => ConsoleColor.Green,
+                Level.Warn      => ConsoleColor.Yellow,
+                Level.Error     => ConsoleColor.Red,
+                Level.Exception => ConsoleColor.DarkRed,
+                Level.Fatal     => ConsoleColor.DarkRed,
+                _ => ConsoleColor.White
+            };
+
+            return color;
+        }
+
+
+        private static void OnLogCallback(DateTime time, Level level, string group, string msg, string fullMessage, ConsoleColor color)
+        {
+            LogCallback?.Invoke(time, level, group, msg, fullMessage, color);
         }
     }
 }

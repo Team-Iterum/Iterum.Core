@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Iterum.Log
+namespace Iterum.Logs
 {
-    public delegate void DebugLogDelegate(DateTime time, string group, string msg, string fullMessage, ConsoleColor color);
+    public delegate void LogDelegate(DateTime time, Level level, string group, string msg, string fullMessage, ConsoleColor color);
 }
