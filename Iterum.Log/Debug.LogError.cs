@@ -8,7 +8,7 @@ namespace Iterum.Logs
         
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Error(string group, string e) => Send(Level.Error, group, e, ConsoleColor.Gray);
+        public static void Error(string group, string e) => Send(Level.Error, group, e, ConsoleColor.DarkRed);
 
         #region Overloads
         
