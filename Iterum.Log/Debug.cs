@@ -58,10 +58,16 @@ namespace Iterum.Logs
                 if (timestamp)
                 {
                     var text = $"{dateTime.ToLongTimeString()} ";
+                    
+#if UNITY_2018_3_OR_NEWER
+                    text = Tagged(text, ConsoleColor.DarkGray);
+                    finalText += text;
+#else
                     finalText += text;
                     Console.ForegroundColor = ConsoleColor.DarkGray;
                     Console.Write(text);
                     Console.ForegroundColor = foreground;
+#endif
                 }
             }
             
@@ -71,10 +77,15 @@ namespace Iterum.Logs
                 if (timestamp)
                 {
                     var text = $"[{level}] ";
+#if UNITY_2018_3_OR_NEWER
+                    text = Tagged(text, GetColorLevel(level));
+                    finalText += text;
+#else
                     finalText += text;
                     Console.ForegroundColor = GetColorLevel(level);
                     Console.Write(text);
                     Console.ForegroundColor = foreground;
+#endif
                 }
             }
 
@@ -84,23 +95,38 @@ namespace Iterum.Logs
                 if (group != null)
                 {
                     var text = $"[{group}] ";
+#if UNITY_2018_3_OR_NEWER
+                    text = Tagged(text, groupColor);
+                    finalText += text;
+#else
                     finalText += text;
                     Console.ForegroundColor = groupColor;
                     Console.Write(text);
                     Console.ForegroundColor = foreground;
+#endif
                 }
             }
 
             // Text
             {
+                
+#if UNITY_2018_3_OR_NEWER
+
+               s = Tagged(s, color);
+               finalText += s;
+#else
                 finalText += s;
                 var foreground = Console.ForegroundColor;
                 Console.ForegroundColor = color;
                 Console.Write(s);
                 Console.ForegroundColor = foreground;
                 Console.Write("\n");
+#endif
             }
 
+#if UNITY_2018_3_OR_NEWER   
+            UnityEngine.Debug.Log(finalText);
+#endif
             OnLogCallback(dateTime, level, group, s, finalText, color);
         }
 
@@ -119,6 +145,32 @@ namespace Iterum.Logs
             };
 
             return color;
+        }
+        
+        private static string Tagged(string text, ConsoleColor color)
+        {
+            string textColor = color switch
+            {
+                ConsoleColor.Black       => "#000",
+                ConsoleColor.Blue        => "#00f",
+                ConsoleColor.Cyan        => "#0ff",
+                ConsoleColor.DarkBlue    => "#009",
+                ConsoleColor.DarkCyan    => "#099",
+                ConsoleColor.DarkGray    => "#aaa",
+                ConsoleColor.DarkGreen   => "#090",
+                ConsoleColor.DarkMagenta => "#909",
+                ConsoleColor.DarkRed     => "#900",
+                ConsoleColor.DarkYellow  => "#aa0",
+                ConsoleColor.Gray        => "#ccc",
+                ConsoleColor.Green       => "#0f0",
+                ConsoleColor.Magenta     => "#f0f",
+                ConsoleColor.Red         => "#f00",
+                ConsoleColor.White       => "#fff",
+                ConsoleColor.Yellow      => "#ff0",
+                _ => "#fff"
+            };
+
+            return $"<{textColor}>text</{textColor}>";
         }
 
 
