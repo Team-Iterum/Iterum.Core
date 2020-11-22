@@ -14,5 +14,6 @@ namespace Iterum.Network
         void Disconnect(int connection);
         
         void Send<T>(int con, T packet) where T : struct, ISerializablePacket;
+        void Send(int con, byte[] packet);
     }
 }
