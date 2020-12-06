@@ -69,6 +69,14 @@ namespace Iterum.Physics.PhysXImpl
         {
             return new Buffer(API.createOverlapBuffer1000(), 1000);
         }
+        public Buffer CreateOverlapBuffer100()
+        {
+            return new Buffer(API.createOverlapBuffer10(), 10);
+        }
+        public Buffer CreateOverlapBuffer1()
+        {
+            return new Buffer(API.createOverlapBuffer1(), 1);
+        }
         
         public Buffer CreateRaycastBuffer10()
         {

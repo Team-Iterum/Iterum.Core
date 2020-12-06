@@ -70,13 +70,31 @@ namespace Iterum.Physics.PhysXImpl
             return count;
         }
 
-        public int SphereCast(Buffer buffer, Vector3 position, IGeometry geometry)
+        public int SphereCast1000(Buffer buffer, Vector3 position, IGeometry geometry)
         {
 #if PHYSICS_DEBUG_LEVEL
-            Console.WriteLine($"{LogGroup} SphereCast. Position: {position} Geometry: {geometry.GetInternalGeometry()}");
+            Console.WriteLine($"{LogGroup} SphereCast1000. Position: {position} Geometry: {geometry.GetInternalGeometry()}");
 #endif
             
-            int count = scene.SphereCast(buffer, geometry, position);
+            int count = scene.SphereCast1000(buffer, geometry, position);
+            return count;
+        }
+        public int SphereCast10(Buffer buffer, Vector3 position, IGeometry geometry)
+        {
+#if PHYSICS_DEBUG_LEVEL
+            Console.WriteLine($"{LogGroup} SphereCast10. Position: {position} Geometry: {geometry.GetInternalGeometry()}");
+#endif
+            
+            int count = scene.SphereCast10(buffer, geometry, position);
+            return count;
+        }
+        public int SphereCast1(Buffer buffer, Vector3 position, IGeometry geometry)
+        {
+#if PHYSICS_DEBUG_LEVEL
+            Console.WriteLine($"{LogGroup} SphereCast1. Position: {position} Geometry: {geometry.GetInternalGeometry()}");
+#endif
+            
+            int count = scene.SphereCast1(buffer, geometry, position);
             return count;
         }
 

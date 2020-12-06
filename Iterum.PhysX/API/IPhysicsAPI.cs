@@ -24,8 +24,12 @@ namespace Iterum.Physics.PhysXImpl
         void charactersUpdate(float elapsed, float minDist);
         void setControllerDirection(long nRef, APIVec3 dir);
         long createRaycastBuffer10();
+        long createOverlapBuffer1();
+        long createOverlapBuffer10();
         long createOverlapBuffer1000();
-        int sceneOverlap(long refScene, long refOverlapBuffer, long refGeo, APIVec3 pos, OverlapCallback callback);
+        int sceneOverlap1(long refScene, long refOverlapBuffer, long refGeo, APIVec3 pos, OverlapCallback callback);
+        int sceneOverlap10(long refScene, long refOverlapBuffer, long refGeo, APIVec3 pos, OverlapCallback callback);
+        int sceneOverlap1000(long refScene, long refOverlapBuffer, long refGeo, APIVec3 pos, OverlapCallback callback);
         int sceneRaycast(long refScene, long refRaycastBuffer, APIVec3 origin, APIVec3 unitDir, float distance,
             RaycastCallback callback);
 

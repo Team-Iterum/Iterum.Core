@@ -28,7 +28,9 @@ namespace Iterum.Physics
         void Step(float dt, float subSteps = 1);
         
         int Raycast(Buffer refBuffer, Vector3 position, Vector3 direction, float maxDist);
-        int SphereCast(Buffer buffer, Vector3 position, IGeometry geometry);
+        int SphereCast1(Buffer buffer, Vector3 position, IGeometry geometry);
+        int SphereCast10(Buffer buffer, Vector3 position, IGeometry geometry);
+        int SphereCast1000(Buffer buffer, Vector3 position, IGeometry geometry);
 
         IStaticObject     CreateStatic(IGeometry geometry, Vector3 pos, Quaternion quat, PhysicsObjectFlags flags);
         IDynamicObject    CreateDynamic(IGeometry[] geometries, Vector3 pos, Quaternion quat, PhysicsObjectFlags flags, float mass, uint word);

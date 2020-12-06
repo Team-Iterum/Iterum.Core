@@ -118,9 +118,9 @@ namespace Iterum.Physics.PhysXImpl
             return count;
         }
         
-        public int SphereCast(Buffer buffer, IGeometry geometry, Vector3 position)
+        public int SphereCast1(Buffer buffer, IGeometry geometry, Vector3 position)
         {
-            int count = API.sceneOverlap(Ref, buffer.Ref, 
+            int count = API.sceneOverlap1(Ref, buffer.Ref, 
                 (long)geometry.GetInternalGeometry(), position, (i, nRef) =>
             {
                 var physicsObject = GetObject(nRef);
@@ -129,6 +129,34 @@ namespace Iterum.Physics.PhysXImpl
                     buffer.Things[i] = physicsObject.Thing;
                 }
             });
+            
+            return count;
+        }
+        public int SphereCast10(Buffer buffer, IGeometry geometry, Vector3 position)
+        {
+            int count = API.sceneOverlap10(Ref, buffer.Ref, 
+                (long)geometry.GetInternalGeometry(), position, (i, nRef) =>
+                {
+                    var physicsObject = GetObject(nRef);
+                    if (physicsObject != null)
+                    {
+                        buffer.Things[i] = physicsObject.Thing;
+                    }
+                });
+            
+            return count;
+        }
+        public int SphereCast1000(Buffer buffer, IGeometry geometry, Vector3 position)
+        {
+            int count = API.sceneOverlap1000(Ref, buffer.Ref, 
+                (long)geometry.GetInternalGeometry(), position, (i, nRef) =>
+                {
+                    var physicsObject = GetObject(nRef);
+                    if (physicsObject != null)
+                    {
+                        buffer.Things[i] = physicsObject.Thing;
+                    }
+                });
             
             return count;
         }
