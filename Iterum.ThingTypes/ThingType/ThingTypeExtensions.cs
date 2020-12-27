@@ -45,7 +45,7 @@ namespace Iterum.ThingTypes
                 ? result : def;
         }
 
-        public static float[] GetFloat2(this IThingType tt, string attr, float[] def = null)
+        public static float[] Float2(this IThingType tt, string attr, float[] def = null)
         {
             if(tt.GetAttr(attr) == null) return def;
 
@@ -57,7 +57,7 @@ namespace Iterum.ThingTypes
             };
         }
 
-        public static float[] GetFloat3(this IThingType tt, string attr, float[] def = null)
+        public static float[] Float3(this IThingType tt, string attr, float[] def = null)
         {
             if(tt.GetAttr(attr) == null) return def;
 
