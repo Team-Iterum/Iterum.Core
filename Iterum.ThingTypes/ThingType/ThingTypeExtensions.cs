@@ -13,6 +13,13 @@ namespace Iterum.ThingTypes
             if (!tt.Attrs.ContainsKey(attr)) return null;
             return tt.Attrs[attr];
         }
+
+        public static string Str(this IThingType tt, string attr, string def = null)
+        {
+            if (tt.Attrs == null) return def;
+            if (!tt.Attrs.ContainsKey(attr)) return def;
+            return tt.Attrs[attr];
+        }
         
         public static bool HasFlag(this IThingType tt, string flag)
         {
@@ -29,8 +36,19 @@ namespace Iterum.ThingTypes
                 ? result : 0;
         }
 
-        public static float[] GetFloat2(this IThingType tt, string attr)
+        public static float Float(this IThingType tt, string attr, float def = 0)
         {
+            if(tt.GetAttr(attr) == null) return def;
+
+            return float.TryParse(tt.GetAttr(attr), 
+                NumberStyles.Any, CultureInfo.InvariantCulture, out float result)
+                ? result : def;
+        }
+
+        public static float[] GetFloat2(this IThingType tt, string attr, float[] def = null)
+        {
+            if(tt.GetAttr(attr) == null) return def;
+
             var str = tt.GetAttr(attr).Split(' ');
             return new[]
             {
@@ -39,8 +57,10 @@ namespace Iterum.ThingTypes
             };
         }
 
-        public static float[] GetFloat3(this IThingType tt, string attr)
+        public static float[] GetFloat3(this IThingType tt, string attr, float[] def = null)
         {
+            if(tt.GetAttr(attr) == null) return def;
+
             var str = tt.GetAttr(attr).Split(' ');
             return new[]
             {
@@ -62,6 +82,15 @@ namespace Iterum.ThingTypes
                 ? result : 0;
         }
 
+        public static int Int(this IThingType tt, string attr, int def = 0)
+        {
+            if(tt.GetAttr(attr) == null) return def;
+
+            return int.TryParse(tt.GetAttr(attr), 
+                NumberStyles.Any, CultureInfo.InvariantCulture, out int result)
+                ? result : def;
+        }
+
         public static int[] GetInt2(this IThingType tt, string attr)
         {
             var str = tt.GetAttr(attr).Split(' ');
@@ -71,6 +100,20 @@ namespace Iterum.ThingTypes
                 int.Parse(str[1], CultureInfo.InvariantCulture)
             };
         }
+
+
+        public static int[] Int2(this IThingType tt, string attr, int[] def = null)
+        {
+            if(tt.GetAttr(attr) == null) return def;
+
+            var str = tt.GetAttr(attr).Split(' ');
+            return new[]
+            {
+                int.Parse(str[0], CultureInfo.InvariantCulture),
+                int.Parse(str[1], CultureInfo.InvariantCulture)
+            };
+        }
+
 
         public static int[] GetInt3(this IThingType tt, string attr)
         {
@@ -82,6 +125,20 @@ namespace Iterum.ThingTypes
                 int.Parse(str[2], CultureInfo.InvariantCulture)
             };
         }
+
+        public static int[] Int3(this IThingType tt, string attr, int[] def = null)
+        {
+            if(tt.GetAttr(attr) == null) return def;
+
+            var str = tt.GetAttr(attr).Split(' ');
+            return new[]
+            {
+                int.Parse(str[0], CultureInfo.InvariantCulture),
+                int.Parse(str[1], CultureInfo.InvariantCulture),
+                int.Parse(str[2], CultureInfo.InvariantCulture)
+            };
+        }
+
 
         #endregion
 
