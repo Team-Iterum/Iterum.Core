@@ -20,7 +20,7 @@ namespace Iterum.Logs
     public static partial class Log
     {
         public static event LogDelegate LogCallback;
-        public static event Func<bool> BeforeLog;
+        public static event Func<string, bool> BeforeLog;
 
         public static Level Enabled = Level.Debug | Level.Info | Level.Success | Level.Warn | Level.Error |
                                       Level.Exception | Level.Fatal;
@@ -51,7 +51,7 @@ namespace Iterum.Logs
 
             if (!Enabled.HasFlag(level)) return;
 
-            if (BeforeLog != null && !BeforeLog.Invoke()) return;
+            if (BeforeLog != null && !BeforeLog.Invoke(s)) return;
             
             var dateTime = DateTime.Now;
             var finalText = string.Empty;
