@@ -10,7 +10,7 @@ namespace Iterum.Logs
 
         static StringSpaces()
         {
-            for (int i = 5; i < 40; i++)
+            for (int i = 1; i < 40; i++)
             {
                 Create(i);
             }

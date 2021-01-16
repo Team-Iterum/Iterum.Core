@@ -20,9 +20,10 @@ namespace Iterum.Logs
     public static partial class Log
     {
         public static event LogDelegate LogCallback;
+        public static event Func<bool> BeforeLog;
 
         public static Level Enabled = Level.Debug | Level.Info | Level.Success | Level.Warn | Level.Error |
-                                            Level.Exception | Level.Fatal;
+                                      Level.Exception | Level.Fatal;
         
         #region Back Color
         
@@ -49,7 +50,9 @@ namespace Iterum.Logs
         {
 
             if (!Enabled.HasFlag(level)) return;
-   
+
+            if (BeforeLog != null && !BeforeLog.Invoke()) return;
+            
             var dateTime = DateTime.Now;
             var finalText = string.Empty;
             
@@ -172,14 +175,9 @@ namespace Iterum.Logs
             };
 
 
-            return $"<{textColor}>text</{textColor}>";
+            return $"<color={textColor}>{text}</color>";
         }
-
-
-
-            return $"<{textColor}>text</{textColor}>";
-        }
-
+        
 
         private static void OnLogCallback(DateTime time, Level level, string group, string msg, string fullMessage, ConsoleColor color)
         {
