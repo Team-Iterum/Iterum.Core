@@ -6,16 +6,16 @@ namespace Iterum.Physics.PhysXImpl
 {
     internal class PhysicsCharacter : IPhysicsCharacter
     {
-
-        public readonly long Ref;
+        public long Ref { get; }
 
         private readonly Scene scene;
-        public float JumpHeight { get; } = 11f;
-
-        #region IPhysicsCharacter
-
-        public Vector3 Direction { get; private set; }
+        public float JumpHeight { get; set; } = 11f;
         public float Speed { get; set; } = 0.1f;
+
+        
+        #region IPhysicsCharacter
+        public Vector3 Direction { get; private set; }
+        
         public float CharacterRotation { get; set; }
 
         public Vector3 FootPosition
@@ -26,6 +26,10 @@ namespace Iterum.Physics.PhysXImpl
 
         public void Destroy()
         {
+            if (IsDestroyed) return;
+#if PHYSICS_DEBUG_LEVEL
+            Console.WriteLine($"PhysicsCharacter ({Ref})", $"Destroy invoked...");
+#endif
             scene.Destroy(this);
             IsDestroyed = true;
         }
@@ -47,15 +51,25 @@ namespace Iterum.Physics.PhysXImpl
 
         #endregion
 
-        internal PhysicsCharacter(Vector3 pos, Vector3 up, float height, float radius, Scene scene)
+        internal PhysicsCharacter(Scene scene, Vector3 pos, Vector3 up, float height, float radius, float stepOffset = 0.05f)
         {
             this.scene = scene;
 
-            Ref = API.createCapsuleCharacter(this.scene.Ref, pos, up.normalized, height, radius, 0.05f);
+            Ref = API.createCapsuleCharacter(this.scene.Ref, pos, up.normalized, height, radius, stepOffset);
 
             Move(Vector3.zero + scene.Gravity);
         }
 
+        /// <summary>
+        /// Dont use with CharactersUpdate in Scene class
+        /// </summary>
+        /// <param name="elapsed"></param>
+        /// <param name="minDist"></param>
+        public void UpdateSingle(float elapsed, float minDist)
+        {
+            API.characterUpdate(Ref, elapsed, minDist);
+        }
+        
         public void Move(Vector3 direction)
         {
             Direction = direction;

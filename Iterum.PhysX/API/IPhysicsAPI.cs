@@ -21,7 +21,8 @@ namespace Iterum.Physics.PhysXImpl
 
     public interface IPhysicsAPI
     {
-        void charactersUpdate(float elapsed, float minDist);
+        void characterUpdate(long nRef, float elapsed, float minDist);
+        void charactersUpdate(long refScene, float elapsed, float minDist);
         void setControllerDirection(long nRef, APIVec3 dir);
         long createRaycastBuffer10();
         long createOverlapBuffer1();

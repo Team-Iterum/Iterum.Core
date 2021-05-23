@@ -32,6 +32,11 @@ namespace Iterum.Physics.PhysXImpl
             Timestamp = scene.Timestamp;
         }
         
+        public void CharactersUpdate(float elapsed, float minDist)
+        {
+            scene.CharactersUpdate(elapsed, minDist);
+        }
+        
         public void Create()
         {
             if (State != IPhysicsWorld.WorldState.None) return;
@@ -117,6 +122,12 @@ namespace Iterum.Physics.PhysXImpl
         {
             return scene.CreateCapsuleCharacter(pos,  up, height, radius);
         }
+        
+        public IPhysicsCharacter CreateCapsuleCharacter2(Vector3 pos, Vector3 up, float height, float radius, float stepOffset = 0.05f)
+        {
+            return scene.CreateCapsuleCharacter(pos,  up, height, radius, stepOffset);
+        }
+        
 
         #endregion
 

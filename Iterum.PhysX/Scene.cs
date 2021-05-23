@@ -96,9 +96,9 @@ namespace Iterum.Physics.PhysXImpl
             return obj;
         }
 
-        public IPhysicsCharacter CreateCapsuleCharacter(Vector3 pos, Vector3 up, float height, float radius)
+        public IPhysicsCharacter CreateCapsuleCharacter(Vector3 pos, Vector3 up, float height, float radius, float stepOffset = 0.05f)
         {
-            var obj = new PhysicsCharacter(pos, up, height, radius, this);
+            var obj = new PhysicsCharacter(this, pos, up, height, radius, stepOffset);
             refs.Add(obj.Ref, obj);
 #if PHYSICS_DEBUG_LEVEL
             Console.WriteLine($"{LogGroup} CapsuleCharacter Ref: ({obj.Ref}) created");
@@ -159,6 +159,11 @@ namespace Iterum.Physics.PhysXImpl
                 });
             
             return count;
+        }
+
+        public void CharactersUpdate(float elapsed, float minDist)
+        {
+            API.charactersUpdate(Ref, elapsed, minDist);
         }
     }
 }
