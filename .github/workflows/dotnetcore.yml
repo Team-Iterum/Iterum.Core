@@ -26,6 +26,8 @@ jobs:
       run: |
         rm -f ./nuget.config
         
+      # restore
+        
     - name: Pack Iterum.Log
       if: always()
       run: |
