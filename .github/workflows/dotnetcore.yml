@@ -25,15 +25,7 @@ jobs:
     - name: Adjust NuGet Config Credentials
       run: |
         rm -f ./nuget.config
-    
-    - name: Ensure GitHub NuGet Source
-      run: |
-        dotnet nuget add source https://nuget.pkg.github.com/Team-Iterum/index.json \
-          -n github \
-          -u ${{ secrets.PERSONAL_USERNAME }} \
-          -p ${{ secrets.PERSONAL_TOKEN }} \
-          --store-password-in-clear-text
-
+        
     - name: Pack Iterum.Log
       if: always()
       run: |
