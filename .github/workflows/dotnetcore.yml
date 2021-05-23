@@ -26,7 +26,21 @@ jobs:
       run: |
         rm -f ./nuget.config
         
-      # restore
+    - name: Restore Iterum.Log
+      run: |
+        dotnet restore Iterum.Log/Iterum.Log.csproj
+    
+    - name: Restore Iterum.Math
+      run: |
+        dotnet restore Iterum.Math/Iterum.Math.csproj
+        
+    - name: Ensure GitHub NuGet Source
+      run: |
+        dotnet nuget add source https://nuget.pkg.github.com/Team-Iterum/index.json \
+          -n github \
+          -u ${{ secrets.PERSONAL_USERNAME }} \
+          -p ${{ secrets.PERSONAL_TOKEN }} \
+          --store-password-in-clear-text
         
     - name: Pack Iterum.Log
       if: always()
