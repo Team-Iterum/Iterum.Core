@@ -32,9 +32,7 @@ jobs:
       if: always()
       run: |
         dotnet pack Iterum.Log/Iterum.Log.csproj --configuration Release
-        dotnet nuget push Iterum.Log/**/*.nupkg  --skip-duplicate
-      env:
-        NUGET_AUTH_TOKEN:  ${{secrets.GITHUB_TOKEN}}
+        dotnet nuget push Iterum.Log/**/*.nupkg -k ${{secrets.PERSONAL_TOKEN}}  --skip-duplicate
         
     - name: Pack Iterum.Math
       if: always()
