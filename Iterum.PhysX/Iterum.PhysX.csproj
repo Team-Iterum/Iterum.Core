@@ -17,12 +17,12 @@
     <RepositoryUrl>https://github.com/Team-Iterum/Iterum.Core</RepositoryUrl>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
-    <PackageVersion>3.3.7</PackageVersion>
+    <PackageVersion>3.4.0</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Iterum.Math" Version="*" />
-    <PackageReference Include="Iterum.Physics" Version="3.3.2" />
+    <PackageReference Include="Iterum.Math" Version="4.0.1" />
+    <PackageReference Include="Iterum.Physics" Version="3.4.0" />
     <PackageReference Include="AdvancedDLSupport" Version="3.2.0" />
   </ItemGroup>
 

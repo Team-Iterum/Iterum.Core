@@ -8,8 +8,13 @@
     }
     public interface IGeometry
     {
-        object GetInternalGeometry();
+        object GetInternal();
 
         GeoType GeoType { get; }
+    }
+    
+    public interface IMaterial
+    {
+        object GetInternal();
     }
 }

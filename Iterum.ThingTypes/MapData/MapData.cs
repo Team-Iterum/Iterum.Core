@@ -50,6 +50,7 @@ namespace Iterum.ThingTypes
     {
         public int ID;
         public int record;
+        public string name;
         public string tag;
         public float[] position;
         public float[] rotation;

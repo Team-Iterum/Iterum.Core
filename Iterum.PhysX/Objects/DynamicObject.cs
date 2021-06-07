@@ -122,16 +122,17 @@ namespace Iterum.Physics.PhysXImpl
         }
         #endregion
 
-        internal DynamicObject(IReadOnlyList<IGeometry> geometries, PhysicsObjectFlags flags, float mass, uint word, Vector3 pos, Quaternion quat, Scene scene)
+        internal DynamicObject(IReadOnlyList<IGeometry> geometries, IMaterial mat, PhysicsObjectFlags flags, float mass, uint word,Vector3 pos, Quaternion quat, Scene scene)
         {
             this.scene = scene;
             this.word = word;
-            long[] array = geometries.Select(e => (long) e.GetInternalGeometry()).ToArray();
+            long[] array = geometries.Select(e => (long) e.GetInternal()).ToArray();
 
             Ref = API.createRigidDynamic((int) geometries[0].GeoType, 
                 geometries.Count, 
                 array,
-                scene.Ref, 
+                scene.Ref,
+                (long) mat.GetInternal(),
                 flags.HasFlag(PhysicsObjectFlags.Kinematic), 
                 flags.HasFlag(PhysicsObjectFlags.CCD), 
                 flags.HasFlag(PhysicsObjectFlags.Retain), 

@@ -43,7 +43,7 @@ namespace Iterum.Physics.PhysXImpl
         long createBoxGeometry(APIVec3 half);
         void cleanupGeometry(long nRef);
 
-        long createRigidStatic(int geoType, long nRefGeo, long nRefScene, APIVec3 pos, APIQuat quat, bool isTrigger);
+        long createRigidStatic(int geoType, long nRefGeo, long nRefScene, long nRefMat, APIVec3 pos, APIQuat quat, bool isTrigger);
         void destroyRigidStatic(long nRef);
 
         APITrans getRigidDynamicTransform(long nRef);
@@ -58,7 +58,7 @@ namespace Iterum.Physics.PhysXImpl
         void setRigidDynamicWord(long nRef, uint word);
 
 
-        long createRigidDynamic(int geoType, int refGeoCount, long[] refGeo, long nRefScene, bool kinematic, bool ccd, bool retain,
+        long createRigidDynamic(int geoType, int refGeoCount, long[] refGeo, long nRefScene, long nRefMat, bool kinematic, bool ccd, bool retain,
             bool disableGravity, bool isTrigger, float mass, uint word, APIVec3 pos, APIQuat quat);
 
         void destroyRigidDynamic(long nRef);
@@ -86,7 +86,7 @@ namespace Iterum.Physics.PhysXImpl
 
 
 
-        long createCapsuleCharacter(long nRefScene, APIVec3 pos, APIVec3 up, float height, float radius,
+        long createCapsuleCharacter(long nRefScene, long nRefMat, APIVec3 pos, APIVec3 up, float height, float radius,
             float stepOffset);
 
         void destroyController(long nRef);
@@ -116,8 +116,11 @@ namespace Iterum.Physics.PhysXImpl
             [DelegateLifetime(DelegateLifetime.Persistent)]
             ErrorCallbackFunc func);
 
-        void initGlobalMaterial(float staticFriction, float dynamicFriction, float restitution);
+        long createMaterial(float staticFriction, float dynamicFriction, float restitution);
+        void cleanupMaterial(long nRef);
+        
         void stepPhysics(long nRef, float dt);
+        
         void cleanupPhysics();
 
     }

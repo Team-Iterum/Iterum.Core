@@ -51,11 +51,11 @@ namespace Iterum.Physics.PhysXImpl
 
         #endregion
 
-        internal PhysicsCharacter(Scene scene, Vector3 pos, Vector3 up, float height, float radius, float stepOffset = 0.05f)
+        internal PhysicsCharacter(IMaterial mat, Vector3 pos, Vector3 up, float height, float radius, float stepOffset, Scene scene)
         {
             this.scene = scene;
 
-            Ref = API.createCapsuleCharacter(this.scene.Ref, pos, up.normalized, height, radius, stepOffset);
+            Ref = API.createCapsuleCharacter(this.scene.Ref, (long) mat.GetInternal(), pos, up.normalized, height, radius, stepOffset);
 
             Move(Vector3.zero + scene.Gravity);
         }

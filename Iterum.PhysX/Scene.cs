@@ -13,11 +13,13 @@ namespace Iterum.Physics.PhysXImpl
         private string LogGroup => $"[Scene ({Ref})]";
         
         private Dictionary<long, IPhysicsObject> refs = new Dictionary<long, IPhysicsObject>();
-        
+        private IMaterial legacySceneGlobalMaterial;
+
         public void Create(ContactReportCallbackFunc contactReport, TriggerReportCallbackFunc trigger)
         {
             Ref = API.createScene(Gravity, contactReport, trigger);
-            
+            legacySceneGlobalMaterial = new Material(0.5f, 0.5f, 0.5f);
+
 #if PHYSICS_DEBUG_LEVEL
             Console.WriteLine($"{LogGroup} Create. Gravity: {Gravity}");
 #endif
@@ -76,9 +78,10 @@ namespace Iterum.Physics.PhysXImpl
 
         #region Create objects
         
-        public IStaticObject CreateStatic(IGeometry geometry, Vector3 pos, Quaternion quat, PhysicsObjectFlags flags)
+        public IStaticObject CreateStatic(IGeometry geometry, Vector3 pos, Quaternion quat, PhysicsObjectFlags flags, IMaterial mat = null)
         {
-            var obj = new StaticObject(geometry, flags, pos, quat, this);
+            mat ??= legacySceneGlobalMaterial;
+            var obj = new StaticObject(geometry, mat, flags, pos, quat, this);
             refs.Add(obj.Ref, obj);
 #if PHYSICS_DEBUG_LEVEL            
             Console.WriteLine($"{LogGroup} StaticObject Ref: ({obj.Ref}) created");
@@ -86,9 +89,10 @@ namespace Iterum.Physics.PhysXImpl
             return obj;
         }
 
-        public IDynamicObject CreateDynamic(IGeometry[] geometries, Vector3 pos, Quaternion quat, PhysicsObjectFlags flags, float mass, uint word)
+        public IDynamicObject CreateDynamic(IGeometry[] geometries, Vector3 pos, Quaternion quat, PhysicsObjectFlags flags, float mass, uint word, IMaterial mat = null)
         {
-            var obj = new DynamicObject(geometries, flags, mass, word, pos, quat,  this);
+            mat ??= legacySceneGlobalMaterial;
+            var obj = new DynamicObject(geometries, mat, flags, mass, word, pos, quat,  this);
             refs.Add(obj.Ref, obj);
 #if PHYSICS_DEBUG_LEVEL            
             Console.WriteLine($"{LogGroup} DynamicObject Ref: ({obj.Ref}) created");
@@ -96,9 +100,10 @@ namespace Iterum.Physics.PhysXImpl
             return obj;
         }
 
-        public IPhysicsCharacter CreateCapsuleCharacter(Vector3 pos, Vector3 up, float height, float radius, float stepOffset = 0.05f)
+        public IPhysicsCharacter CreateCapsuleCharacter(Vector3 pos, Vector3 up, float height, float radius, float stepOffset = 0.05f, IMaterial mat = null)
         {
-            var obj = new PhysicsCharacter(this, pos, up, height, radius, stepOffset);
+            mat ??= legacySceneGlobalMaterial;
+            var obj = new PhysicsCharacter(mat, pos, up, height, radius, stepOffset, this);
             refs.Add(obj.Ref, obj);
 #if PHYSICS_DEBUG_LEVEL
             Console.WriteLine($"{LogGroup} CapsuleCharacter Ref: ({obj.Ref}) created");
@@ -121,7 +126,7 @@ namespace Iterum.Physics.PhysXImpl
         public int SphereCast1(Buffer buffer, IGeometry geometry, Vector3 position)
         {
             int count = API.sceneOverlap1(Ref, buffer.Ref, 
-                (long)geometry.GetInternalGeometry(), position, (i, nRef) =>
+                (long)geometry.GetInternal(), position, (i, nRef) =>
             {
                 var physicsObject = GetObject(nRef);
                 if (physicsObject != null)
@@ -135,7 +140,7 @@ namespace Iterum.Physics.PhysXImpl
         public int SphereCast10(Buffer buffer, IGeometry geometry, Vector3 position)
         {
             int count = API.sceneOverlap10(Ref, buffer.Ref, 
-                (long)geometry.GetInternalGeometry(), position, (i, nRef) =>
+                (long)geometry.GetInternal(), position, (i, nRef) =>
                 {
                     var physicsObject = GetObject(nRef);
                     if (physicsObject != null)
@@ -149,7 +154,7 @@ namespace Iterum.Physics.PhysXImpl
         public int SphereCast1000(Buffer buffer, IGeometry geometry, Vector3 position)
         {
             int count = API.sceneOverlap1000(Ref, buffer.Ref, 
-                (long)geometry.GetInternalGeometry(), position, (i, nRef) =>
+                (long)geometry.GetInternal(), position, (i, nRef) =>
                 {
                     var physicsObject = GetObject(nRef);
                     if (physicsObject != null)

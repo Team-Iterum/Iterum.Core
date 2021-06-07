@@ -4,8 +4,7 @@ namespace Iterum.Physics
 {
     public interface IPhysics
     {
-        void Init(bool isCreatePvd, float toleranceLength, float toleranceSpeed,
-            float staticFriction, float dynamicFriction, float restitution);
+        void Init(bool isCreatePvd, float toleranceLength, float toleranceSpeed);
 
         // Model geometry
         IGeometry CreateTriangleMeshGeometry(IModelData modelData);
@@ -14,5 +13,8 @@ namespace Iterum.Physics
         // Simple geometry
         IGeometry CreateSphereGeometry(float radius);
         IGeometry CreateBoxGeometry(Vector3 size);
+        
+        // Materials
+        IMaterial CreateMaterial(float staticFriction, float dynamicFriction, float restitution);
     }
 }

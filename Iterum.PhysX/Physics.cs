@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using AdvancedDLSupport;
 using Iterum.Math;
 
@@ -16,8 +17,9 @@ namespace Iterum.Physics.PhysXImpl
 
         public IPhysicsAPI API { get; private set; }
 
-        public void Init(bool isCreatePvd = true, float toleranceLength = 1, float toleranceSpeed = 5,
-            float staticFriction = 0.5f, float dynamicFriction = 0.5f, float restitution = 0.5f)
+        public List<IMaterial> Materials { get; }  = new ();
+
+        public void Init(bool isCreatePvd = true, float toleranceLength = 1, float toleranceSpeed = 5)
         {
             if (isCreated) return;
 
@@ -30,10 +32,15 @@ namespace Iterum.Physics.PhysXImpl
             API.initLog(LogDebug, LogError);
             
             API.initPhysics(isCreatePvd, Environment.ProcessorCount, toleranceLength, toleranceSpeed, LogCritical);
-
-            API.initGlobalMaterial(staticFriction, dynamicFriction, restitution);
-
+            
             isCreated = true;
+        }
+
+        public IMaterial CreateMaterial(float staticFriction = 0.5f, float dynamicFriction = 0.5f, float restitution = 0.5f)
+        {
+            var mat = new Material(staticFriction, dynamicFriction, restitution);
+            Materials.Add(mat);
+            return mat;
         }
 
         #region Logs

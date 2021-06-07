@@ -37,11 +37,11 @@ namespace Iterum.Physics.PhysXImpl
         }
         #endregion
 
-        internal StaticObject(IGeometry geometry, PhysicsObjectFlags flags,Vector3 pos, Quaternion quat, Scene scene)
+        internal StaticObject(IGeometry geometry, IMaterial mat, PhysicsObjectFlags flags,Vector3 pos, Quaternion quat, Scene scene)
         {
             this.scene = scene;
 
-            Ref = API.createRigidStatic((int) geometry.GeoType, (long)geometry.GetInternalGeometry(), scene.Ref, 
+            Ref = API.createRigidStatic((int) geometry.GeoType, (long) mat.GetInternal(), (long)geometry.GetInternal(), scene.Ref, 
                 pos, quat, flags.HasFlag(PhysicsObjectFlags.Trigger));
         }
 

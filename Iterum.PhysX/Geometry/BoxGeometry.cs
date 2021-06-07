@@ -16,7 +16,7 @@ namespace Iterum.Physics.PhysXImpl
         {
             API.cleanupGeometry(nRef);
         }
-        public object GetInternalGeometry()
+        public object GetInternal()
         {
             return nRef;
         }

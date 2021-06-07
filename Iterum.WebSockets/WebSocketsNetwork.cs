@@ -34,10 +34,16 @@ namespace Iterum.Network
             {
                 token?.Cancel();
             }
+            
+            private SemaphoreSlim sendSlim = new SemaphoreSlim(1, 1);
 
-            public async void WriteBytesAsync(byte[] packet)
+            public void WriteBytesAsync(byte[] packet)
             {
-                await socket.WriteBytesAsync(packet, 0, packet.Length);
+                sendSlim.Wait();
+                
+                socket.WriteBytesAsync(packet, 0, packet.Length);
+                
+                sendSlim.Release();
             }
         }
         private Dictionary<int, WrapperWebSocket> sockets = new Dictionary<int, WrapperWebSocket>();
@@ -203,7 +209,9 @@ namespace Iterum.Network
         {
             try
             {
-                sockets[conn].WriteBytesAsync(packet);
+
+                if (sockets.ContainsKey(conn) && sockets[conn].socket.IsConnected)
+                    sockets[conn].WriteBytesAsync(packet);
             }
             catch (Exception ex)
             {

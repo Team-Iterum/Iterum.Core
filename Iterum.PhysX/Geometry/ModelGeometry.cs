@@ -52,7 +52,7 @@ namespace Iterum.Physics.PhysXImpl
                     break;
             }
         }
-        public object GetInternalGeometry()
+        public object GetInternal()
         {
             return nRef;
         }

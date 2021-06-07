@@ -110,23 +110,19 @@ namespace Iterum.Physics.PhysXImpl
 
         #region Create objects
 
-        public IStaticObject CreateStatic(IGeometry geometry, Vector3 pos, Quaternion quat, PhysicsObjectFlags flags)
+        public IStaticObject CreateStatic(IGeometry geometry, Vector3 pos, Quaternion quat, PhysicsObjectFlags flags, IMaterial mat = null)
         {
-            return scene.CreateStatic(geometry, pos, quat, flags);
+            return scene.CreateStatic(geometry, pos, quat, flags, mat);
         }
-        public IDynamicObject CreateDynamic(IGeometry[] geometries, Vector3 pos, Quaternion quat, PhysicsObjectFlags flags, float mass, uint word)
+        public IDynamicObject CreateDynamic(IGeometry[] geometries, Vector3 pos, Quaternion quat, PhysicsObjectFlags flags, float mass, uint word, IMaterial mat = null)
         {
-            return scene.CreateDynamic(geometries, pos, quat, flags, mass, word);
+            return scene.CreateDynamic(geometries, pos, quat, flags, mass, word, mat);
         }
-        public IPhysicsCharacter CreateCapsuleCharacter(Vector3 pos, Vector3 up, float height, float radius)
+        public IPhysicsCharacter CreateCapsuleCharacter(Vector3 pos, Vector3 up, float height, float radius, float stepOffset = 0.05f, IMaterial mat = null)
         {
-            return scene.CreateCapsuleCharacter(pos,  up, height, radius);
+            return scene.CreateCapsuleCharacter(pos,  up, height, radius, stepOffset, mat);
         }
         
-        public IPhysicsCharacter CreateCapsuleCharacter2(Vector3 pos, Vector3 up, float height, float radius, float stepOffset = 0.05f)
-        {
-            return scene.CreateCapsuleCharacter(pos,  up, height, radius, stepOffset);
-        }
         
 
         #endregion
