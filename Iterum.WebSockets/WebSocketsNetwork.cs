@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using Iterum.Logs;
@@ -56,6 +57,40 @@ namespace Iterum.Network
         {
             server.StopAsync().Wait();
             CancellationTokenSource.Cancel();
+        }
+
+        /// <summary>
+        /// Start web socket server
+        /// </summary>
+        /// <param name="host"></param>
+        /// <param name="port">IGNORED</param>
+        public void StartServer(string host, int port, X509Certificate2 cert)
+        {
+            try
+            {
+                var options = new WebSocketListenerOptions()
+                {
+                    NegotiationQueueCapacity = 128,
+                    ParallelNegotiations = 16
+                };
+                options.Standards.RegisterRfc6455();
+                options.ConnectionExtensions.RegisterSecureConnection(cert);
+                
+                server = new WebSocketListener(new IPEndPoint(IPAddress.Parse(host), port), options);
+
+                server.StartAsync().Wait();
+                
+                CancellationTokenSource = new CancellationTokenSource();
+
+                Task.Run(AcceptWebSocketsAsync);
+
+                Log.Success(LogGroup, $"Started at {host}");
+            }
+            catch (Exception ex)
+            {
+                Log.Error(LogGroup, "Client connection error");
+                Log.Exception(LogGroup, ex);
+            }
         }
 
         /// <summary>
