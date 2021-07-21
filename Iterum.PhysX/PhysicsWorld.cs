@@ -16,9 +16,9 @@ namespace Iterum.Physics.PhysXImpl
         
         private Scene scene;
         
-        public PhysicsWorld(Vector3 gravity)
+        public PhysicsWorld(Vector3 gravity, bool ccd, bool determenism)
         {
-            scene = new Scene { Gravity = gravity };
+            scene = new Scene { Gravity = gravity, ccd = ccd, determenism = determenism };
 
 
 #if PHYSICS_DEBUG_LEVEL

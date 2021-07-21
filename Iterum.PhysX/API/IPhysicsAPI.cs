@@ -103,7 +103,7 @@ namespace Iterum.Physics.PhysXImpl
         long createScene(APIVec3 gravity, [DelegateLifetime(DelegateLifetime.Persistent)]
             ContactReportCallbackFunc func,
             [DelegateLifetime(DelegateLifetime.Persistent)]
-            TriggerReportCallbackFunc triggerFunc);
+            TriggerReportCallbackFunc triggerFunc, bool enableCCD, bool enableEnhancedDetermenism);
 
         void cleanupScene(long nRef);
         long getSceneTimestamp(long nRef);

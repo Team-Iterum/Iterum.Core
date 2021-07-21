@@ -14,10 +14,13 @@ namespace Iterum.Physics.PhysXImpl
         
         private Dictionary<long, IPhysicsObject> refs = new Dictionary<long, IPhysicsObject>();
         private IMaterial legacySceneGlobalMaterial;
+        
+        public bool ccd;
+        public bool determenism;
 
         public void Create(ContactReportCallbackFunc contactReport, TriggerReportCallbackFunc trigger)
         {
-            Ref = API.createScene(Gravity, contactReport, trigger);
+            Ref = API.createScene(Gravity, contactReport, trigger, ccd, determenism);
             legacySceneGlobalMaterial = new Material(0.5f, 0.5f, 0.5f);
 
 #if PHYSICS_DEBUG_LEVEL

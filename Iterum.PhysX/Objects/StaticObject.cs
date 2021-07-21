@@ -41,7 +41,8 @@ namespace Iterum.Physics.PhysXImpl
         {
             this.scene = scene;
 
-            Ref = API.createRigidStatic((int) geometry.GeoType, (long) mat.GetInternal(), (long)geometry.GetInternal(), scene.Ref, 
+            Ref = API.createRigidStatic((int) geometry.GeoType, (long) geometry.GetInternal(),
+                scene.Ref, (long) mat.GetInternal(),
                 pos, quat, flags.HasFlag(PhysicsObjectFlags.Trigger));
         }
 
