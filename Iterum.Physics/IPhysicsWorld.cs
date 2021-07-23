@@ -41,6 +41,9 @@ namespace Iterum.Physics
     {
         // ReSharper disable InconsistentNaming
         
+        public int index;
+        public int count;
+        
         public IThing obj0;
         public IThing obj1;
         
@@ -51,7 +54,9 @@ namespace Iterum.Physics
         public float separation;
         
         public bool isTrigger;
-        
+        public int faceIndex0;
+        public int faceIndex1;
+
         // ReSharper restore InconsistentNaming
     }
 }

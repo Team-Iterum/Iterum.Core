@@ -2,7 +2,6 @@
 using System.Runtime.CompilerServices;
 using Iterum.Math;
 
-
 [assembly: InternalsVisibleTo("AdvancedDLSupport")]
 namespace Iterum.Physics.PhysXImpl
 {
@@ -136,7 +135,7 @@ namespace Iterum.Physics.PhysXImpl
 
             if (obj0 == null || obj1 == null) return;
             
-            ContactReport?.Invoke(this, new ContactReport()
+            ContactReport?.Invoke(this, new ContactReport
             {
                 obj0 = obj0.Thing,
                 obj1 = obj1.Thing,
@@ -144,15 +143,18 @@ namespace Iterum.Physics.PhysXImpl
                 isTrigger = true,
             });
         }
-        private void OnContactReport(long ref0, long ref1, APIVec3 normal, APIVec3 position, APIVec3 impulse, float separation)
+        private void OnContactReport(int index, int count, long ref0, long ref1, APIVec3 normal, APIVec3 position, APIVec3 impulse, float separation, int faceIndex0, int faceIndex1)
         {
             var obj0 = scene.GetObject(ref0);
             var obj1 = scene.GetObject(ref1);
             
             if (obj0 == null || obj1 == null) return;
             
-            ContactReport?.Invoke(this, new ContactReport()
+            ContactReport?.Invoke(this, new ContactReport
             {
+                index = index,
+                count = count,
+                
                 obj0 = obj0.Thing,
                 obj1 = obj1.Thing,
                 
@@ -161,7 +163,10 @@ namespace Iterum.Physics.PhysXImpl
                 normal = normal,
                 impulse = impulse,
                 
-                separation = separation
+                separation = separation,
+                 
+                faceIndex0 = faceIndex0,
+                faceIndex1 = faceIndex1
             });
         }
 

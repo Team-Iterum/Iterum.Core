@@ -14,8 +14,7 @@ namespace Iterum.Physics.PhysXImpl
 
     public delegate void DebugLogErrorFunc(string message);
 
-    public delegate void ContactReportCallbackFunc(long ref0, long ref1, APIVec3 normal, APIVec3 position,
-        APIVec3 impulse, float separation);
+    public delegate void ContactReportCallbackFunc(int index, int count, long ref0, long ref1, APIVec3 normal, APIVec3 position, APIVec3 impulse, float separation, int faceIndex0, int faceIndex1);
 
     public delegate void TriggerReportCallbackFunc(long ref0, long ref1);
 
