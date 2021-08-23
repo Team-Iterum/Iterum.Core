@@ -125,6 +125,12 @@ namespace Iterum.Physics.PhysXImpl
                 });
             return count;
         }
+
+        public Vector4 ComputePenetration(IGeometry geo1, IGeometry geo2, APITrans t1, APITrans t2)
+        {
+            return API.computePenetration((long)geo1.GetInternal(), (int)geo1.GeoType, (long)geo2.GetInternal(),
+                (int)geo2.GeoType, t1, t2);
+        }
         
         public int SphereCast1(Buffer buffer, IGeometry geometry, Vector3 position)
         {

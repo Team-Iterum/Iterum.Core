@@ -76,7 +76,7 @@ namespace Iterum.Physics.PhysXImpl
         {
             return new Buffer(API.createOverlapBuffer1000(), 1000);
         }
-        public Buffer CreateOverlapBuffer100()
+        public Buffer CreateOverlapBuffer10()
         {
             return new Buffer(API.createOverlapBuffer10(), 10);
         }
@@ -89,7 +89,7 @@ namespace Iterum.Physics.PhysXImpl
         {
             return new Buffer(API.createRaycastBuffer10(), 10);
         }
-
+        
 
         public static IGeometry LoadTriangleMeshGeometry(string name)
         {

@@ -63,6 +63,22 @@ namespace Iterum.Physics.PhysXImpl
         
 
         #region Overlaps / Raycasts
+        
+        /// <summary>
+        /// ComputePenetration
+        /// </summary>
+        /// <param name="geo1"></param>
+        /// <param name="geo2"></param>
+        /// <param name="t1"></param>
+        /// <param name="t2"></param>
+        /// <returns>
+        /// x,y,z = direction
+        /// w = depth
+        /// </returns>
+        public Vector4 ComputePenetration(IGeometry geo1, IGeometry geo2, APITrans t1, APITrans t2)
+        {
+            return scene.ComputePenetration(geo1, geo2, t1, t2);
+        }
 
         public int Raycast(Buffer refBuffer, Vector3 position, Vector3 direction, float maxDist)
         {

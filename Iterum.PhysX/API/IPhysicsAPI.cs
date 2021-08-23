@@ -117,6 +117,8 @@ namespace Iterum.Physics.PhysXImpl
 
         long createMaterial(float staticFriction, float dynamicFriction, float restitution);
         void cleanupMaterial(long nRef);
+
+        APIVec4 computePenetration(long refGeo1, int geoType1, long refGeo2, int geoType2, APITrans t1, APITrans t2);
         
         void stepPhysics(long nRef, float dt);
         

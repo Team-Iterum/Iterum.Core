@@ -22,6 +22,24 @@ namespace Iterum.Physics.PhysXImpl
         }
     }
     
+    public struct APIVec4
+    {
+        public float x;
+        public float y;
+        public float z;
+        public float w;
+
+        public static implicit operator APIVec4(Vector4 p)
+        {
+            return new APIVec4 {x = p.x, y = p.y, z = p.z, w = p.w};
+        }
+
+        public static implicit operator Vector4(APIVec4 p)
+        {
+            return new Vector4(p.x, p.y, p.z, p.w);
+        }
+    }
+    
     public struct APITrans
     {
         public APIQuat q;
