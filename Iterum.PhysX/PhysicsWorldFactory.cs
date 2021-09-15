@@ -22,7 +22,7 @@ namespace Iterum.Physics
             CreatePhysics(isCreatePvd, toleranceLength, toleranceSpeed);
         }
 
-        public static IPhysicsWorld CreateWorld(Vector3 gravity, bool ccd = false, bool determenism = false)
+        public static PhysicsWorld CreateWorld(Vector3 gravity, bool ccd = false, bool determenism = false)
         {
             // PhysX
             return new PhysicsWorld(gravity, ccd, determenism);

@@ -72,22 +72,14 @@ namespace Iterum.Physics.PhysXImpl
             return new BoxGeometry(size);
         }
         
-        public Buffer CreateOverlapBuffer1000()
+        public Buffer CreateOverlapBuffer(int max)
         {
-            return new Buffer(API.createOverlapBuffer1000(), 1000);
-        }
-        public Buffer CreateOverlapBuffer10()
-        {
-            return new Buffer(API.createOverlapBuffer10(), 10);
-        }
-        public Buffer CreateOverlapBuffer1()
-        {
-            return new Buffer(API.createOverlapBuffer1(), 1);
+            return new Buffer(API.createOverlapBuffer(max), max);
         }
         
-        public Buffer CreateRaycastBuffer10()
+        public Buffer CreateRaycastBuffer(int max)
         {
-            return new Buffer(API.createRaycastBuffer10(), 10);
+            return new Buffer(API.createRaycastBuffer(max), max);
         }
         
 

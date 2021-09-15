@@ -121,20 +121,20 @@ namespace Iterum.Physics.PhysXImpl
             int count = API.sceneRaycast(Ref, buffer.Ref,
                 position, direction, maxDist, (i, nRef) =>
                 {
-                    buffer.Things[i] = GetObject(nRef).Thing;
+                    var physicsObject = GetObject(nRef);
+                    if (physicsObject != null)
+                    {
+                        buffer.Things[i] = physicsObject.Thing;
+                    }
                 });
+            buffer.SetResultsCount(count);
+
             return count;
         }
-
-        public Vector4 ComputePenetration(IGeometry geo1, IGeometry geo2, APITrans t1, APITrans t2)
-        {
-            return API.computePenetration((long)geo1.GetInternal(), (int)geo1.GeoType, (long)geo2.GetInternal(),
-                (int)geo2.GeoType, t1, t2);
-        }
         
-        public int SphereCast1(Buffer buffer, IGeometry geometry, Vector3 position)
+        public int SphereCast(Buffer buffer, IGeometry geometry, Vector3 position)
         {
-            int count = API.sceneOverlap1(Ref, buffer.Ref, 
+            int count = API.sceneOverlap(Ref, buffer.Ref, 
                 (long)geometry.GetInternal(), position, (i, nRef) =>
             {
                 var physicsObject = GetObject(nRef);
@@ -143,36 +143,15 @@ namespace Iterum.Physics.PhysXImpl
                     buffer.Things[i] = physicsObject.Thing;
                 }
             });
+            buffer.SetResultsCount(count);
             
             return count;
         }
-        public int SphereCast10(Buffer buffer, IGeometry geometry, Vector3 position)
+
+        public Vector4 ComputePenetration(IGeometry geo1, IGeometry geo2, APITrans t1, APITrans t2)
         {
-            int count = API.sceneOverlap10(Ref, buffer.Ref, 
-                (long)geometry.GetInternal(), position, (i, nRef) =>
-                {
-                    var physicsObject = GetObject(nRef);
-                    if (physicsObject != null)
-                    {
-                        buffer.Things[i] = physicsObject.Thing;
-                    }
-                });
-            
-            return count;
-        }
-        public int SphereCast1000(Buffer buffer, IGeometry geometry, Vector3 position)
-        {
-            int count = API.sceneOverlap1000(Ref, buffer.Ref, 
-                (long)geometry.GetInternal(), position, (i, nRef) =>
-                {
-                    var physicsObject = GetObject(nRef);
-                    if (physicsObject != null)
-                    {
-                        buffer.Things[i] = physicsObject.Thing;
-                    }
-                });
-            
-            return count;
+            return API.computePenetration((long)geo1.GetInternal(), (int)geo1.GeoType, (long)geo2.GetInternal(),
+                (int)geo2.GeoType, t1, t2);
         }
 
         public void CharactersUpdate(float elapsed, float minDist)
