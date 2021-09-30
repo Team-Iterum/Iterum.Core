@@ -7,16 +7,16 @@ using System.Threading.Tasks;
 
 namespace Iterum.Physics.PhysXImpl
 {
-    public struct Buffer
+    public struct Buffer<T> where T : IThing
     {
         public long Ref;
-        public IThing[] Things;
+        public T[] Things;
         public int Count { get; private set; }
 
         public Buffer(long nRef, int max)
         {
             Ref = nRef;
-            Things = new IThing[max];
+            Things = new T[max];
             Count = 0;
         }
 

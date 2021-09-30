@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using AdvancedDLSupport;
 using Iterum.Math;
+using Iterum.Things;
 
 namespace Iterum.Physics.PhysXImpl
 {
@@ -72,14 +73,14 @@ namespace Iterum.Physics.PhysXImpl
             return new BoxGeometry(size);
         }
         
-        public Buffer CreateOverlapBuffer(int max)
+        public Buffer<T> CreateOverlapBuffer<T>(int max) where T : class, IThing
         {
-            return new Buffer(API.createOverlapBuffer(max), max);
+            return new Buffer<T>(API.createOverlapBuffer(max), max);
         }
         
-        public Buffer CreateRaycastBuffer(int max)
+        public Buffer<T> CreateRaycastBuffer<T>(int max) where T : class, IThing
         {
-            return new Buffer(API.createRaycastBuffer(max), max);
+            return new Buffer<T>(API.createRaycastBuffer(max), max);
         }
         
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using Iterum.Math;
+using Iterum.Things;
 
 [assembly: InternalsVisibleTo("AdvancedDLSupport")]
 namespace Iterum.Physics.PhysXImpl
@@ -80,23 +81,23 @@ namespace Iterum.Physics.PhysXImpl
             return scene.ComputePenetration(geo1, geo2, t1, t2);
         }
 
-        public int Raycast(Buffer refBuffer, Vector3 position, Vector3 direction, float maxDist)
+        public int Raycast<T>(Buffer<T> refBuffer, Vector3 position, Vector3 direction, float maxDist) where T : class, IThing
         {
 #if PHYSICS_DEBUG_LEVEL
             Console.WriteLine($"{LogGroup} Raycast. Position: {position} Direction: {direction}");
 #endif
             
-            int count = scene.Raycast(refBuffer, position, direction, maxDist);
+            int count = scene.Raycast<T>(refBuffer, position, direction, maxDist);
             return count;
         }
 
-        public int SphereCast(Buffer buffer, Vector3 position, IGeometry geometry)
+        public int SphereCast<T>(Buffer<T> buffer, Vector3 position, IGeometry geometry) where T : class, IThing
         {
 #if PHYSICS_DEBUG_LEVEL
             Console.WriteLine($"{LogGroup} SphereCast. Position: {position} Geometry: {geometry.GetInternalGeometry()}");
 #endif
             
-            int count = scene.SphereCast(buffer, geometry, position);
+            int count = scene.SphereCast<T>(buffer, geometry, position);
             return count;
         }
 

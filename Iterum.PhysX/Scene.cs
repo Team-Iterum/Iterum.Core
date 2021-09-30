@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Iterum.Math;
+using Iterum.Things;
 using static Iterum.Physics.PhysXImpl.PhysicsAlias;
 
 namespace Iterum.Physics.PhysXImpl
@@ -116,7 +117,7 @@ namespace Iterum.Physics.PhysXImpl
         
         #endregion
         
-        public int Raycast(Buffer buffer, Vector3 position,  Vector3 direction, float maxDist)
+        public int Raycast<T>(Buffer<T> buffer, Vector3 position,  Vector3 direction, float maxDist) where T : class, IThing
         {
             int count = API.sceneRaycast(Ref, buffer.Ref,
                 position, direction, maxDist, (i, nRef) =>
@@ -124,7 +125,7 @@ namespace Iterum.Physics.PhysXImpl
                     var physicsObject = GetObject(nRef);
                     if (physicsObject != null)
                     {
-                        buffer.Things[i] = physicsObject.Thing;
+                        buffer.Things[i] = physicsObject.Thing as T;
                     }
                 });
             buffer.SetResultsCount(count);
@@ -132,7 +133,7 @@ namespace Iterum.Physics.PhysXImpl
             return count;
         }
         
-        public int SphereCast(Buffer buffer, IGeometry geometry, Vector3 position)
+        public int SphereCast<T>(Buffer<T> buffer, IGeometry geometry, Vector3 position) where T : class, IThing
         {
             int count = API.sceneOverlap(Ref, buffer.Ref, 
                 (long)geometry.GetInternal(), position, (i, nRef) =>
@@ -140,7 +141,7 @@ namespace Iterum.Physics.PhysXImpl
                 var physicsObject = GetObject(nRef);
                 if (physicsObject != null)
                 {
-                    buffer.Things[i] = physicsObject.Thing;
+                    buffer.Things[i] = physicsObject.Thing as T;
                 }
             });
             buffer.SetResultsCount(count);
