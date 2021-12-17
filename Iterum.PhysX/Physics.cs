@@ -19,7 +19,7 @@ namespace Iterum.Physics.PhysXImpl
         public IPhysicsAPI API { get; private set; }
 
         public List<IMaterial> Materials { get; }  = new ();
-
+        
         public void Init(bool isCreatePvd = true, float toleranceLength = 1, float toleranceSpeed = 5)
         {
             if (isCreated) return;
@@ -37,20 +37,21 @@ namespace Iterum.Physics.PhysXImpl
             isCreated = true;
         }
 
+        #region Logs
+        
+        public DebugLogFunc LogDebug = e => Console.WriteLine($"[PhysX Debug] {e}");
+        public DebugLogErrorFunc LogError = e => Console.WriteLine($"[PhysX Critical] {e}");
+        public ErrorCallbackFunc LogCritical = e => Console.WriteLine($"[PhysX Error] {e}");
+        
+        #endregion
+        
         public IMaterial CreateMaterial(float staticFriction = 0.5f, float dynamicFriction = 0.5f, float restitution = 0.5f)
         {
             var mat = new Material(staticFriction, dynamicFriction, restitution);
             Materials.Add(mat);
             return mat;
         }
-
-        #region Logs
-        private static void LogDebug(string message) => Console.WriteLine($"[PhysX Debug] {message}");
-        private static void LogCritical(string message) => Console.WriteLine($"[PhysX Critical] {message}");
-        private static void LogError(string message) => Console.WriteLine($"[PhysX Error] {message}");
-
-        #endregion
-
+        
         #region Create geometries
 
         public IGeometry CreateTriangleMeshGeometry(IModelData modelData)
