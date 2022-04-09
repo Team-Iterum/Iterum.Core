@@ -44,11 +44,7 @@ public class Physics : IPhysics
     public ErrorCallbackFunc LogCritical = e => Console.WriteLine($"[PhysX Error] {e}");
         
     #endregion
-
-    public IGeometry CreateBoxGeometry(Vector3 size)
-    {
-        throw new NotImplementedException();
-    }
+    
 
     public IMaterial CreateMaterial(float staticFriction = 0.5f, float dynamicFriction = 0.5f, float restitution = 0.5f)
     {
