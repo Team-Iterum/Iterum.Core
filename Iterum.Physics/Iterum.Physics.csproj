@@ -18,6 +18,9 @@
     
 
     <PackageVersion>3.4.3</PackageVersion>
+    
+
+    <LangVersion>default</LangVersion>
   </PropertyGroup>
   
   <ItemGroup>

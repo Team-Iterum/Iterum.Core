@@ -1,11 +1,9 @@
-﻿
-using Iterum.Math;
+﻿using UnityEngine;
 
-namespace Iterum.Physics
+namespace Iterum.Physics;
+
+public interface IModelData
 {
-    public interface IModelData
-    {
-        int[] Triangles { get; }
-        Vector3[] Points { get; }
-    }
+    int[] Triangles { get; }
+    Vector3[] Points { get; }
 }

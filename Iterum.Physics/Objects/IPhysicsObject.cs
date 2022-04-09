@@ -1,18 +1,17 @@
-﻿using Iterum.Math;
+﻿using System.Numerics;
 using Iterum.Things;
 
 // ReSharper disable UnusedMember.Global
 
-namespace Iterum.Physics
+namespace Iterum.Physics;
+
+public interface IPhysicsObject
 {
-    public interface IPhysicsObject
-    {
-        void Destroy();
-        bool IsDestroyed { get; }
+    void Destroy();
+    bool IsDestroyed { get; }
         
-        Vector3 Position { get; set; }
-        Quaternion Rotation { get; set; }
+    Vector3 Position { get; set; }
+    Quaternion Rotation { get; set; }
         
-        IThing Thing { get; set; }
-    }
+    IThing Thing { get; set; }
 }

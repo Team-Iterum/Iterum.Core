@@ -1,20 +1,19 @@
-using Iterum.Math;
+using System.Numerics;
 
-namespace Iterum.Physics
+namespace Iterum.Physics;
+
+public interface IPhysics
 {
-    public interface IPhysics
-    {
-        void Init(bool isCreatePvd, float toleranceLength, float toleranceSpeed);
+    void Init(bool isCreatePvd, float toleranceLength, float toleranceSpeed);
 
-        // Model geometry
-        IGeometry CreateTriangleMeshGeometry(IModelData modelData);
-        IGeometry CreateConvexMeshGeometry(IModelData modelData);
+    // Model geometry
+    IGeometry CreateTriangleMeshGeometry(IModelData modelData);
+    IGeometry CreateConvexMeshGeometry(IModelData modelData);
 
-        // Simple geometry
-        IGeometry CreateSphereGeometry(float radius);
-        IGeometry CreateBoxGeometry(Vector3 size);
+    // Simple geometry
+    IGeometry CreateSphereGeometry(float radius);
+    IGeometry CreateBoxGeometry(Vector3 size);
         
-        // Materials
-        IMaterial CreateMaterial(float staticFriction, float dynamicFriction, float restitution);
-    }
+    // Materials
+    IMaterial CreateMaterial(float staticFriction, float dynamicFriction, float restitution);
 }

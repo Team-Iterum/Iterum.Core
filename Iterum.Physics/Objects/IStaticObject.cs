@@ -1,7 +1,6 @@
-﻿namespace Iterum.Physics
-{
-    public interface IStaticObject : IPhysicsObject
-    {
+﻿namespace Iterum.Physics;
 
-    }
+public interface IStaticObject : IPhysicsObject
+{
+
 }
