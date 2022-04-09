@@ -76,7 +76,7 @@ namespace NetStack.Threading {
 			array[index].IsSet = 1;
 
 			#if NET_4_6 || NET_STANDARD_2_0
-				Volatile.write(ref _enqueuePosition, position + 1);
+				Volatile.Write(ref _enqueuePosition, position + 1);
 			#else
 				Thread.MemoryBarrier();
 				_enqueuePosition = position + 1;
@@ -110,7 +110,7 @@ namespace NetStack.Threading {
 			array[index].IsSet = 0;
 
 			#if NET_4_6 || NET_STANDARD_2_0
-				Volatile.write(ref _dequeuePosition, position + 1);
+				Volatile.Write(ref _dequeuePosition, position + 1);
 			#else
 				Thread.MemoryBarrier();
 				_dequeuePosition = position + 1;
@@ -138,7 +138,7 @@ namespace NetStack.Threading {
 
 				set {
 					#if NET_4_6 || NET_STANDARD_2_0
-						Volatile.write(ref isSet, value);
+						Volatile.Write(ref isSet, value);
 					#else
 						Thread.MemoryBarrier();
 						isSet = value;

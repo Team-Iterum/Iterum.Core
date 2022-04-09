@@ -509,14 +509,15 @@ namespace NetStack.Serialization {
 			[MethodImpl(256)]
 		#endif
 		public string ReadString() {
-            uint length = Read(stringLengthBits);
-
-            List<byte> bytes = new List<byte>();
-			for (int i = 0; i < length; i++) {
-				bytes.Add(ReadByte());
+            int length = (int)Read(stringLengthBits);
+            
+            Span<byte> bytes = length <= 1024 ? stackalloc byte[1024] : new byte[length];
+			for (int i = 0; i < length; i++)
+			{
+				bytes[i] = ReadByte();
 			}
 
-            return Encoding.UTF8.GetString(bytes.ToArray());
+            return Encoding.UTF8.GetString(bytes);
         }
 
 		public override string ToString() {

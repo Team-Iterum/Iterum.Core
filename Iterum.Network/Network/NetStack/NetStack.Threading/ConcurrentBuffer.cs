@@ -80,7 +80,7 @@ namespace NetStack.Threading {
 					buffer[index].Element = item;
 
 					#if NET_4_6 || NET_STANDARD_2_0
-						Volatile.write(ref buffer[index].Sequence, position + 1);
+						Volatile.Write(ref buffer[index].Sequence, position + 1);
 					#else
 						Thread.MemoryBarrier();
 						buffer[index].Sequence = position + 1;
@@ -118,7 +118,7 @@ namespace NetStack.Threading {
 					buffer[index].Element = null;
 
 					#if NET_4_6 || NET_STANDARD_2_0
-						Volatile.write(ref buffer[index].Sequence, position + bufferMask + 1);
+						Volatile.Write(ref buffer[index].Sequence, position + bufferMask + 1);
 					#else
 						Thread.MemoryBarrier();
 						buffer[index].Sequence = position + bufferMask + 1;

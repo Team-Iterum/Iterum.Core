@@ -21,12 +21,9 @@
  */
 
 using System.Runtime.CompilerServices;
+using UnityEngine;
 
-#if !(ENABLE_MONO || ENABLE_IL2CPP)
-using Iterum.Math;
-#else
-	using UnityEngine;
-#endif
+using UnityEngine;
 
 namespace NetStack.Compression {
 	public struct CompressedVector2 {

@@ -6,7 +6,7 @@
     
     <Platforms>x64</Platforms>
     
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;NETSTACK_SPAN;NETSTACK_INLINING;NET_STANDARD_2_0</DefineConstants>
     
     <PackageId>Iterum.Network</PackageId>
     
@@ -17,7 +17,13 @@
     <RepositoryUrl>https://github.com/Team-Iterum/Iterum.Core</RepositoryUrl>
     
 
-    <PackageVersion>5.0.1</PackageVersion>
+    <PackageVersion>5.0.2</PackageVersion>
+    
+
+    <LangVersion>default</LangVersion>
+    
+
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   
   <ItemGroup>

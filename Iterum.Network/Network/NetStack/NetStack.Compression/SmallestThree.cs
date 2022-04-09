@@ -21,12 +21,7 @@
  */
 
 using System;
-
-#if (ENABLE_MONO || ENABLE_IL2CPP)
-	using UnityEngine;
-#else
-	using Iterum.Math;
-#endif
+using UnityEngine;
 
 namespace NetStack.Compression {
 	public struct CompressedQuaternion {
