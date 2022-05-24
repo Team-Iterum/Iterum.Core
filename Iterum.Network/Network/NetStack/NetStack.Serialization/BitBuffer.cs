@@ -517,7 +517,7 @@ namespace NetStack.Serialization {
 				bytes[i] = ReadByte();
 			}
 
-            return Encoding.UTF8.GetString(bytes);
+            return Encoding.UTF8.GetString(bytes.Slice(0, length));
         }
 
 		public override string ToString() {
