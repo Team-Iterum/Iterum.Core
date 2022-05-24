@@ -59,6 +59,15 @@ internal class Scene
             Console.WriteLine($"{LogGroup} StaticObject Ref: ({e.Ref}) destroyed");
 #endif
     }
+    public void Destroy(TerrainObject e)
+    {
+        refs.Remove(e.Ref);
+
+        API.destroyRigidStatic(e.Ref);
+#if PHYSICS_DEBUG_LEVEL            
+            Console.WriteLine($"{LogGroup} StaticObject Ref: ({e.Ref}) destroyed");
+#endif
+    }
     public void Destroy(DynamicObject e)
     {
         refs.Remove(e.Ref);
