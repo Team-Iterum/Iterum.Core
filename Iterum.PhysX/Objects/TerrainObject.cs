@@ -46,7 +46,7 @@ internal class TerrainObject : IStaticObject
 
     public void ModifyTerrain(float[] samples, int startCol, int startRow, int countCol, int countRow, float hfScale, bool shrinkBounds)
     {
-        API.modifySamples(Ref, samples, startCol, startRow, countCol, countRow, hfScale, shrinkBounds);
+        API.modifyTerrain(Ref, samples, startCol, startRow, countCol, countRow, hfScale, shrinkBounds);
     }
 
 }

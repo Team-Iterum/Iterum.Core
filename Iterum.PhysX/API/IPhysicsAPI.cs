@@ -114,7 +114,7 @@ public interface IPhysicsAPI
     long createMaterial(float staticFriction, float dynamicFriction, float restitution);
     void cleanupMaterial(long nRef);
 
-    void modifySamples(long nRef, float[] heightmap, int startCol, int startRow, int nbCols, int nbRows, float hfScale, bool shrinkBounds);
+    void modifyTerrain(long nRef, float[] heightmap, int startCol, int startRow, int nbCols, int nbRows, float hfScale, bool shrinkBounds);
 
     APIVec4 computePenetration(long refGeo1, int geoType1, long refGeo2, int geoType2, APITrans t1, APITrans t2);
 
