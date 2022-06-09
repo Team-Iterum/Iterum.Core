@@ -38,11 +38,17 @@ public class TerrainObject : IStaticObject
     }
     #endregion
 
-    internal TerrainObject(Memory<float> samples, float hfScale, long hfSize, IMaterial mat, Vector3 pos, Scene scene)
+    internal TerrainObject(Memory<float> heightmap, float hfScale, long hfSize, 
+        float thickness, float convexEdgeThreshold, bool noBoundaries, 
+        Vector3 scale,
+        IMaterial mat, Vector3 pos, Scene scene)
     {
         this.scene = scene;
 
-        Ref = API.createTerrain(samples.ToArray(), hfScale, hfSize, scene.Ref, (long)mat.GetInternal(), pos);
+        Ref = API.createTerrain(heightmap.ToArray(), hfScale, hfSize,
+            thickness, convexEdgeThreshold, noBoundaries,
+            scale.y, scale.x, scale.z,
+            scene.Ref, (long)mat.GetInternal(), pos);
     }
 
     public void ModifyTerrain(Memory<float> samples, long startCol, long startRow, long countCol, long countRow, float hfScale, bool shrinkBounds)

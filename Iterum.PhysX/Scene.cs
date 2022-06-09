@@ -91,18 +91,20 @@ internal class Scene
     #endregion
 
     #region Create objects
-        
-    public TerrainObject CreateTerrain(Memory<float> buffer, float scale, long size, Vector3 pos, IMaterial mat = null)
+
+    public TerrainObject CreateTerrain(Memory<float> heightmap, float hfScale, long hfSize, Vector3 scale, Vector3 pos,
+        float thickness = -1, float convexEdgeThreshold = 0, bool noBoundaries = false, IMaterial mat = null)
     {
         mat ??= legacySceneGlobalMaterial;
-        var obj = new TerrainObject(buffer, scale, size, mat, pos, this);
+        var obj = new TerrainObject(heightmap, hfScale, hfSize, thickness, convexEdgeThreshold, noBoundaries, scale,
+            mat, pos, this);
         refs.Add(obj.Ref, obj);
-#if PHYSICS_DEBUG_LEVEL            
+#if PHYSICS_DEBUG_LEVEL
             Console.WriteLine($"{LogGroup} StaticObject Ref: ({obj.Ref}) created");
 #endif
         return obj;
     }
-    
+
     public IStaticObject CreateStatic(IGeometry geometry, Vector3 pos, Quaternion quat, PhysicsObjectFlags flags, IMaterial mat = null)
     {
         mat ??= legacySceneGlobalMaterial;

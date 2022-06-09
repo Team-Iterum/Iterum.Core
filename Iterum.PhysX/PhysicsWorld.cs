@@ -108,9 +108,10 @@ public sealed class PhysicsWorld
 
     #region Create objects
 
-    public TerrainObject CreateTerrain(Memory<float> buffer, float scale, long size, Vector3 pos, IMaterial mat = null)
+    public TerrainObject CreateTerrain(Memory<float> heightmap, float hfScale, long hfSize, Vector3 scale, Vector3 pos,
+        float thickness = -1, float convexEdgeThreshold = 0, bool noBoundaries = false, IMaterial mat = null)
     {
-        return scene.CreateTerrain(buffer, scale, size, pos, mat);
+        return scene.CreateTerrain(heightmap, hfScale, hfSize, scale, pos, thickness, convexEdgeThreshold, noBoundaries, mat);
     }
     public IStaticObject CreateStatic(IGeometry geometry, Vector3 pos, Quaternion quat, PhysicsObjectFlags flags, IMaterial mat = null)
     {
