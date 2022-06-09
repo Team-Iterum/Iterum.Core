@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Iterum.Things;
 using UnityEngine;
 using static Iterum.Physics.PhysXImpl.PhysicsAlias;
@@ -91,6 +92,17 @@ internal class Scene
 
     #region Create objects
         
+    public IStaticObject CreateTerrain(Memory<float> buffer, float scale, float size, Vector3 pos, IMaterial mat = null)
+    {
+        mat ??= legacySceneGlobalMaterial;
+        var obj = new TerrainObject(buffer, scale, size,  mat, pos, this);
+        refs.Add(obj.Ref, obj);
+#if PHYSICS_DEBUG_LEVEL            
+            Console.WriteLine($"{LogGroup} StaticObject Ref: ({obj.Ref}) created");
+#endif
+        return obj;
+    }
+    
     public IStaticObject CreateStatic(IGeometry geometry, Vector3 pos, Quaternion quat, PhysicsObjectFlags flags, IMaterial mat = null)
     {
         mat ??= legacySceneGlobalMaterial;

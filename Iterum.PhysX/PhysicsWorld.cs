@@ -108,6 +108,10 @@ public sealed class PhysicsWorld
 
     #region Create objects
 
+    public IStaticObject CreateTerrain(IGeometry geometry, Vector3 pos, Quaternion quat, PhysicsObjectFlags flags, IMaterial mat = null)
+    {
+        return scene.CreateStatic(geometry, pos, quat, flags, mat);
+    }
     public IStaticObject CreateStatic(IGeometry geometry, Vector3 pos, Quaternion quat, PhysicsObjectFlags flags, IMaterial mat = null)
     {
         return scene.CreateStatic(geometry, pos, quat, flags, mat);

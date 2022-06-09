@@ -1,4 +1,5 @@
-﻿using Iterum.Things;
+﻿using System;
+using Iterum.Things;
 using UnityEngine;
 using static Iterum.Physics.PhysXImpl.PhysicsAlias;
 
@@ -37,16 +38,16 @@ internal class TerrainObject : IStaticObject
     }
     #endregion
 
-    internal TerrainObject(float[] samples, float hfScale, float hfSize, IMaterial mat, Vector3 pos, Scene scene)
+    internal TerrainObject(Memory<float> samples, float hfScale, float hfSize, IMaterial mat, Vector3 pos, Scene scene)
     {
         this.scene = scene;
 
-        Ref = API.createTerrain(samples, hfScale, hfSize, scene.Ref, (long)mat.GetInternal(), pos);
+        Ref = API.createTerrain(samples.ToArray(), hfScale, hfSize, scene.Ref, (long)mat.GetInternal(), pos);
     }
 
-    public void ModifyTerrain(float[] samples, int startCol, int startRow, int countCol, int countRow, float hfScale, bool shrinkBounds)
+    public void ModifyTerrain(Memory<float> samples, int startCol, int startRow, int countCol, int countRow, float hfScale, bool shrinkBounds)
     {
-        API.modifyTerrain(Ref, samples, startCol, startRow, countCol, countRow, hfScale, shrinkBounds);
+        API.modifyTerrain(Ref, samples.ToArray(), startCol, startRow, countCol, countRow, hfScale, shrinkBounds);
     }
 
 }
