@@ -5,7 +5,7 @@ using static Iterum.Physics.PhysXImpl.PhysicsAlias;
 
 namespace Iterum.Physics.PhysXImpl;
 
-internal class TerrainObject : IStaticObject
+public class TerrainObject : IStaticObject
 {
     public long Ref { get; }
 

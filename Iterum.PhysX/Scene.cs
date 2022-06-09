@@ -92,7 +92,7 @@ internal class Scene
 
     #region Create objects
         
-    public IStaticObject CreateTerrain(Memory<float> buffer, float scale, long size, Vector3 pos, IMaterial mat = null)
+    public TerrainObject CreateTerrain(Memory<float> buffer, float scale, long size, Vector3 pos, IMaterial mat = null)
     {
         mat ??= legacySceneGlobalMaterial;
         var obj = new TerrainObject(buffer, scale, size, mat, pos, this);
