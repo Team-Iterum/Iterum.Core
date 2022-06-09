@@ -40,7 +40,7 @@ public interface IPhysicsAPI
     long createRigidStatic(int geoType, long nRefGeo, long nRefScene, long nRefMat, APIVec3 pos, APIQuat quat, bool isTrigger);
     void destroyRigidStatic(long nRef);
     
-    long createTerrain(float[] heightmap, float hfScale, float hfSize,
+    long createTerrain(float[] heightmap, float hfScale, long hfSize,
         float thickness, float convexEdgeThreshold, bool noBoundaries,
         float heightScale, float rowScale, float columnScale,
         long refScene, long refMat, APIVec3 pos);
