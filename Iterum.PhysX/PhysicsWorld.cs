@@ -108,7 +108,7 @@ public sealed class PhysicsWorld
 
     #region Create objects
 
-    public IStaticObject CreateTerrain(Memory<float> buffer, float scale, float size, Vector3 pos, IMaterial mat = null)
+    public IStaticObject CreateTerrain(Memory<float> buffer, float scale, long size, Vector3 pos, IMaterial mat = null)
     {
         return scene.CreateTerrain(buffer, scale, size, pos, mat);
     }

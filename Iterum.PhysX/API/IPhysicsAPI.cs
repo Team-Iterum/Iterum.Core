@@ -38,7 +38,7 @@ public interface IPhysicsAPI
     void cleanupGeometry(long nRef);
 
     long createRigidStatic(int geoType, long nRefGeo, long nRefScene, long nRefMat, APIVec3 pos, APIQuat quat, bool isTrigger);
-    long createTerrain(float[] heightmap, float hfScale, float hfSize, long refScene, long refMat, APIVec3 pos);
+    long createTerrain(float[] heightmap, float hfScale, long hfSize, long refScene, long refMat, APIVec3 pos);
     void destroyRigidStatic(long nRef);
 
     APITrans getRigidDynamicTransform(long nRef);
@@ -114,7 +114,7 @@ public interface IPhysicsAPI
     long createMaterial(float staticFriction, float dynamicFriction, float restitution);
     void cleanupMaterial(long nRef);
 
-    void modifyTerrain(long nRef, float[] heightmap, int startCol, int startRow, int nbCols, int nbRows, float hfScale, bool shrinkBounds);
+    void modifyTerrain(long nRef, float[] heightmap, long startCol, long startRow, long nbCols, long nbRows, float hfScale, bool shrinkBounds);
 
     APIVec4 computePenetration(long refGeo1, int geoType1, long refGeo2, int geoType2, APITrans t1, APITrans t2);
 

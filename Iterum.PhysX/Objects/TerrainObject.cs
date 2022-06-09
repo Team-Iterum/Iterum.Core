@@ -38,14 +38,14 @@ internal class TerrainObject : IStaticObject
     }
     #endregion
 
-    internal TerrainObject(Memory<float> samples, float hfScale, float hfSize, IMaterial mat, Vector3 pos, Scene scene)
+    internal TerrainObject(Memory<float> samples, float hfScale, long hfSize, IMaterial mat, Vector3 pos, Scene scene)
     {
         this.scene = scene;
 
         Ref = API.createTerrain(samples.ToArray(), hfScale, hfSize, scene.Ref, (long)mat.GetInternal(), pos);
     }
 
-    public void ModifyTerrain(Memory<float> samples, int startCol, int startRow, int countCol, int countRow, float hfScale, bool shrinkBounds)
+    public void ModifyTerrain(Memory<float> samples, long startCol, long startRow, long countCol, long countRow, float hfScale, bool shrinkBounds)
     {
         API.modifyTerrain(Ref, samples.ToArray(), startCol, startRow, countCol, countRow, hfScale, shrinkBounds);
     }
