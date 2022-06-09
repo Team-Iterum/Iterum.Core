@@ -38,8 +38,10 @@ public interface IPhysicsAPI
     void cleanupGeometry(long nRef);
 
     long createRigidStatic(int geoType, long nRefGeo, long nRefScene, long nRefMat, APIVec3 pos, APIQuat quat, bool isTrigger);
-    long createTerrain(float[] heightmap, float hfScale, long hfSize, long refScene, long refMat, APIVec3 pos);
     void destroyRigidStatic(long nRef);
+    
+    long createTerrain(float[] heightmap, float hfScale, long hfSize, long refScene, long refMat, APIVec3 pos);
+    void destroyTerrain(long nRef);
 
     APITrans getRigidDynamicTransform(long nRef);
     void setRigidDynamicTransform(long nRef, APITrans t);
@@ -51,6 +53,9 @@ public interface IPhysicsAPI
     void setRigidStaticRotation(long nRef, APIQuat q);
     void setRigidDynamicDisable(long nRef, bool disabled);
     void setRigidDynamicWord(long nRef, uint word);
+    
+    APIVec3 getTerrainPosition(long nRef);
+    void setTerrainPosition(long nRef, APIVec3 t);
 
 
     long createRigidDynamic(int geoType, int refGeoCount, long[] refGeo, long nRefScene, long nRefMat, bool kinematic, bool ccd, bool retain,

@@ -15,14 +15,14 @@ internal class TerrainObject : IStaticObject
 
     public Vector3 Position
     {
-        get => API.getRigidStaticPosition(Ref);
-        set => API.setRigidStaticPosition(Ref, value);
+        get => API.getTerrainPosition(Ref);
+        set => API.setTerrainPosition(Ref, value);
     }
 
     public Quaternion Rotation
     {
-        get => API.getRigidStaticRotation(Ref);
-        set => API.setRigidStaticRotation(Ref, value);
+        get => throw new NotSupportedException();
+        set => throw new NotSupportedException();
     }
     public bool IsDestroyed { get; private set; }
 
