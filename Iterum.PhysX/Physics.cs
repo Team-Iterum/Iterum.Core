@@ -74,6 +74,11 @@ public class Physics : IPhysics
     {
         return new BoxGeometry(size);
     }
+    
+    public IGeometry CreateCapsuleGeometry(float radius, float halfHeight)
+    {
+        return new CapsuleGeometry(radius, halfHeight);
+    }
         
     public Buffer<T> CreateOverlapBuffer<T>(int max) where T : class, IThing
     {
