@@ -34,6 +34,7 @@ public interface IPhysicsAPI
 
 
     long createSphereGeometry(float radius);
+    long createCapsuleGeometry(float radius, float halfHeight);
     long createBoxGeometry(APIVec3 half);
     void cleanupGeometry(long nRef);
 
