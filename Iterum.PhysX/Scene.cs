@@ -92,7 +92,7 @@ internal class Scene
 
     #region Create objects
 
-    public TerrainObject CreateTerrain(Memory<float> heightmap, float hfScale, long hfSize, Vector3 scale, Vector3 pos,
+    public TerrainObject CreateTerrain(Memory<short> heightmap, float hfScale, long hfSize, Vector3 scale, Vector3 pos,
         float thickness = -1, float convexEdgeThreshold = 0, bool noBoundaries = false, IMaterial mat = null)
     {
         mat ??= legacySceneGlobalMaterial;

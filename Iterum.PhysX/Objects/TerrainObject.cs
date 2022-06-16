@@ -38,7 +38,7 @@ public class TerrainObject : IStaticObject
     }
     #endregion
 
-    internal TerrainObject(Memory<float> heightmap, float hfScale, long hfSize, 
+    internal TerrainObject(Memory<short> heightmap, float hfScale, long hfSize, 
         float thickness, float convexEdgeThreshold, bool noBoundaries, 
         Vector3 scale,
         IMaterial mat, Vector3 pos, Scene scene)
@@ -51,7 +51,7 @@ public class TerrainObject : IStaticObject
             scene.Ref, (long)mat.GetInternal(), pos);
     }
 
-    public void ModifyTerrain(Memory<float> samples, long startCol, long startRow, long countCol, long countRow, float hfScale, bool shrinkBounds)
+    public void ModifyTerrain(Memory<short> samples, long startCol, long startRow, long countCol, long countRow, float hfScale, bool shrinkBounds)
     {
         API.modifyTerrain(Ref, samples.ToArray(), startCol, startRow, countCol, countRow, hfScale, shrinkBounds);
     }
