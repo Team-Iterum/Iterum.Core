@@ -23,7 +23,7 @@ internal class Scene
     public void Create(ContactReportCallbackFunc contactReport, TriggerReportCallbackFunc trigger)
     {
         Ref = API.createScene(Gravity, contactReport, trigger, ccd, determenism);
-        legacySceneGlobalMaterial = new Material(0.5f, 0.5f, 0.5f);
+        legacySceneGlobalMaterial = new Material();
 
 #if PHYSICS_DEBUG_LEVEL
             Console.WriteLine($"{LogGroup} Create. Gravity: {Gravity}");
@@ -92,11 +92,11 @@ internal class Scene
 
     #region Create objects
 
-    public TerrainObject CreateTerrain(Memory<short> heightmap, float hfScale, long hfSize, Vector3 scale, Vector3 pos,
+    public TerrainObject CreateTerrain(Memory<short> heightmap, long hfSize, Vector3 scale, Vector3 pos,
         float thickness = -1, float convexEdgeThreshold = 0, bool noBoundaries = false, IMaterial mat = null)
     {
         mat ??= legacySceneGlobalMaterial;
-        var obj = new TerrainObject(heightmap, hfScale, hfSize, thickness, convexEdgeThreshold, noBoundaries, scale,
+        var obj = new TerrainObject(heightmap, hfSize, thickness, convexEdgeThreshold, noBoundaries, scale,
             mat, pos, this);
         refs.Add(obj.Ref, obj);
 #if PHYSICS_DEBUG_LEVEL

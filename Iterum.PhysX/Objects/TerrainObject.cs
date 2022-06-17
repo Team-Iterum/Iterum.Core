@@ -38,14 +38,14 @@ public class TerrainObject : IStaticObject
     }
     #endregion
 
-    internal TerrainObject(Memory<short> heightmap, float hfScale, long hfSize, 
+    internal TerrainObject(Memory<short> heightmap, long hfSize, 
         float thickness, float convexEdgeThreshold, bool noBoundaries, 
         Vector3 scale,
         IMaterial mat, Vector3 pos, Scene scene)
     {
         this.scene = scene;
 
-        Ref = API.createTerrain(heightmap.ToArray(), hfScale, hfSize,
+        Ref = API.createTerrain(heightmap.ToArray(), hfSize,
             thickness, convexEdgeThreshold, noBoundaries,
             scale.y, scale.x, scale.z,
             scene.Ref, (long)mat.GetInternal(), pos);
