@@ -4,20 +4,21 @@ using static Iterum.Physics.PhysXImpl.PhysicsAlias;
 
 namespace Iterum.Physics.PhysXImpl;
 
-internal class PhysicsCharacter : IPhysicsCharacter
+public class PhysicsCharacter : IPhysicsCharacter
 {
     public long Ref { get; }
 
     private readonly Scene scene;
     public float JumpHeight { get; set; } = 11f;
     public float Speed { get; set; } = 0.1f;
-
+    
+    #region IPhysicsCharacter
+    
     public bool IsControllerCollisionUp => API.isControllerCollisionUp(Ref);
     public bool IsControllerCollisionDown => API.isControllerCollisionDown(Ref);
     public bool IsControllerCollisionSides => API.isControllerCollisionSides(Ref);
     public bool IsControllerMovingUp => API.isControllerMovingUp(Ref);
-
-    #region IPhysicsCharacter
+    
     public Vector3 Direction { get; private set; }
         
     public float CharacterRotation { get; set; }
