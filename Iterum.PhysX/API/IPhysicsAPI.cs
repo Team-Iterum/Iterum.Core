@@ -21,6 +21,10 @@ public interface IPhysicsAPI
 {
     void characterUpdate(long nRef, float elapsed, float minDist);
     void charactersUpdate(long refScene, float elapsed, float minDist);
+    bool isControllerCollisionUp(long nRef);
+    bool isControllerCollisionDown(long nRef);
+    bool isControllerCollisionSides(long nRef);
+    bool isControllerMovingUp(long nRef);
     void setControllerDirection(long nRef, APIVec3 dir);
     long createRaycastBuffer(int max);
     long createOverlapBuffer(int max);

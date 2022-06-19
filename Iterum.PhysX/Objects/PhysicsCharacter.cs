@@ -12,7 +12,11 @@ internal class PhysicsCharacter : IPhysicsCharacter
     public float JumpHeight { get; set; } = 11f;
     public float Speed { get; set; } = 0.1f;
 
-        
+    public bool IsControllerCollisionUp => API.isControllerCollisionUp(Ref);
+    public bool IsControllerCollisionDown => API.isControllerCollisionDown(Ref);
+    public bool IsControllerCollisionSides => API.isControllerCollisionSides(Ref);
+    public bool IsControllerMovingUp => API.isControllerMovingUp(Ref);
+
     #region IPhysicsCharacter
     public Vector3 Direction { get; private set; }
         
