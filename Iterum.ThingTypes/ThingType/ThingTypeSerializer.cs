@@ -30,8 +30,14 @@ namespace Iterum.ThingTypes
             var tt = thingTypes.FirstOrDefault(e => e.ID == id);
             return tt;
         }
-        
-        private static IEnumerable<Type> GetDataBlocksTypes() 
+
+        public static ThingType Find(Dictionary<int, ThingType> all, int id)
+        {
+            var tt = all.Values.FirstOrDefault(e => e.ID == id);
+            return tt;
+        }
+
+        private static IEnumerable<(string FlagKeyword, Type type)> GetDataBlocksTypes() 
         {
             foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies()) 
             {
@@ -39,7 +45,13 @@ namespace Iterum.ThingTypes
                 {
                     if(!type.GetInterfaces().Contains(typeof(IDataBlock))) continue;
                     
-                    yield return type;
+                    var attr = type.GetCustomAttribute(typeof(AutoRegisterDataBlock), true);
+                    if (attr == null || !type.GetInterfaces().Contains(typeof(IDataBlock))) continue;
+                    
+                    if (attr is AutoRegisterDataBlock regAttr)
+                    {
+                        yield return (regAttr.FlagKeyword, type);
+                    }
                 }
             }
         }
@@ -47,10 +59,17 @@ namespace Iterum.ThingTypes
         {
             var things = new Dictionary<int, ThingType>();
 
+            var builder = new DeserializerBuilder();
+
+            foreach (var dataBlock in GetDataBlocksTypes()) 
+                builder.WithTagMapping($"!{dataBlock.FlagKeyword}", dataBlock.type);
+            
+            var deserializer =  builder.Build();
+            
             var files = Directory.EnumerateFiles(directory, "*.yml", SearchOption.AllDirectories);
             foreach (string fileName in files)
             {
-                var tt = Deserialize(fileName);
+                var tt = Deserialize(deserializer, fileName);
                 if(tt.Name == null) continue;
                 
                 things.Add(tt.ID, tt);
@@ -59,18 +78,10 @@ namespace Iterum.ThingTypes
             return things;
         }
 
-        public static ThingType Deserialize(string fileName)
+        public static ThingType Deserialize(IDeserializer deserializer, string fileName)
         {
             if (!File.Exists(fileName)) return default;
-
-            var builder = new DeserializerBuilder();
-
-            foreach (var dataBlock in GetDataBlocksTypes()) 
-                builder.WithTagMapping($"!{dataBlock.Name}", dataBlock);
-            
-            var serializer =  builder.Build();
-            
-            return serializer.Deserialize<ThingType>(File.ReadAllText(fileName));
+            return deserializer.Deserialize<ThingType>(File.ReadAllText(fileName));
         }
         
         public static void Serialize(string fileName, ThingType tt, bool overwrite = true, bool outputFlags = true)
@@ -81,7 +92,7 @@ namespace Iterum.ThingTypes
             builder.WithEventEmitter(e => new FlowIntSequences(e));
 
             foreach (var dataBlock in GetDataBlocksTypes()) 
-                builder.WithTagMapping($"!{dataBlock.Name}", dataBlock);
+                builder.WithTagMapping($"!{dataBlock.FlagKeyword}", dataBlock.type);
 
             var serializer = builder.Build();
             
