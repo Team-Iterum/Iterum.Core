@@ -36,11 +36,9 @@ jobs:
         
     - name: Ensure GitHub NuGet Source
       run: |
-        dotnet nuget add source https://nuget.pkg.github.com/Team-Iterum/index.json \
+        dotnet nuget add source https://api.nuget.org/v3/index.json \
           -n github \
-          -u ${{ secrets.PERSONAL_USERNAME }} \
-          -p ${{ secrets.PERSONAL_TOKEN }} \
-          --store-password-in-clear-text
+          --api-key ${{ secrets.NUGET_API }} \
         
     - name: Pack Iterum.Log
       if: always()
