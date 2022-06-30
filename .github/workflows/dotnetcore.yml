@@ -21,10 +21,6 @@ jobs:
       #  source-url: https://api.nuget.org/v3/index.json
       #env:
        # NUGET_AUTH_TOKEN: ${{secrets.GITU}}
-         
-    - name: Ensure NuGet Source
-      run: |
-        dotnet nuget add source https://api.nuget.org/v3/index.json
         
     - name: Restore Iterum.Log
       run: |
