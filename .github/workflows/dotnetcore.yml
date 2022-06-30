@@ -18,14 +18,10 @@ jobs:
       with:
         dotnet-version: '6.0.x'
          # Authenticates packages to push to GPR
-        source-url: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
+        source-url: https://api.nuget.org/v3/index.json
       env:
-        NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-   
-    - name: Adjust NuGet Config Credentials
-      run: |
-        rm -f ./nuget.config
-        
+        NUGET_AUTH_TOKEN: ${{secrets.NUGET_API}}
+         
     - name: Restore Iterum.Log
       run: |
         dotnet restore Iterum.Log/Iterum.Log.csproj
