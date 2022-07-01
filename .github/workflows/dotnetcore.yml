@@ -88,3 +88,9 @@ jobs:
         dotnet pack Iterum.Telepathy/Iterum.Telepathy.csproj --configuration Release
         dotnet nuget push Iterum.Telepathy/**/*.nupkg  --api-key ${{secrets.NUGET_API}} --source https://api.nuget.org/v3/index.json --skip-duplicate
 
+    - name: Pack Iterum.WebSockets
+      if: always()
+      run: |
+        dotnet pack Iterum.WebSockets/Iterum.WebSockets.csproj --configuration Release
+        dotnet nuget push Iterum.WebSockets/**/*.nupkg  --api-key ${{secrets.NUGET_API}} --source https://api.nuget.org/v3/index.json --skip-duplicate
+
