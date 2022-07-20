@@ -56,4 +56,13 @@ public class TerrainObject : IStaticObject
         API.modifyTerrain(Ref, samples.ToArray(), startCol, startRow, countCol, countRow, hfScale, shrinkBounds);
     }
 
+    /// <summary>
+    /// Sample terrain height
+    /// </summary>
+    /// <param name="pos">x, z used, y ignored</param>
+    public float SampleTerrain(Vector3 pos)
+    {
+        return API.sampleTerrainHeight(Ref, pos);
+    }
+
 }

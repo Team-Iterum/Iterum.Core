@@ -82,6 +82,12 @@ public class PhysicsCharacter : IPhysicsCharacter
         API.setControllerDirection(Ref, Direction);
     }
 
+
+    public void SetHeight(float height)
+    {
+        API.setControllerHeight(Ref, height);
+    }
+
     public void Move(MoveDirection dirs)
     {
 

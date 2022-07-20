@@ -26,6 +26,7 @@ public interface IPhysicsAPI
     bool isControllerCollisionSides(long nRef);
     bool isControllerMovingUp(long nRef);
     void setControllerDirection(long nRef, APIVec3 dir);
+    void setControllerHeight(long nRef, float height);
     long createRaycastBuffer(int max);
     long createOverlapBuffer(int max);
     int sceneOverlap(long refScene, long refOverlapBuffer, long refGeo, APIVec3 pos, OverlapCallback callback);
@@ -63,6 +64,7 @@ public interface IPhysicsAPI
     void setRigidDynamicWord(long nRef, uint word);
     
     APIVec3 getTerrainPosition(long nRef);
+    float sampleTerrainHeight(long nRef, APIVec3 p);
     void setTerrainPosition(long nRef, APIVec3 t);
 
 
