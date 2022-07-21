@@ -19,6 +19,9 @@ public struct Buffer<T> where T : IThing
     {
         Ref = nRef;
         Things = new T[max];
+        Dists = new float[max];
+        Positions = new Vector3[max];
+        Normals = new Vector3[max];
         Count = 0;
     }
 
