@@ -143,12 +143,15 @@ internal class Scene
     public int Raycast<T>(Buffer<T> buffer, Vector3 position,  Vector3 direction, float maxDist) where T : class, IThing
     {
         int count = API.sceneRaycast(Ref, buffer.Ref,
-            position, direction, maxDist, (i, nRef) =>
+            position, direction, maxDist, (i, nRef, dist, pos, normal) =>
             {
                 var physicsObject = GetObject(nRef);
                 if (physicsObject != null)
                 {
                     buffer.Things[i] = physicsObject.Thing as T;
+                    buffer.Dists[i] = dist;
+                    buffer.Positions[i] = pos;
+                    buffer.Normals[i] = normal;
                 }
             });
         buffer.SetResultsCount(count);

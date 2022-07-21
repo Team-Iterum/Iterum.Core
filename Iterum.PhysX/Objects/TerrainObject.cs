@@ -64,5 +64,22 @@ public class TerrainObject : IStaticObject
     {
         return API.sampleTerrainHeight(Ref, pos);
     }
+    
+    /// <summary>
+    /// Sample terrain height by row&col
+    /// </summary>
+    public short SampleTerrainRowCol(uint row, uint col)
+    {
+        return API.sampleTerrainHeightRowCol(Ref, row, col);
+    }
+    
+        
+    /// <summary>
+    /// Sample terrain height  normalize [0..1, 0..1]
+    /// </summary>
+    public short SampleTerrainRowCol(Vector3 pos)
+    {
+        return API.sampleTerrainHeightNorm(Ref, pos);
+    }
 
 }

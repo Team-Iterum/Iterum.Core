@@ -5,7 +5,7 @@ using AdvancedDLSupport;
 namespace Iterum.Physics.PhysXImpl;
 
 public delegate void OverlapCallback(int index, long nRef);
-public delegate void RaycastCallback(int index, long nRef);
+public delegate void RaycastCallback(int index, long nRef, float distance, APIVec3 position, APIVec3 normal);
 
 public delegate void ErrorCallbackFunc(string message);
 
@@ -65,6 +65,8 @@ public interface IPhysicsAPI
     
     APIVec3 getTerrainPosition(long nRef);
     float sampleTerrainHeight(long nRef, APIVec3 p);
+    short sampleTerrainHeightRowCol(long nRef, uint row, uint col);
+    short sampleTerrainHeightNorm(long nRef, APIVec3 p);
     void setTerrainPosition(long nRef, APIVec3 t);
 
 
