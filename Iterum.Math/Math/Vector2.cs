@@ -1,12 +1,17 @@
 using System;
+using ProtoBuf;
 
 
 namespace UnityEngine;
 
+[ProtoContract]
+[Serializable]
 public struct Vector2
 {
+    [ProtoMember(1)]
     public float x;
 
+    [ProtoMember(2)]
     public float y;
 
     public const float kEpsilon = 1E-05f;

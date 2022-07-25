@@ -1,41 +1,44 @@
 using System;
 using System.Runtime.CompilerServices;
+using ProtoBuf;
 
 namespace UnityEngine;
 
+[ProtoContract]
+[Serializable]
 public struct Matrix4x4
 {
-    public float m00;
+    [ProtoMember(1)] public float m00;
 
-    public float m10;
+    [ProtoMember(2)] public float m10;
 
-    public float m20;
+    [ProtoMember(3)] public float m20;
 
-    public float m30;
+    [ProtoMember(4)] public float m30;
 
-    public float m01;
+    [ProtoMember(5)] public float m01;
 
-    public float m11;
+    [ProtoMember(6)] public float m11;
 
-    public float m21;
+    [ProtoMember(7)] public float m21;
 
-    public float m31;
+    [ProtoMember(8)] public float m31;
 
-    public float m02;
+    [ProtoMember(9)] public float m02;
 
-    public float m12;
+    [ProtoMember(10)] public float m12;
 
-    public float m22;
+    [ProtoMember(11)] public float m22;
 
-    public float m32;
+    [ProtoMember(12)] public float m32;
 
-    public float m03;
+    [ProtoMember(13)] public float m03;
 
-    public float m13;
+    [ProtoMember(14)] public float m13;
 
-    public float m23;
+    [ProtoMember(15)] public float m23;
 
-    public float m33;
+    [ProtoMember(16)] public float m33;
 
     public Matrix4x4 inverse => Matrix4x4.Inverse(this);
 

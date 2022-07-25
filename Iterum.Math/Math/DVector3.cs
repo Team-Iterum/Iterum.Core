@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using ProtoBuf;
 
 namespace UnityEngine;
 
@@ -7,6 +8,7 @@ namespace UnityEngine;
 ///   <para>Representation of 3D vectors and points.</para>
 /// </summary>
 [Serializable]
+[ProtoContract]
 public struct DVector3
 {
     public const double kEpsilon = 1E-05f;
@@ -14,16 +16,19 @@ public struct DVector3
     /// <summary>
     ///   <para>X component of the vector.</para>
     /// </summary>
+    [ProtoMember(1)]
     public double x;
 
     /// <summary>
     ///   <para>Y component of the vector.</para>
     /// </summary>
+    [ProtoMember(2)]
     public double y;
 
     /// <summary>
     ///   <para>Z component of the vector.</para>
     /// </summary>
+    [ProtoMember(3)]
     public double z;
 
     public double this[int index]

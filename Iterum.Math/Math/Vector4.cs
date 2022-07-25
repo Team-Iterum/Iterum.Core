@@ -1,17 +1,24 @@
 using System;
+using ProtoBuf;
 
 namespace UnityEngine;
 
+[ProtoContract]
+[Serializable]
 public struct Vector4
 {
     public const float kEpsilon = 1E-05f;
 
+    [ProtoMember(1)]
     public float x;
 
+    [ProtoMember(2)]
     public float y;
 
+    [ProtoMember(3)]
     public float z;
 
+    [ProtoMember(4)]
     public float w;
 
     public float this[int index]
