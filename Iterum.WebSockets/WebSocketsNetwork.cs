@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
@@ -71,10 +72,11 @@ namespace Iterum.Network
                 var options = new WebSocketListenerOptions()
                 {
                     NegotiationQueueCapacity = 128,
-                    ParallelNegotiations = 16
+                    ParallelNegotiations = 16,
                 };
                 options.Standards.RegisterRfc6455();
-                options.ConnectionExtensions.RegisterSecureConnection(cert);
+                if (cert != null)
+                    options.ConnectionExtensions.RegisterSecureConnection(cert);
                 
                 server = new WebSocketListener(new IPEndPoint(IPAddress.Parse(host), port), options);
 
@@ -84,11 +86,11 @@ namespace Iterum.Network
 
                 Task.Run(AcceptWebSocketsAsync);
 
-                Log.Success(LogGroup, $"Started at {host}");
+                Log.Success(LogGroup, $"Started at {host}:{port}");
             }
             catch (Exception ex)
             {
-                Log.Error(LogGroup, "Client connection error");
+                Log.Error(LogGroup, "Server start error");
                 Log.Exception(LogGroup, ex);
             }
         }
@@ -100,24 +102,7 @@ namespace Iterum.Network
         /// <param name="port">IGNORED</param>
         public void StartServer(string host, int port)
         {
-            try
-            {
-                var options = new WebSocketListenerOptions();
-                options.Standards.RegisterRfc6455();
-                server = new WebSocketListener(new IPEndPoint(IPAddress.Parse(host), port), options);
-                server.StartAsync().Wait();
-                
-                CancellationTokenSource = new CancellationTokenSource();
-
-                Task.Run(AcceptWebSocketsAsync);
-
-                Log.Success(LogGroup, $"Started at {host}");
-            }
-            catch (Exception ex)
-            {
-                Log.Error(LogGroup, "Client connection error");
-                Log.Exception(LogGroup, ex);
-            }
+            StartServer(host, port, null);
         }
 
         
@@ -151,9 +136,9 @@ namespace Iterum.Network
                     /* server is stopped */
                     break;
                 }
-                catch (Exception acceptError)
+                catch (WebSocketException acceptError)
                 {
-                    Log.Error("An error occurred while accepting client.", acceptError);
+                    Log.Warn("An error occurred while accepting client.", acceptError);
                 }
             }
 
@@ -197,6 +182,12 @@ namespace Iterum.Network
                     }
                     catch (TaskCanceledException)
                     {
+                        break;
+                    }
+                    catch (WebSocketException ex) when (ex.InnerException is SocketException socketException)
+                    {
+                        Log.Warn(LogGroup, $"An error occurred while reading/writing echo message. SocketErrorCode: {socketException.SocketErrorCode}");
+                        Log.Warn(LogGroup, ex.ToString());
                         break;
                     }
                     catch (Exception readWriteError)
