@@ -10,6 +10,7 @@ namespace Iterum.Network
     public sealed class TelepathyNetwork : INetworkServer
     {
         public int ServerFrequency = 60;
+        public bool UseYield = false;
         public bool IsReport = true;
         
         private Server server;
@@ -26,6 +27,7 @@ namespace Iterum.Network
             Logger.LogWarning = s => Log.Warn(LogGroup, s);
             Logger.LogWarning = s => Log.Error(LogGroup, s);
         }
+        
         
         public void Stop()
         {
@@ -62,11 +64,19 @@ namespace Iterum.Network
                     {
                         case EventType.Connected:
                         {
-                            string address = server.GetClientAddress(msg.connectionId);
+                            string address = string.Empty;
+                            try
+                            {
+                                address = server.GetClientAddress(msg.connectionId);
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.Debug(LogGroup, ex.ToString());
+                            }
 
                             if (string.IsNullOrEmpty(address))
                             {
-                                Log.Warn(LogGroup, $"Client empty address - ID: {msg.connectionId}");
+                                Log.Warn(LogGroup, $"Client empty address - ID: {msg.connectionId.ToString()}");
                                 break;
                             };
                             
@@ -78,7 +88,7 @@ namespace Iterum.Network
                             
                             Connected?.Invoke(conData);
 
-                            Log.Info(LogGroup, $"Client connected - ID: {msg.connectionId} IP: {address}", ConsoleColor.Magenta);
+                            Log.Info(LogGroup, $"Client connected - ID: {msg.connectionId.ToString()} IP: {address}", ConsoleColor.Magenta);
                             break;
                         }
                         case EventType.Data:
@@ -93,31 +103,38 @@ namespace Iterum.Network
                         }
                         case EventType.Disconnected:
                         {
-                            var conData = new ConnectionData()
+                            var conData = new ConnectionData
                             {
                                 conn = msg.connectionId,
                             };
                             Disconnected?.Invoke(conData);
 
                             Log.Info(LogGroup,
-                                $"Client disconnected - ID: {msg.connectionId}", ConsoleColor.Magenta);
+                                $"Client disconnected - ID: {msg.connectionId.ToString()}", ConsoleColor.Magenta);
 
                             break;
                         }
                     }
                 }
 
-                
-                // sleep
-                Thread.Sleep(1000 / ServerFrequency);
+                if (UseYield)
+                {
+                    if(!Thread.Yield())
+                        Thread.Sleep(0);
+                }
+                else
+                {
+                    // sleep
+                    Thread.Sleep(1000 / ServerFrequency);
+                }
 
                 if (IsReport)
                 {
                     // report every 10 seconds
                     if (sw.ElapsedMilliseconds > 1000 * 2)
                     {
-                        Log.Debug($"Thread {Thread.CurrentThread.ManagedThreadId}", string.Format("In={0} ({1} KB/s)  Out={0} ({1} KB/s) ReceiveQueue={2}", 
-                            messagesReceived, dataReceived * 1000 / (sw.ElapsedMilliseconds * 1024), server.ReceiveQueueCount.ToString()), ConsoleColor.DarkGray);
+                        Log.Debug($"Thread {Thread.CurrentThread.ManagedThreadId.ToString()}", string.Format("In={0} ({1} KB/s)  Out={0} ({1} KB/s) ReceiveQueue={2}", 
+                            messagesReceived, (dataReceived * 1000 / (sw.ElapsedMilliseconds * 1024)).ToString(), server.ReceiveQueueCount.ToString()));
                     
                         sw.Stop();
                         sw = Stopwatch.StartNew();
