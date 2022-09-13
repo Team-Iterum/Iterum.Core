@@ -46,7 +46,7 @@ namespace Telepathy
         // -> simply increase max packet size if you want to send around bigger
         //    files!
         // -> 16KB per message should be more than enough.
-        public int MaxMessageSize = 16 * 1024;
+        public int MaxMessageSize = 64 * 1024;
 
         // Send would stall forever if the network is cut off during a send, so
         // we need a timeout (in milliseconds)
