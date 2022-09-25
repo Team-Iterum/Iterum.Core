@@ -10,8 +10,10 @@
 // let's even keep them in a STATIC CLASS so it's 100% obvious that this should
 // NOT EVER be changed to non static!
 using System;
+using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using Iterum.Network;
 
 namespace Telepathy
 {
@@ -68,7 +70,9 @@ namespace Telepathy
                 // read exactly 'size' bytes for content (blocking)
                 return stream.ReadExactly(payloadBuffer, size);
             }
+            
             Log.Warning("ReadMessageBlocking: possible header attack with a header of: " + size + " bytes.");
+            
             return false;
         }
 
@@ -119,8 +123,19 @@ namespace Telepathy
                 {
                     // read the next message (blocking) or stop if stream closed
                     if (!ReadMessageBlocking(stream, MaxMessageSize, headerBuffer, receiveBuffer, out int size))
+                    {
+                        try
+                        {
+                            var ipAddress = ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString();
+                            SpamBlockIpList.Addresses.Add(ipAddress);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error(ex.ToString());
+                        }
                         // break instead of return so stream close still happens!
                         break;
+                    }
 
                     // create arraysegment for the read message
                     ArraySegment<byte> message = new ArraySegment<byte>(receiveBuffer, 0, size);

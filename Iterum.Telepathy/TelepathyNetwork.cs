@@ -51,6 +51,7 @@ namespace Iterum.Network
             stopwatch = Stopwatch.StartNew();
             
             workerThread = new Thread(Update);
+            workerThread.IsBackground = true;
             workerThread.Start();
             
             Log.Success(LogGroup, $"Started at {host}:{port.ToString()}");
