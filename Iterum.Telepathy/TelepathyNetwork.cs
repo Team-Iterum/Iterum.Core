@@ -144,16 +144,11 @@ namespace Iterum.Network
             server.Disconnect(conn);
         }
         
-        public void Send<T>(int conn, T packet) where T : struct, ISerializablePacket
+        public void Send<T>(int conn, T packet) where T : struct, ISerializablePacketSegment
         {
             server.Send(conn, packet.Serialize());
         }
-        
-        public void SendSegment<T>(int conn, T packet) where T : struct, ISerializablePacketSegment
-        {
-            server.Send(conn, packet.Serialize());
-        }
-        
+
         public void Send(int conn, byte[] packet)
         {
             server.Send(conn, packet);
