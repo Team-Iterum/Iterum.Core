@@ -104,37 +104,39 @@ namespace Iterum.Network
 
         private void Update()
         {
-
-            server.Tick(100000);
+            while (server.Active)
+            {
+                server.Tick(100000);
             
-            if (UseYield)
-            {
-                if(!Thread.Yield())
-                    Thread.Sleep(0);
-            }
-            else
-            {
-                // sleep
-                Thread.Sleep(1000 / ServerFrequency);
-            }
-
-            if (IsReport)
-            {
-                // report every 10 seconds
-                if (stopwatch.ElapsedMilliseconds > 1000 * 2)
+                if (UseYield)
                 {
-                    Log.Info(LogGroup, string.Format(
-                        "Thread[{3}]: Server in={0} ({1} KB/s)  out={0} ({1} KB/s) ReceiveQueue={2}", messagesReceived.ToString(),
-                        (dataReceived * 1000 / (stopwatch.ElapsedMilliseconds * 1024)).ToString(),
-                        server.ReceivePipeTotalCount.ToString(), Thread.CurrentThread.ManagedThreadId.ToString()));
-                    
-                    stopwatch.Stop();
-                    stopwatch = Stopwatch.StartNew();
-                    messagesReceived = 0;
-                    dataReceived = 0;
+                    if(!Thread.Yield())
+                        Thread.Sleep(0);
                 }
+                else
+                {
+                    // sleep
+                    Thread.Sleep(1000 / ServerFrequency);
+                }
+
+                if (IsReport)
+                {
+                    // report every 10 seconds
+                    if (stopwatch.ElapsedMilliseconds > 1000 * 2)
+                    {
+                        Log.Info(LogGroup, string.Format(
+                            "Thread[{3}]: Server in={0} ({1} KB/s)  out={0} ({1} KB/s) ReceiveQueue={2}", messagesReceived.ToString(),
+                            (dataReceived * 1000 / (stopwatch.ElapsedMilliseconds * 1024)).ToString(),
+                            server.ReceivePipeTotalCount.ToString(), Thread.CurrentThread.ManagedThreadId.ToString()));
+                    
+                        stopwatch.Stop();
+                        stopwatch = Stopwatch.StartNew();
+                        messagesReceived = 0;
+                        dataReceived = 0;
+                    }
+                }
+
             }
-            
         
         }
         
