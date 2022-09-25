@@ -13,4 +13,10 @@ namespace Iterum.Network
         Span<byte> Serialize();
         void Deserialize(ReadOnlySpan<byte> packet);    
     }
+    public interface ISerializablePacketSegment
+    {
+        ArraySegment<byte> Serialize();
+        void Deserialize(ArraySegment<byte> packet);    
+    }
+
 }
