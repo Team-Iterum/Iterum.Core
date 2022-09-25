@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using Iterum.Network;
 
 namespace Telepathy
 {
@@ -105,6 +106,24 @@ namespace Telepathy
                     // dispose after thread was started but we still need it
                     // in the thread
                     TcpClient client = listener.AcceptTcpClient();
+
+
+                    try
+                    {
+                        var address = ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString();
+                        if (SpamBlockIpList.Exist(address))
+                        {
+                            Log.Warning($"Disconnect spam client: {address}");
+                            client.Close();
+                            continue;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error($"Spam ip handle: {ex}");
+                        client.Close();
+                        continue;
+                    }
 
                     // set socket options
                     client.NoDelay = NoDelay;

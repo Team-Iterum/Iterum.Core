@@ -42,7 +42,7 @@ namespace Telepathy
         }
         // read message (via stream) blocking.
         // writes into byte[] and returns bytes written to avoid allocations.
-        public static bool ReadMessageBlocking(NetworkStream stream, int MaxMessageSize, byte[] headerBuffer, byte[] payloadBuffer, out int size)
+        public static bool ReadMessageBlocking(NetworkStream stream, TcpClient client, int MaxMessageSize, byte[] headerBuffer, byte[] payloadBuffer, out int size)
         {
             size = 0;
 
@@ -72,6 +72,16 @@ namespace Telepathy
             }
             
             Log.Warning("ReadMessageBlocking: possible header attack with a header of: " + size + " bytes.");
+            
+            try
+            {
+                var ipAddress = ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString();
+                SpamBlockIpList.Add(ipAddress);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.ToString());
+            }
             
             return false;
         }
@@ -122,17 +132,8 @@ namespace Telepathy
                 while (true)
                 {
                     // read the next message (blocking) or stop if stream closed
-                    if (!ReadMessageBlocking(stream, MaxMessageSize, headerBuffer, receiveBuffer, out int size))
+                    if (!ReadMessageBlocking(stream, client, MaxMessageSize, headerBuffer, receiveBuffer, out int size))
                     {
-                        try
-                        {
-                            var ipAddress = ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString();
-                            SpamBlockIpList.Addresses.Add(ipAddress);
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Error(ex.ToString());
-                        }
                         // break instead of return so stream close still happens!
                         break;
                     }
