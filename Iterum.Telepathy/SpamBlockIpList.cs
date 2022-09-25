@@ -6,6 +6,7 @@ namespace Iterum.Network
     public static class SpamBlockIpList
     {
         public static List<string> Addresses = new List<string>();
+        public static bool IsLogDisconnects { get; set; } = true;
 
         public static void Add(string address)
         {

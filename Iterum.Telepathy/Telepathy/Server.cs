@@ -113,14 +113,23 @@ namespace Telepathy
                         var address = ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString();
                         if (SpamBlockIpList.Exist(address))
                         {
-                            Log.Warning($"Disconnect spam client: {address}");
+                            if (SpamBlockIpList.IsLogDisconnects)
+                                Log.Warning($"Disconnect spam client: {address}");
+
+                            // close the stream if not closed yet. it may have been closed
+                            // by a disconnect already, so use try/catch
+                            try { client.GetStream().Close(); } catch {}
                             client.Close();
                             continue;
                         }
                     }
                     catch (Exception ex)
                     {
-                        Log.Error($"Spam ip handle: {ex}");
+                        if (SpamBlockIpList.IsLogDisconnects)
+                            Log.Error($"Spam ip handle: {ex}");
+                        // close the stream if not closed yet. it may have been closed
+                        // by a disconnect already, so use try/catch
+                        try { client.GetStream().Close(); } catch {}
                         client.Close();
                         continue;
                     }
