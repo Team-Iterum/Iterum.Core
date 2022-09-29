@@ -76,7 +76,7 @@ namespace Telepathy
             try
             {
                 var ipAddress = ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString();
-                SpamBlockIpList.Add(ipAddress);
+                SpamBlockIpList.Check(ipAddress);
             }
             catch (Exception ex)
             {

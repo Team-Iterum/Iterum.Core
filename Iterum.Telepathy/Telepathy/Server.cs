@@ -111,6 +111,9 @@ namespace Telepathy
                     try
                     {
                         var address = ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString();
+                        if (!SpamBlockIpList.Exist(address)) 
+                            SpamBlockIpList.CheckIncoming(address);
+                        
                         if (SpamBlockIpList.Exist(address))
                         {
                             if (SpamBlockIpList.IsLogDisconnects)

@@ -11,7 +11,15 @@ namespace Iterum.Network
         public static bool IsLogDisconnects { get; set; } = false;
         public static bool IsLogDisconnectsErrors { get; set; } = true;
 
-        public static async void Add(string address)
+        public static async void CheckIncoming(string address)
+        {
+            var result = await OnCheck(address);
+            if(result)
+            {
+                Addresses.Add(address);
+            }
+        }
+        public static async void Check(string address)
         {
             var result = await OnAdd(address);
             if(result)
@@ -20,7 +28,8 @@ namespace Iterum.Network
             }
         }
 
-        public static Func<string, Task<bool>> OnAdd = e => Task.FromResult(true); 
+        public static Func<string, Task<bool>> OnAdd = e => Task.FromResult(true);
+        public static Func<string, Task<bool>> OnCheck = e => Task.FromResult(true);
 
         public static bool Exist(string address)
         {
