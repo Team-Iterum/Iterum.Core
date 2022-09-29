@@ -17,7 +17,7 @@
     <RepositoryUrl>https://github.com/Team-Iterum/Iterum.Core</RepositoryUrl>
     
 
-    <PackageVersion>3.4.6</PackageVersion>
+    <PackageVersion>3.4.7</PackageVersion>
   </PropertyGroup>
   
   <ItemGroup>

@@ -125,7 +125,7 @@ namespace Telepathy
                     }
                     catch (Exception ex)
                     {
-                        if (SpamBlockIpList.IsLogDisconnects)
+                        if (SpamBlockIpList.IsLogDisconnectsErrors)
                             Log.Error($"Spam ip handle: {ex}");
                         // close the stream if not closed yet. it may have been closed
                         // by a disconnect already, so use try/catch
