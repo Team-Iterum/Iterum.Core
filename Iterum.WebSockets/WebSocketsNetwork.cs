@@ -226,11 +226,11 @@ namespace Iterum.Network
             }
         }
 
-        public void Send<T>(int conn, T packet) where T : struct, ISerializablePacket
+        public void Send<T>(int conn, T packet) where T : struct, ISerializablePacketSegment
         {
             Send(conn, packet.Serialize());
         }
-        
+
         public void Send(int conn, byte[] packet)
         {
             try
@@ -238,6 +238,21 @@ namespace Iterum.Network
 
                 if (sockets.ContainsKey(conn) && sockets[conn].socket.IsConnected)
                     sockets[conn].WriteBytesAsync(packet);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(LogGroup, "Send error");
+                Log.Exception(LogGroup, ex);
+            }
+        }
+
+        public void Send(int conn, ArraySegment<byte> packet)
+        {
+            try
+            {
+
+                if (sockets.ContainsKey(conn) && sockets[conn].socket.IsConnected)
+                    sockets[conn].WriteBytesAsync(packet.ToArray());
             }
             catch (Exception ex)
             {
