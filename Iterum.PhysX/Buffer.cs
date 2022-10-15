@@ -7,6 +7,7 @@ public struct Buffer<T> where T : IThing
 {
     public long Ref;
     public T[] Things;
+    public long[] Refs;
     
     // supportData
     public float[] Dists;
@@ -19,6 +20,7 @@ public struct Buffer<T> where T : IThing
     {
         Ref = nRef;
         Things = new T[max];
+        Refs = new long[max];
         Dists = new float[max];
         Positions = new Vector3[max];
         Normals = new Vector3[max];

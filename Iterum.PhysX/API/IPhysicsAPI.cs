@@ -29,7 +29,7 @@ public interface IPhysicsAPI
     void setControllerHeight(long nRef, float height);
     long createRaycastBuffer(int max);
     long createOverlapBuffer(int max);
-    int sceneOverlap(long refScene, long refOverlapBuffer, long refGeo, APIVec3 pos, OverlapCallback callback);
+    int sceneOverlap(long refScene, long refOverlapBuffer, long[] bufferRefs, long refGeo, APIVec3 pos);
     int sceneRaycast(long refScene, long refRaycastBuffer, APIVec3 origin, APIVec3 unitDir, float distance,
         RaycastCallback callback);
 
@@ -52,16 +52,16 @@ public interface IPhysicsAPI
         long refScene, long refMat, APIVec3 pos);
     void destroyTerrain(long nRef);
 
-    APITrans getRigidDynamicTransform(long nRef);
-    void setRigidDynamicTransform(long nRef, APITrans t);
+    APITrans getRigidDynamicTransform(long sceneRef, long nRef);
+    void setRigidDynamicTransform(long sceneRef, long nRef, APITrans t);
 
 
     APIVec3 getRigidStaticPosition(long nRef);
     APIQuat getRigidStaticRotation(long nRef);
     void setRigidStaticPosition(long nRef, APIVec3 p);
     void setRigidStaticRotation(long nRef, APIQuat q);
-    void setRigidDynamicDisable(long nRef, bool disabled);
-    void setRigidDynamicWord(long nRef, uint word);
+    void setRigidDynamicDisable(long sceneRef, long nRef, bool disabled);
+    void setRigidDynamicWord(long sceneRef, long nRef, uint word);
     
     APIVec3 getTerrainPosition(long nRef);
     float sampleTerrainHeight(long nRef, APIVec3 p);
@@ -73,27 +73,27 @@ public interface IPhysicsAPI
     long createRigidDynamic(int geoType, int refGeoCount, long[] refGeo, long nRefScene, long nRefMat, bool kinematic, bool ccd, bool retain,
         bool disableGravity, bool isTrigger, float mass, uint word, APIVec3 pos, APIQuat quat);
 
-    void destroyRigidDynamic(long nRef);
+    void destroyRigidDynamic(long sceneRef, long nRef);
 
-    void setRigidDynamicKinematicTarget(long nRef, APITrans t);
+    void setRigidDynamicKinematicTarget(long sceneRef, long nRef, APITrans t);
 
-    void setRigidDynamicLinearVelocity(long nRef, APIVec3 v);
-    void setRigidDynamicAngularVelocity(long nRef, APIVec3 v);
+    void setRigidDynamicLinearVelocity(long sceneRef, long nRef, APIVec3 v);
+    void setRigidDynamicAngularVelocity(long sceneRef, long nRef, APIVec3 v);
 
 
-    void setRigidDynamicLinearDamping(long nRef, float v);
-    void setRigidDynamicAngularDamping(long nRef, float v);
+    void setRigidDynamicLinearDamping(long sceneRef, long nRef, float v);
+    void setRigidDynamicAngularDamping(long sceneRef, long nRef, float v);
 
-    void addRigidDynamicForce(long nRef, APIVec3 v, ForceMode mode);
-    void addRigidDynamicTorque(long nRef, APIVec3 v, ForceMode mode);
+    void addRigidDynamicForce(long sceneRef, long nRef, APIVec3 v, ForceMode mode);
+    void addRigidDynamicTorque(long sceneRef, long nRef, APIVec3 v, ForceMode mode);
 
-    void setRigidDynamicMaxLinearVelocity(long nRef, float v);
-    void setRigidDynamicMaxAngularVelocity(long nRef, float v);
+    void setRigidDynamicMaxLinearVelocity(long sceneRef, long nRef, float v);
+    void setRigidDynamicMaxAngularVelocity(long sceneRef, long nRef, float v);
 
-    APIVec3 getRigidDynamicAngularVelocity(long nRef);
-    APIVec3 getRigidDynamicLinearVelocity(long nRef);
-    float getRigidDynamicMaxAngularVelocity(long nRef);
-    float getRigidDynamicMaxLinearVelocity(long nRef);
+    APIVec3 getRigidDynamicAngularVelocity(long sceneRef, long nRef);
+    APIVec3 getRigidDynamicLinearVelocity(long sceneRef, long nRef);
+    float getRigidDynamicMaxAngularVelocity(long sceneRef, long nRef);
+    float getRigidDynamicMaxLinearVelocity(long sceneRef, long nRef);
 
 
 

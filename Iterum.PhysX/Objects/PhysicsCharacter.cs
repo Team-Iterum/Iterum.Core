@@ -1,4 +1,5 @@
 ﻿using Iterum.Things;
+using Mono.DllMap.Extensions;
 using UnityEngine;
 using static Iterum.Physics.PhysXImpl.PhysicsAlias;
 
@@ -99,14 +100,14 @@ public class PhysicsCharacter : IPhysicsCharacter
 
         var moveDelta = Vector3.zero;
 
-        if (dirs.HasFlag(MoveDirection.Forward)) moveDelta += forward;
-        else if (dirs.HasFlag(MoveDirection.Backward)) moveDelta += -forward;
+        if (dirs.HasFlagFast(MoveDirection.Forward)) moveDelta += forward;
+        else if (dirs.HasFlagFast(MoveDirection.Backward)) moveDelta += -forward;
             
-        if (dirs.HasFlag(MoveDirection.Left)) moveDelta += -right;
-        else if (dirs.HasFlag(MoveDirection.Right)) moveDelta += right;
+        if (dirs.HasFlagFast(MoveDirection.Left)) moveDelta += -right;
+        else if (dirs.HasFlagFast(MoveDirection.Right)) moveDelta += right;
             
-        if (dirs.HasFlag(MoveDirection.Up)) moveDelta += up * scene.Gravity.magnitude * JumpHeight;
-        else if (dirs.HasFlag(MoveDirection.Down)) moveDelta += -up;
+        if (dirs.HasFlagFast(MoveDirection.Up)) moveDelta += up * scene.Gravity.magnitude * JumpHeight;
+        else if (dirs.HasFlagFast(MoveDirection.Down)) moveDelta += -up;
 
 
         Direction = moveDelta * Speed + scene.Gravity;

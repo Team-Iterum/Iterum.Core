@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Iterum.Things;
+using Mono.DllMap.Extensions;
 using UnityEngine;
 using static Iterum.Physics.PhysXImpl.PhysicsAlias;
 
@@ -26,62 +27,62 @@ public class DynamicObject : IDynamicObject
         
     public APITrans Transform
     {
-        get => API.getRigidDynamicTransform(Ref);
-        set => API.setRigidDynamicTransform(Ref, value);
+        get => API.getRigidDynamicTransform(scene.Ref, Ref);
+        set => API.setRigidDynamicTransform(scene.Ref, Ref, value);
     }
     public Vector3 Position
     {
-        get => API.getRigidDynamicTransform(Ref).p;
-        set => API.setRigidDynamicTransform(Ref, new APITrans(value, Rotation));
+        get => API.getRigidDynamicTransform(scene.Ref, Ref).p;
+        set => API.setRigidDynamicTransform(scene.Ref, Ref, new APITrans(value, Rotation));
     }
 
     public Quaternion Rotation
     {
-        get => API.getRigidDynamicTransform(Ref).q;
-        set => API.setRigidDynamicTransform(Ref, new APITrans(Position, value));
+        get => API.getRigidDynamicTransform(scene.Ref, Ref).q;
+        set => API.setRigidDynamicTransform(scene.Ref, Ref, new APITrans(Position, value));
     }
         
     public bool IsDestroyed { get; private set; }
 
     public float MaxLinearVelocity
     {
-        get => API.getRigidDynamicMaxLinearVelocity(Ref);
-        set => API.setRigidDynamicMaxLinearVelocity(Ref, value);
+        get => API.getRigidDynamicMaxLinearVelocity(scene.Ref, Ref);
+        set => API.setRigidDynamicMaxLinearVelocity(scene.Ref, Ref, value);
     }
     public Vector3 LinearVelocity
     {
-        get => API.getRigidDynamicLinearVelocity(Ref);
-        set => API.setRigidDynamicLinearVelocity(Ref, value);
+        get => API.getRigidDynamicLinearVelocity(scene.Ref, Ref);
+        set => API.setRigidDynamicLinearVelocity(scene.Ref, Ref, value);
     }
 
     public float MaxAngularVelocity
     {
-        get => API.getRigidDynamicMaxAngularVelocity(Ref);
-        set => API.setRigidDynamicMaxAngularVelocity(Ref, value);
+        get => API.getRigidDynamicMaxAngularVelocity(scene.Ref, Ref);
+        set => API.setRigidDynamicMaxAngularVelocity(scene.Ref, Ref, value);
     }
     public Vector3 AngularVelocity
     {
-        get => API.getRigidDynamicAngularVelocity(Ref);
-        set => API.setRigidDynamicAngularVelocity(Ref, value);
+        get => API.getRigidDynamicAngularVelocity(scene.Ref, Ref);
+        set => API.setRigidDynamicAngularVelocity(scene.Ref, Ref, value);
     }
 
     public float LinearDamping
     {
-        set => API.setRigidDynamicLinearDamping(Ref, value);
+        set => API.setRigidDynamicLinearDamping(scene.Ref, Ref, value);
     }
     public float AngularDamping
     {
-        set => API.setRigidDynamicAngularDamping(Ref, value);
+        set => API.setRigidDynamicAngularDamping(scene.Ref, Ref, value);
     }
 
     public void SetKinematicTarget(Vector3 position, Quaternion rotation) =>
-        API.setRigidDynamicKinematicTarget(Ref, new APITrans(position, rotation));
+        API.setRigidDynamicKinematicTarget(scene.Ref, Ref, new APITrans(position, rotation));
         
-    public void SetKinematicTarget(APITrans transform) => API.setRigidDynamicKinematicTarget(Ref, transform);
+    public void SetKinematicTarget(APITrans transform) => API.setRigidDynamicKinematicTarget(scene.Ref, Ref, transform);
         
 
-    public void AddForce(Vector3 force, ForceMode mode) => API.addRigidDynamicForce(Ref, force, mode);
-    public void AddTorque(Vector3 torque, ForceMode mode) => API.addRigidDynamicTorque(Ref, torque, mode);
+    public void AddForce(Vector3 force, ForceMode mode) => API.addRigidDynamicForce(scene.Ref, Ref, force, mode);
+    public void AddTorque(Vector3 torque, ForceMode mode) => API.addRigidDynamicTorque(scene.Ref, Ref, torque, mode);
 
     public bool DisabledSimulation
     {
@@ -89,7 +90,7 @@ public class DynamicObject : IDynamicObject
         {
             if (disabledSimulation != value)
             {
-                API.setRigidDynamicDisable(Ref, value);
+                API.setRigidDynamicDisable(scene.Ref, Ref, value);
                 disabledSimulation = value;
             }
         }
@@ -102,7 +103,7 @@ public class DynamicObject : IDynamicObject
         {
             if (word != value)
             {
-                API.setRigidDynamicWord(Ref, value);
+                API.setRigidDynamicWord(scene.Ref, Ref, value);
                 word = value;
             }
         }
@@ -132,11 +133,11 @@ public class DynamicObject : IDynamicObject
             array,
             scene.Ref,
             (long) mat.GetInternal(),
-            flags.HasFlag(PhysicsObjectFlags.Kinematic), 
-            flags.HasFlag(PhysicsObjectFlags.CCD), 
-            flags.HasFlag(PhysicsObjectFlags.Retain), 
-            flags.HasFlag(PhysicsObjectFlags.DisableGravity), 
-            flags.HasFlag(PhysicsObjectFlags.Trigger), 
+            flags.HasFlagFast(PhysicsObjectFlags.Kinematic), 
+            flags.HasFlagFast(PhysicsObjectFlags.CCD), 
+            flags.HasFlagFast(PhysicsObjectFlags.Retain), 
+            flags.HasFlagFast(PhysicsObjectFlags.DisableGravity), 
+            flags.HasFlagFast(PhysicsObjectFlags.Trigger), 
             mass, 
             word,
             pos, quat);

@@ -72,7 +72,7 @@ internal class Scene
     public void Destroy(DynamicObject e)
     {
         refs.Remove(e.Ref);
-        API.destroyRigidDynamic(e.Ref);
+        API.destroyRigidDynamic(Ref, e.Ref);
 #if PHYSICS_DEBUG_LEVEL            
             Console.WriteLine($"{LogGroup} DynamicObject Ref: ({e.Ref}) destroyed");
 #endif
@@ -161,18 +161,20 @@ internal class Scene
         
     public int SphereCast<T>(Buffer<T> buffer, IGeometry geometry, Vector3 position) where T : class, IThing
     {
-        int count = API.sceneOverlap(Ref, buffer.Ref, 
-            (long)geometry.GetInternal(), position, (i, nRef) =>
+        int count = API.sceneOverlap(Ref, buffer.Ref, buffer.Refs, (long)geometry.GetInternal(), position);
+        
+        for (int i = 0; i < count; i++)
+        {
+            var physicsObject = GetObject(buffer.Refs[i]);
+            if (physicsObject != null)
             {
-                var physicsObject = GetObject(nRef);
-                if (physicsObject != null)
-                {
-                    buffer.Things[i] = physicsObject.Thing as T;
-                }
-            });
-        buffer.SetResultsCount(count);
+                buffer.Things[i] = physicsObject.Thing as T;
+            }
+        }
             
-        return count;
+        buffer.SetResultsCount(refs.Count);
+        
+        return buffer.Count;
     }
 
     public Vector4 ComputePenetration(IGeometry geo1, IGeometry geo2, APITrans t1, APITrans t2)
