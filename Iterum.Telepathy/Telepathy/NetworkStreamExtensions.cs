@@ -1,9 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net.Sockets;
 
 namespace Telepathy
 {
-
     public static class NetworkStreamExtensions
     {
         // .Read returns '0' if remote closed the connection but throws an
@@ -17,15 +17,23 @@ namespace Telepathy
             {
                 return stream.Read(buffer, offset, size);
             }
+            // IOException happens if we voluntarily closed our own connection.
             catch (IOException)
+            {
+                return 0;
+            }
+            // ObjectDisposedException can be thrown if Client.Disconnect()
+            // disposes the stream, while we are still trying to read here.
+            // catching it fixes https://github.com/vis2k/Telepathy/pull/104
+            catch (ObjectDisposedException)
             {
                 return 0;
             }
         }
 
         // helper function to read EXACTLY 'n' bytes
-        // -> default .Read reads up to 'n' bytes. this function reads exactly 'n'
-        //    bytes
+        // -> default .Read reads up to 'n' bytes. this function reads exactly
+        //    'n' bytes
         // -> this is blocking until 'n' bytes were received
         // -> immediately returns false in case of disconnects
         public static bool ReadExactly(this NetworkStream stream, byte[] buffer, int amount)
