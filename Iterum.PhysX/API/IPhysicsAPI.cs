@@ -29,7 +29,7 @@ public interface IPhysicsAPI
     void setControllerHeight(long nRef, float height);
     long createRaycastBuffer(int max);
     long createOverlapBuffer(int max);
-    int sceneOverlap(long refScene, long refOverlapBuffer, long[] bufferRefs, long refGeo, APIVec3 pos);
+    int sceneOverlap(long refScene, long refOverlapBuffer, long[] bufferRefs, long refGeo, APIVec3 pos, int allDynamicStatic);
     int sceneRaycast(long refScene, long refRaycastBuffer, APIVec3 origin, APIVec3 unitDir, float distance,
         RaycastCallback callback);
 

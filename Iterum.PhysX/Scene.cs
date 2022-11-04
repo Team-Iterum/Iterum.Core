@@ -159,9 +159,10 @@ internal class Scene
         return count;
     }
         
-    public int SphereCast<T>(Buffer<T> buffer, IGeometry geometry, Vector3 position) where T : class, IThing
+    public int SphereCast<T>(Buffer<T> buffer, IGeometry geometry, Vector3 position, SphereCastFilter filter) where T : class, IThing
     {
-        int count = API.sceneOverlap(Ref, buffer.Ref, buffer.Refs, (long)geometry.GetInternal(), position);
+        
+        int count = API.sceneOverlap(Ref, buffer.Ref, buffer.Refs, (long)geometry.GetInternal(), position, (int)filter);
         
         for (int i = 0; i < count; i++)
         {

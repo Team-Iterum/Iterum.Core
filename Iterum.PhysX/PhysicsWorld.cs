@@ -91,13 +91,13 @@ public sealed class PhysicsWorld
         return count;
     }
 
-    public int SphereCast<T>(Buffer<T> buffer, Vector3 position, IGeometry geometry) where T : class, IThing
+    public int SphereCast<T>(Buffer<T> buffer, Vector3 position, IGeometry geometry, SphereCastFilter filter = SphereCastFilter.All) where T : class, IThing
     {
 #if PHYSICS_DEBUG_LEVEL
             Console.WriteLine($"{LogGroup} SphereCast. Position: {position} Geometry: {geometry.GetInternalGeometry()}");
 #endif
             
-        int count = scene.SphereCast<T>(buffer, geometry, position);
+        int count = scene.SphereCast<T>(buffer, geometry, position, filter);
         return count;
     }
 
