@@ -14,7 +14,7 @@ internal class SphereGeometry : IGeometry
     {
         API.cleanupGeometry(nRef);
     }
-    public object GetInternal()
+    public long GetInternal()
     {
         return nRef;
     }

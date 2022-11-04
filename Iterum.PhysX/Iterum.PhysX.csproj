@@ -17,14 +17,18 @@
     <RepositoryUrl>https://github.com/Team-Iterum/Iterum.Core</RepositoryUrl>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
-    <PackageVersion>10.195.0.0</PackageVersion>
+    <PackageVersion>10.196.0.0</PackageVersion>
     <LangVersion>default</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Iterum.Core" Version="*" />
     <PackageReference Include="Iterum.Math" Version="*" />
-    <PackageReference Include="Iterum.Physics" Version="*" />
     <PackageReference Include="AdvancedDLSupport" Version="3.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Folder.DotSettings" />
   </ItemGroup>
 
 </Project>

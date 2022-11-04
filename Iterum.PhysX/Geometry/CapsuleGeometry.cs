@@ -15,7 +15,7 @@ internal class CapsuleGeometry : IGeometry
         API.cleanupGeometry(nRef);
     }
     
-    public object GetInternal()
+    public long GetInternal()
     {
         return nRef;
     }

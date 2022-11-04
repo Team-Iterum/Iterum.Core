@@ -12,9 +12,9 @@ internal class Scene
     public int Timestamp => (int) API.getSceneTimestamp(Ref);
     public Vector3 Gravity;
 
-    private string LogGroup => $"[Scene ({Ref})]";
+    private string LogGroup => $"[Scene ({Ref.ToString()})]";
         
-    private Dictionary<long, IPhysicsObject> refs = new Dictionary<long, IPhysicsObject>();
+    private Dictionary<long, IPhysicsObject> refs = new();
     private IMaterial legacySceneGlobalMaterial;
         
     public bool ccd;
@@ -149,7 +149,7 @@ internal class Scene
                 if (physicsObject != null)
                 {
                     buffer.Things[i] = physicsObject.Thing as T;
-                    buffer.Dists[i] = dist;
+                    buffer.Distances[i] = dist;
                     buffer.Positions[i] = pos;
                     buffer.Normals[i] = normal;
                 }

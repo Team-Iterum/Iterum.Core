@@ -25,7 +25,7 @@ public class Material : IMaterial
         API.cleanupMaterial(nRef);
     }
         
-    public object GetInternal()
+    public long GetInternal()
     {
         return nRef;
     }

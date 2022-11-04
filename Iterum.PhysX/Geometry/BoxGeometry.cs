@@ -16,7 +16,7 @@ internal class BoxGeometry : IGeometry
     {
         API.cleanupGeometry(nRef);
     }
-    public object GetInternal()
+    public long GetInternal()
     {
         return nRef;
     }
