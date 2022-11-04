@@ -7,10 +7,15 @@ namespace Iterum.ThingTypes
 {
     public static class TTExtensions
     {
-        public static string GetAttr(this IThingType tt, string attr)
+        public static bool HasFlag(this IThingType tt, string flag)
         {
-            if (tt.Attrs == null) return null;
-            if (!tt.Attrs.ContainsKey(attr)) return null;
+            return tt.Flags != null && tt.Flags.Contains(flag);
+        }
+
+        public static string GetAttr(this IThingType tt, string attr, string def = null)
+        {
+            if (tt.Attrs == null) return def;
+            if (!tt.Attrs.ContainsKey(attr)) return def;
             return tt.Attrs[attr];
         }
 
@@ -20,22 +25,9 @@ namespace Iterum.ThingTypes
             if (!tt.Attrs.ContainsKey(attr)) return def;
             return tt.Attrs[attr];
         }
-        
-        public static bool HasFlag(this IThingType tt, string flag)
-        {
-            return tt.Flags != null && tt.Flags.Contains(flag);
-        }
-        
 
         #region Float Attr Accessors
-
-        public static float GetFloat(this IThingType tt, string attr)
-        {
-            return float.TryParse(tt.GetAttr(attr), 
-                NumberStyles.Any, CultureInfo.InvariantCulture, out float result)
-                ? result : 0;
-        }
-
+        
         public static float Float(this IThingType tt, string attr, float def = 0)
         {
             if(tt.GetAttr(attr) == null) return def;
@@ -74,13 +66,7 @@ namespace Iterum.ThingTypes
 
 
         #region Int Attrs Accessors
-
-        public static int GetInt(this IThingType tt, string attr)
-        {
-            return int.TryParse(tt.GetAttr(attr), 
-                NumberStyles.Any, CultureInfo.InvariantCulture, out int result)
-                ? result : 0;
-        }
+        
 
         public static int Int(this IThingType tt, string attr, int def = 0)
         {
@@ -90,17 +76,6 @@ namespace Iterum.ThingTypes
                 NumberStyles.Any, CultureInfo.InvariantCulture, out int result)
                 ? result : def;
         }
-
-        public static int[] GetInt2(this IThingType tt, string attr)
-        {
-            var str = tt.GetAttr(attr).Split(' ');
-            return new[]
-            {
-                int.Parse(str[0], CultureInfo.InvariantCulture),
-                int.Parse(str[1], CultureInfo.InvariantCulture)
-            };
-        }
-
 
         public static int[] Int2(this IThingType tt, string attr, int[] def = null)
         {
@@ -114,18 +89,7 @@ namespace Iterum.ThingTypes
             };
         }
 
-
-        public static int[] GetInt3(this IThingType tt, string attr)
-        {
-            var str = tt.GetAttr(attr).Split(' ');
-            return new[]
-            {
-                int.Parse(str[0], CultureInfo.InvariantCulture),
-                int.Parse(str[1], CultureInfo.InvariantCulture),
-                int.Parse(str[2], CultureInfo.InvariantCulture)
-            };
-        }
-
+        
         public static int[] Int3(this IThingType tt, string attr, int[] def = null)
         {
             if(tt.GetAttr(attr) == null) return def;

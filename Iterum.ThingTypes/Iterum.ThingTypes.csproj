@@ -17,11 +17,12 @@
     <RepositoryUrl>https://github.com/Team-Iterum/Iterum.Core</RepositoryUrl>
     
     
-    <PackageVersion>3.3.6</PackageVersion>
+    <PackageVersion>3.4.0</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="YamlDotNet.dll" />
+    <None Remove="Folder.DotSettings" />
   </ItemGroup>
 
   <ItemGroup>
