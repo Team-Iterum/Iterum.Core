@@ -173,7 +173,7 @@ internal class Scene
             }
         }
             
-        buffer.SetResultsCount(refs.Count);
+        buffer.SetResultsCount(count);
         
         return buffer.Count;
     }
