@@ -10,7 +10,7 @@ namespace Iterum.Physics.PhysXImpl;
 public class DynamicObject : IDynamicObject
 {
     public long Ref { get; }
-        
+
     private readonly Scene scene;
     private bool disabledSimulation;
     private uint word;
@@ -24,12 +24,13 @@ public class DynamicObject : IDynamicObject
     }
 
     public object UserData { get; set; }
-        
+
     public APITrans Transform
     {
         get => API.getRigidDynamicTransform(scene.Ref, Ref);
         set => API.setRigidDynamicTransform(scene.Ref, Ref, value);
     }
+
     public Vector3 Position
     {
         get => API.getRigidDynamicTransform(scene.Ref, Ref).p;
@@ -41,7 +42,7 @@ public class DynamicObject : IDynamicObject
         get => API.getRigidDynamicTransform(scene.Ref, Ref).q;
         set => API.setRigidDynamicTransform(scene.Ref, Ref, new APITrans(Position, value));
     }
-        
+
     public bool IsDestroyed { get; private set; }
 
     public float MaxLinearVelocity
@@ -49,6 +50,7 @@ public class DynamicObject : IDynamicObject
         get => API.getRigidDynamicMaxLinearVelocity(scene.Ref, Ref);
         set => API.setRigidDynamicMaxLinearVelocity(scene.Ref, Ref, value);
     }
+
     public Vector3 LinearVelocity
     {
         get => API.getRigidDynamicLinearVelocity(scene.Ref, Ref);
@@ -60,6 +62,7 @@ public class DynamicObject : IDynamicObject
         get => API.getRigidDynamicMaxAngularVelocity(scene.Ref, Ref);
         set => API.setRigidDynamicMaxAngularVelocity(scene.Ref, Ref, value);
     }
+
     public Vector3 AngularVelocity
     {
         get => API.getRigidDynamicAngularVelocity(scene.Ref, Ref);
@@ -70,6 +73,7 @@ public class DynamicObject : IDynamicObject
     {
         set => API.setRigidDynamicLinearDamping(scene.Ref, Ref, value);
     }
+
     public float AngularDamping
     {
         set => API.setRigidDynamicAngularDamping(scene.Ref, Ref, value);
@@ -77,9 +81,9 @@ public class DynamicObject : IDynamicObject
 
     public void SetKinematicTarget(Vector3 position, Quaternion rotation) =>
         API.setRigidDynamicKinematicTarget(scene.Ref, Ref, new APITrans(position, rotation));
-        
+
     public void SetKinematicTarget(APITrans transform) => API.setRigidDynamicKinematicTarget(scene.Ref, Ref, transform);
-        
+
 
     public void AddForce(Vector3 force, ForceMode mode) => API.addRigidDynamicForce(scene.Ref, Ref, force, mode);
     public void AddTorque(Vector3 torque, ForceMode mode) => API.addRigidDynamicTorque(scene.Ref, Ref, torque, mode);
@@ -109,7 +113,7 @@ public class DynamicObject : IDynamicObject
         }
         get => word;
     }
-        
+
     public void Destroy()
     {
         if (IsDestroyed) return;
@@ -120,28 +124,35 @@ public class DynamicObject : IDynamicObject
         IsDestroyed = true;
 
     }
+
     #endregion
 
-    internal DynamicObject(IReadOnlyList<IGeometry> geometries, IMaterial mat, PhysicsObjectFlags flags, float mass, uint word,Vector3 pos, Quaternion quat, Scene scene)
+    internal DynamicObject(IReadOnlyList<IGeometry> geometries, IMaterial mat, PhysicsObjectFlags flags, float mass,
+        uint word, Vector3 pos, Quaternion quat, Scene scene)
     {
         this.scene = scene;
         this.word = word;
-        long[] array = geometries.Select(e => (long) e.GetInternal()).ToArray();
+        
+        var array = new long[geometries.Count];
+        for (int i = 0; i < geometries.Count; i++)
+        {
+            array[i] = geometries[i].GetInternal();
+        }
 
-        Ref = API.createRigidDynamic((int) geometries[0].GeoType, 
-            geometries.Count, 
+        Ref = API.createRigidDynamic((int)geometries[0].GeoType,
+            geometries.Count,
             array,
             scene.Ref,
-            (long) mat.GetInternal(),
-            flags.HasFlagFast(PhysicsObjectFlags.Kinematic), 
-            flags.HasFlagFast(PhysicsObjectFlags.CCD), 
-            flags.HasFlagFast(PhysicsObjectFlags.Retain), 
-            flags.HasFlagFast(PhysicsObjectFlags.DisableGravity), 
-            flags.HasFlagFast(PhysicsObjectFlags.Trigger), 
-            mass, 
+            mat.GetInternal(),
+            flags.HasFlagFast(PhysicsObjectFlags.Kinematic),
+            flags.HasFlagFast(PhysicsObjectFlags.CCD),
+            flags.HasFlagFast(PhysicsObjectFlags.Retain),
+            flags.HasFlagFast(PhysicsObjectFlags.DisableGravity),
+            flags.HasFlagFast(PhysicsObjectFlags.Trigger),
+            mass,
             word,
             pos, quat);
-           
+
     }
 
 }

@@ -4,7 +4,6 @@ using AdvancedDLSupport;
 
 namespace Iterum.Physics.PhysXImpl;
 
-public delegate void OverlapCallback(int index, long nRef);
 public delegate void RaycastCallback(int index, long nRef, float distance, APIVec3 position, APIVec3 normal);
 
 public delegate void ErrorCallbackFunc(string message);
@@ -140,4 +139,6 @@ public interface IPhysicsAPI
         
     void cleanupPhysics();
 
+    void cleanupRaycastBuffer(long nRef);
+    void cleanupSphereBuffer(long nRef);
 }

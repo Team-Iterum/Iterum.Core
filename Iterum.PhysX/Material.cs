@@ -1,9 +1,10 @@
-﻿using Iterum.Physics;
+﻿using System;
+using Iterum.Physics;
 using static Iterum.Physics.PhysXImpl.PhysicsAlias;
 
 namespace Iterum;
 
-public class Material : IMaterial
+public class Material : IMaterial, IDisposable
 {
     public readonly float staticFriction;
     public readonly float dynamicFriction;
@@ -28,5 +29,10 @@ public class Material : IMaterial
     public long GetInternal()
     {
         return nRef;
+    }
+
+    public void Dispose()
+    {
+        Destroy();
     }
 }

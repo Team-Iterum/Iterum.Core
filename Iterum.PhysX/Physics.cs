@@ -82,12 +82,12 @@ public class Physics : IPhysics
         
     public Buffer<T> CreateOverlapBuffer<T>(int max) where T : class, IThing
     {
-        return new Buffer<T>(API.createOverlapBuffer(max), max);
+        return new Buffer<T>(API.createOverlapBuffer(max), max, BufferType.Sphere);
     }
         
     public Buffer<T> CreateRaycastBuffer<T>(int max) where T : class, IThing
     {
-        return new Buffer<T>(API.createRaycastBuffer(max), max);
+        return new Buffer<T>(API.createRaycastBuffer(max), max, BufferType.Raycast);
     }
         
 

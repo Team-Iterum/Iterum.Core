@@ -1,8 +1,9 @@
-﻿using static Iterum.Physics.PhysXImpl.PhysicsAlias;
+﻿using System;
+using static Iterum.Physics.PhysXImpl.PhysicsAlias;
 
 namespace Iterum.Physics.PhysXImpl;
 
-internal class SphereGeometry : IGeometry
+internal class SphereGeometry : IGeometry, IDisposable
 {
     private long nRef;
     public SphereGeometry(float radius)
@@ -20,4 +21,9 @@ internal class SphereGeometry : IGeometry
     }
 
     public GeoType GeoType { get; } = GeoType.SimpleGeometry;
+
+    public void Dispose()
+    {
+        Destroy();
+    }
 }

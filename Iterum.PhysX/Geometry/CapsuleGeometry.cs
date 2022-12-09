@@ -1,8 +1,9 @@
-﻿using static Iterum.Physics.PhysXImpl.PhysicsAlias;
+﻿using System;
+using static Iterum.Physics.PhysXImpl.PhysicsAlias;
 
 namespace Iterum.Physics.PhysXImpl;
 
-internal class CapsuleGeometry : IGeometry
+internal class CapsuleGeometry : IGeometry, IDisposable
 {
     private long nRef;
     public CapsuleGeometry(float radius, float halfHeight)
@@ -21,4 +22,9 @@ internal class CapsuleGeometry : IGeometry
     }
 
     public GeoType GeoType { get; } = GeoType.SimpleGeometry;
+
+    public void Dispose()
+    {
+        Destroy();
+    }
 }

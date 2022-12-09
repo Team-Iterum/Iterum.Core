@@ -4,7 +4,7 @@ using static Iterum.Physics.PhysXImpl.PhysicsAlias;
 
 namespace Iterum.Physics.PhysXImpl;
 
-internal class ModelGeometry : IGeometry
+internal class ModelGeometry : IGeometry, IDisposable
 {
     private long nRef;
     // private uint[] indices;
@@ -55,5 +55,10 @@ internal class ModelGeometry : IGeometry
     public long GetInternal()
     {
         return nRef;
+    }
+
+    public void Dispose()
+    {
+        Destroy();
     }
 }

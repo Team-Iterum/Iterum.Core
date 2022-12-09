@@ -1,9 +1,10 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using static Iterum.Physics.PhysXImpl.PhysicsAlias;
 
 namespace Iterum.Physics.PhysXImpl;
 
-internal class BoxGeometry : IGeometry
+internal class BoxGeometry : IGeometry, IDisposable
 {
     private long nRef;
 
@@ -22,4 +23,9 @@ internal class BoxGeometry : IGeometry
     }
 
     public GeoType GeoType { get; } = GeoType.SimpleGeometry;
+
+    public void Dispose()
+    {
+        Destroy();
+    }
 }
