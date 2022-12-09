@@ -1,58 +1,52 @@
+using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
+using System.Runtime.Serialization;
 
 namespace Iterum.ThingTypes
 {
+    [Serializable]
+    [DataContract]
     public class MapData
     {
+        [DataMember]
         public string Name;
-        
+
+        [DataMember]
         public Dictionary<string, string> Attrs;
         
+        [DataMember]
         public MapRef[] Refs;
-
-        public float[] GetFloat3(string key, char separator = ' ')
+        
+        public List<MapRef> GetRefsWithTag(string tag)
         {
-            var split = Attrs[key].Split(separator);
-            return new[]
+            var returnRefs = new List<MapRef>();
+            for (int i = 0; i < Refs.Length; i++)
             {
-                float.Parse(split[0], CultureInfo.InvariantCulture),
-                float.Parse(split[1], CultureInfo.InvariantCulture), 
-                float.Parse(split[2], CultureInfo.InvariantCulture)
-            };
-        }
+                if (Refs[i].tag == tag)
+                {
+                    returnRefs.Add(Refs[i]);
+                }
+            }
 
-        public IEnumerable<MapRef> GetRefsWithTag(string tag)
-        {
-            return Refs.Where(e => e.tag == tag);
+            return returnRefs;
         }
-        
-        
-        public string GetString(string key)
-        {
-            return Attrs[key];
-        }
-        
-        public uint GetUInt(string key)
-        {
-            return uint.Parse(Attrs[key], CultureInfo.InvariantCulture);
-        }
-        
-        public byte GetByte(string key)
-        {
-            return byte.Parse(Attrs[key], CultureInfo.InvariantCulture);
-        }
-
     }
 
+    [Serializable]
+    [DataContract]
     public class MapRef
     {
+        [DataMember]
         public int ID;
+        [DataMember]
         public int record;
+        [DataMember]
         public string name;
+        [DataMember]
         public string tag;
+        [DataMember]
         public float[] position;
+        [DataMember]
         public float[] rotation;
     }
     

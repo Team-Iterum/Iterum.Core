@@ -1,23 +1,27 @@
-using System;
+﻿using System;
 using System.IO;
 using YamlDotNet.Serialization;
 
 namespace Iterum.ThingTypes
 {
-    public static class MapDataSerializer
+    public class YamlMapDataSerializer : IMapDataSerializer
     {
-        public static MapData Deserialize(string mapName)
+        public string FileExtension => "yml";
+
+        public MapData Deserialize(string fileName)
         {
             var builder = new DeserializerBuilder();
 
             var serializer =  builder.Build();
             
-            var mapData = serializer.Deserialize<MapData>(File.ReadAllText(mapName));
+            fileName = Path.ChangeExtension(fileName, FileExtension);
+            
+            var mapData = serializer.Deserialize<MapData>(File.ReadAllText(fileName));
 
             return mapData;
         }
-        
-        public static void Serialize(string fileName, MapData mapData, bool overwrite = true)
+
+        public void Serialize(string fileName, MapData mapData)
         {
             var builder = new SerializerBuilder();
             builder.DisableAliases();
@@ -28,9 +32,11 @@ namespace Iterum.ThingTypes
             
             if (File.Exists(fileName))
             {
-                if(overwrite) File.Delete(fileName);
+                File.Delete(fileName);
             }
 
+            fileName = Path.ChangeExtension(fileName, FileExtension);
+            
             using StreamWriter w = File.AppendText(fileName);
             
             w.Write($"---\n" +
