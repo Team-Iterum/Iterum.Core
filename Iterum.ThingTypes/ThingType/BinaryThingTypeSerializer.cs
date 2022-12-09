@@ -1,18 +1,18 @@
 ﻿using System.IO;
-using System.Xml.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Iterum.ThingTypes
 {
-    public class XmlThingTypeSerializer : IThingTypeSerializer
+    public class BinaryThingTypeSerializer : IThingTypeSerializer
     {
-        public string FileExtension => "xml";
+        public string FileExtension => "bin";
 
         public ThingType Deserialize(string fileName)
         {
             fileName = Path.ChangeExtension(fileName, FileExtension);
             
-            var xmlSerializer = new XmlSerializer(typeof(ThingType));
-            var tt = (ThingType)xmlSerializer.Deserialize(File.OpenRead(fileName));
+            var binaryFormatter = new BinaryFormatter();
+            var tt = (ThingType)binaryFormatter.Deserialize(File.OpenRead(fileName));
 
             return tt;
         }
@@ -21,14 +21,13 @@ namespace Iterum.ThingTypes
         {
             fileName = Path.ChangeExtension(fileName, FileExtension);
             
-            
             if (File.Exists(fileName))
             {
                 File.Delete(fileName);
             }
             
-            var xmlSerializer = new XmlSerializer(typeof(ThingType));
-            xmlSerializer.Serialize(File.OpenWrite(fileName), tt);
+            var binaryFormatter = new BinaryFormatter();
+            binaryFormatter.Serialize(File.OpenWrite(fileName), tt);
         }
         
         
