@@ -37,6 +37,11 @@ public class Physics : IPhysics
         isCreated = true;
     }
 
+    public void Destroy()
+    {
+        API.cleanupPhysics();
+    }
+
     #region Logs
         
     public DebugLogFunc LogDebug = e => Console.WriteLine($"[PhysX Debug] {e}");

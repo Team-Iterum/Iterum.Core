@@ -14,6 +14,14 @@ public static class PhysicsWorldFactory
         PhysicsAlias.GlobalPhysics = new PhysXImpl.Physics();
         PhysicsAlias.GlobalPhysics.Init(isCreatePvd, toleranceLength, toleranceSpeed);
     }
+    
+    public static void DestroyPhysics()
+    {
+        // PhysX
+        PhysicsAlias.GlobalPhysics.Destroy();
+        PhysicsAlias.GlobalPhysics = null;
+    }
+    
     public static PhysicsWorld CreateWorld(Vector3 gravity, bool ccd = false, bool determenism = false)
     {
         // PhysX
