@@ -140,5 +140,5 @@ public interface IPhysicsAPI
     void cleanupPhysics();
 
     void cleanupRaycastBuffer(long nRef);
-    void cleanupSphereBuffer(long nRef);
+    void cleanupOverlapBuffer(long nRef);
 }

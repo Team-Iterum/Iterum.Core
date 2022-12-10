@@ -43,7 +43,7 @@ public struct Buffer<T> : IDisposable where T : IThing
                 API.cleanupRaycastBuffer(Ref);
                 break;
             case BufferType.Sphere:
-                API.cleanupSphereBuffer(Ref);
+                API.cleanupOverlapBuffer(Ref);
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
