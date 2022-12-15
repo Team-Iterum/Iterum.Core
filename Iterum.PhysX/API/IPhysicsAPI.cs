@@ -51,6 +51,9 @@ public interface IPhysicsAPI
         long refScene, long refMat, APIVec3 pos);
     void destroyTerrain(long nRef);
 
+    
+    void setRigidDynamicLockFlag(long sceneRef, long nRef, DynamicLockFlag lockFlag, bool value);
+    
     APITrans getRigidDynamicTransform(long sceneRef, long nRef);
     void setRigidDynamicTransform(long sceneRef, long nRef, APITrans t);
 

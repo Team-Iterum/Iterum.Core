@@ -17,7 +17,7 @@
     <RepositoryUrl>https://github.com/Team-Iterum/Iterum.Core</RepositoryUrl>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
-    <PackageVersion>10.197.2.0</PackageVersion>
+    <PackageVersion>10.199.0.0</PackageVersion>
     <LangVersion>default</LangVersion>
   </PropertyGroup>
 

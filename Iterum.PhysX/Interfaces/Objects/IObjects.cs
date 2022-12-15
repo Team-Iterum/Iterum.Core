@@ -26,6 +26,16 @@ public enum ForceMode
         
     // ReSharper restore InconsistentNaming
 };
+
+public enum DynamicLockFlag
+{
+    eLOCK_LINEAR_X = 1 << 0,
+    eLOCK_LINEAR_Y = 1 << 1,
+    eLOCK_LINEAR_Z = 1 << 2,
+    eLOCK_ANGULAR_X = 1 << 3,
+    eLOCK_ANGULAR_Y = 1 << 4,
+    eLOCK_ANGULAR_Z = 1 << 5
+};
     
 public interface IDynamicObject : IPhysicsObject
 {
