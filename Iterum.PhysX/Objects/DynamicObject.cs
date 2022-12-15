@@ -83,6 +83,8 @@ public class DynamicObject : IDynamicObject
         API.setRigidDynamicKinematicTarget(scene.Ref, Ref, new APITrans(position, rotation));
 
     public void SetKinematicTarget(APITrans transform) => API.setRigidDynamicKinematicTarget(scene.Ref, Ref, transform);
+    
+    public void SetLockFlags(DynamicLockFlag lockFlag, bool value) => API.setRigidDynamicLockFlag(scene.Ref, Ref, lockFlag, value);
 
 
     public void AddForce(Vector3 force, ForceMode mode) => API.addRigidDynamicForce(scene.Ref, Ref, force, mode);
