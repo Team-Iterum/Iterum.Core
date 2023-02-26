@@ -22,6 +22,8 @@ namespace Iterum.Logs
         public static event LogDelegate LogCallback;
         public static event Func<string, bool> BeforeLog;
 
+        public static string TimeStampFormat = "t"; // short
+
         public static Level Enabled = Level.Debug | Level.Info | Level.Success | Level.Warn | Level.Error |
                                       Level.Exception | Level.Fatal;
         
@@ -61,7 +63,7 @@ namespace Iterum.Logs
                 var foreground = Console.ForegroundColor;
                 if (timestamp)
                 {
-                    var text = $"{dateTime.ToLongTimeString()} ";
+                    var text = $"{dateTime.ToString(TimeStampFormat)} ";
                     
 #if UNITY_2018_3_OR_NEWER
                     text = Tagged(text, ConsoleColor.DarkGray);
