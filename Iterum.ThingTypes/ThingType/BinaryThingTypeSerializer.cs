@@ -45,12 +45,12 @@ namespace Iterum.ThingTypes
             var binaryFormatter = new BinaryFormatter();
             foreach (var (_, thingType) in store.ThingTypes)
             {
-                var memoryStream = new MemoryStream();
-                binaryFormatter.Serialize(memoryStream, thingType);
-                var buffer = memoryStream.ToArray();
+                var ms = new MemoryStream();
+                binaryFormatter.Serialize(ms, thingType);
+                var buffer = ms.ToArray();
                 var length = BitConverter.GetBytes(buffer.Length);
                 fs.Write(length);
-                fs.Write(memoryStream.ToArray());
+                fs.Write(ms.ToArray());
             }
             
             fs.Flush();
@@ -67,12 +67,15 @@ namespace Iterum.ThingTypes
             {
                 Span<byte> lengthBuffer = new byte[4];
 
-                var _ = fs.Read(lengthBuffer);
+                fs.Read(lengthBuffer);
 
                 var length = BitConverter.ToInt32(lengthBuffer);
 
-                var ms = new MemoryStream(new byte[length]);
-                var thingType = (ThingType)binaryFormatter.Deserialize(ms);
+                var buffer = new byte[length];
+                
+                fs.Read(buffer);
+                
+                var thingType = (ThingType)binaryFormatter.Deserialize(new MemoryStream(buffer));
 
                 thingTypes.Add(thingType);
             }

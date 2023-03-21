@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 
 namespace Iterum.ThingTypes
@@ -16,25 +15,24 @@ namespace Iterum.ThingTypes
         public ThingTypeStore DeserializeAll(string directory)
         {
 
-            var dict = _serializers.ToDictionary(e => $".{e.FileExtension}", e => e);
-            var things = new List<ThingType>();
+            var serializerDictionary = _serializers.ToDictionary(e => $".{e.FileExtension}", e => e);
+            var store = new ThingTypeStore();
 
             var files = Directory.EnumerateFiles(directory, "*.*", SearchOption.AllDirectories).ToList();
             foreach (string fileName in files)
             {
-                var fileInfo = new FileInfo(fileName);
+                var info = new FileInfo(fileName);
 
-                if(!dict.ContainsKey(fileInfo.Extension)) continue;
+                if(!serializerDictionary.ContainsKey(info.Extension)) continue;
                 
-                var serializer = dict[fileInfo.Extension];
+                var serializer = serializerDictionary[info.Extension];
                 
-                var tt = serializer.Deserialize(fileName);
-                if(tt.Name == null) continue;
-                
-                things.Add(tt);
+                var newStore = serializer.DeserializeAll(fileName);
+
+                store.Add(newStore);
             }
 
-            return new ThingTypeStore(things);
+            return store;
         }
     }
 }
