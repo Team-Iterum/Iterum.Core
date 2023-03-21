@@ -24,6 +24,8 @@ namespace Iterum.ThingTypes
             {
                 var fileInfo = new FileInfo(fileName);
 
+                if(!dict.ContainsKey(fileInfo.Extension)) continue;
+                
                 var serializer = dict[fileInfo.Extension];
                 
                 var tt = serializer.Deserialize(fileName);
