@@ -31,6 +31,10 @@ namespace Iterum.ThingTypes
             xmlSerializer.Serialize(File.OpenWrite(fileName), tt);
         }
         
+        public ThingTypeStore DeserializeAll(string directory)
+        {
+            return new ThingTypeStore(new[] { Deserialize(directory) });
+        }
         
     }
 }

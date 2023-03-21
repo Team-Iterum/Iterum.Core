@@ -65,15 +65,12 @@ namespace Iterum.ThingTypes
             var thingTypes = new List<ThingType>();
             while (fs.CanRead)
             {
-                Span<byte> lengthBuffer = new byte[4];
-
-                fs.Read(lengthBuffer);
-
+                byte[] lengthBuffer = new byte[4];
+                fs.Read(lengthBuffer, 0, lengthBuffer.Length);
                 var length = BitConverter.ToInt32(lengthBuffer);
 
                 var buffer = new byte[length];
-                
-                fs.Read(buffer);
+                fs.Read(buffer, 0, buffer.Length);
                 
                 var thingType = (ThingType)binaryFormatter.Deserialize(new MemoryStream(buffer));
 
