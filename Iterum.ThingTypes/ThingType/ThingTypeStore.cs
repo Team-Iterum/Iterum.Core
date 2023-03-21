@@ -22,6 +22,19 @@ namespace Iterum.ThingTypes
         {
             ThingTypes = thingTypes.ToDictionary(e => e.ID, e => e);
         }
+        public ThingTypeStore()
+        {
+            ThingTypes = new Dictionary<int, ThingType>();
+        }
+
+        public void Add(ThingTypeStore store)
+        {
+            foreach (var tt in store.ThingTypes)
+            {
+                if (!ThingTypes.ContainsKey(tt.Key))
+                    ThingTypes.Add(tt.Key, tt.Value);
+            }
+        }
         
     }
 }
