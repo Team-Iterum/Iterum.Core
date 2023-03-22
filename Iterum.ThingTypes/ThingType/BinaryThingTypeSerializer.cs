@@ -67,14 +67,16 @@ namespace Iterum.ThingTypes
             {
                 byte[] lengthBuffer = new byte[4];
                 int read = fs.Read(lengthBuffer, 0, lengthBuffer.Length);
-                if (read < 0)
+                if (read <= 0)
                     break;
                 
                 var length = BitConverter.ToInt32(lengthBuffer);
 
                 var buffer = new byte[length];
                 read = fs.Read(buffer, 0, buffer.Length);
-                if(read < 0)
+                if(read <= 0)
+                    break;
+                if(buffer.Length == 0) 
                     break;
                 
                 var thingType = (ThingType)binaryFormatter.Deserialize(new MemoryStream(buffer));
