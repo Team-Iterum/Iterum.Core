@@ -87,7 +87,7 @@ public sealed class WebSocketsNetwork : INetworkServer
 
             Task.Run(AcceptWebSocketsAsync);
 
-            Log.Success(LogGroup, $"Started at {host}:{port}");
+            Log.Success(LogGroup, $"Started at {host}:{port.ToString()}");
         }
         catch (Exception ex)
         {
@@ -153,7 +153,7 @@ public sealed class WebSocketsNetwork : INetworkServer
         var conData = new ConnectionData
         {
             conn = conn,
-            address = null,
+            address = webSocket.RemoteEndpoint as IPEndPoint
         };
 
         var socket = new WrapperWebSocket(webSocket, conData.conn);

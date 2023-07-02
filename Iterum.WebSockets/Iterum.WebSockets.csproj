@@ -17,14 +17,14 @@
     <RepositoryUrl>https://github.com/Team-Iterum/Iterum.Core</RepositoryUrl>
     
 
-    <PackageVersion>3.5.2</PackageVersion>
+    <PackageVersion>3.5.3</PackageVersion>
     
 
     <LangVersion>default</LangVersion>
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="deniszykov.WebSocketListener" Version="4.2.15" />
+    <PackageReference Include="deniszykov.WebSocketListener" Version="4.2.16" />
     <PackageReference Include="Iterum.Network" Version="*" />
     <PackageReference Include="Iterum.Log" Version="*" />
   </ItemGroup>
