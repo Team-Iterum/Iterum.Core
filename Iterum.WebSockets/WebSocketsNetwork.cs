@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
@@ -72,8 +73,10 @@ public sealed class WebSocketsNetwork : INetworkServer
         {
             var options = new WebSocketListenerOptions
             {
-                NegotiationQueueCapacity = 128,
-                ParallelNegotiations = 16,
+                PingTimeout = TimeSpan.FromSeconds(15),
+                NegotiationTimeout = TimeSpan.FromSeconds(15),
+                PingMode = PingMode.BandwidthSaving
+
             };
             options.Standards.RegisterRfc6455();
             if (cert != null)
