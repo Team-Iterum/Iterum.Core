@@ -1,21 +1,9 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace Iterum.Logs
 {
-    [Flags]
-    public enum Level
-    {
-        None       = 0,
-        Debug      = 1 << 8,
-        Info       = 2 << 8,
-        Success    = 3 << 8,
-        Warn       = 4 << 8,
-        Error      = 5 << 8,
-        Exception  = 6 << 8,
-        Fatal      = 7 << 8,
-    }
-
     
     public static partial class Log
     {
@@ -46,17 +34,17 @@ namespace Iterum.Logs
         #endregion
         
         // ReSharper disable Unity.PerformanceAnalysis
-        private static void Send(Level level, string group, string s, 
+        public static void Send(Level level, string group, string s, 
             ConsoleColor color = ConsoleColor.White, ConsoleColor groupColor = ConsoleColor.Gray, 
             bool timestamp = true)
         {
 
-            if (!Enabled.HasFlag(level)) return;
+            if (!Enabled.HasFlagFast(level)) return;
 
             if (BeforeLog != null && !BeforeLog.Invoke(s)) return;
             
             var dateTime = DateTime.Now;
-            var finalText = string.Empty;
+            var finalText = new StringBuilder();
             
             // Timestamp
             {
@@ -67,9 +55,9 @@ namespace Iterum.Logs
                     
 #if UNITY_2018_3_OR_NEWER
                     text = Tagged(text, ConsoleColor.DarkGray);
-                    finalText += text;
+                    finalText.Append(text);
 #else
-                    finalText += text;
+                    finalText.Append(text);
                     Console.ForegroundColor = ConsoleColor.DarkGray;
                     Console.Write(text);
                     Console.ForegroundColor = foreground;
@@ -82,12 +70,12 @@ namespace Iterum.Logs
                 var foreground = Console.ForegroundColor;
                 if (timestamp)
                 {
-                    var text = $"[{level}] ";
+                    var text = $"[{level.ToLevelString()}] ";
 #if UNITY_2018_3_OR_NEWER
                     text = Tagged(text, GetColorLevel(level));
-                    finalText += text;
+                    finalText.Append(text);
 #else
-                    finalText += text;
+                    finalText.Append(text);
                     Console.ForegroundColor = GetColorLevel(level);
                     Console.Write(text);
                     Console.ForegroundColor = foreground;
@@ -103,9 +91,9 @@ namespace Iterum.Logs
                     var text = $"[{group}] ";
 #if UNITY_2018_3_OR_NEWER
                     text = Tagged(text, groupColor);
-                    finalText += text;
+                    finalText.Append(text);
 #else
-                    finalText += text;
+                    finalText.Append(text);
                     Console.ForegroundColor = groupColor;
                     Console.Write(text);
                     Console.ForegroundColor = foreground;
@@ -119,9 +107,9 @@ namespace Iterum.Logs
 #if UNITY_2018_3_OR_NEWER
 
                s = Tagged(s, color);
-               finalText += s;
+               finalText.Append(s);
 #else
-                finalText += s;
+                finalText.Append(s);
                 var foreground = Console.ForegroundColor;
                 Console.ForegroundColor = color;
                 Console.Write(s);
@@ -133,7 +121,7 @@ namespace Iterum.Logs
 #if UNITY_2018_3_OR_NEWER   
             UnityEngine.Debug.Log(finalText);
 #endif
-            OnLogCallback(dateTime, level, group, s, finalText, color);
+            OnLogCallback(dateTime, level, group, s, finalText.ToString(), color);
         }
 
         private static ConsoleColor GetColorLevel(Level level)
@@ -152,6 +140,7 @@ namespace Iterum.Logs
 
             return color;
         }
+        
         
         private static string Tagged(string text, ConsoleColor color)
         {
