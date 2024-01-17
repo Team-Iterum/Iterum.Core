@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Iterum.Physics.PhysXImpl;
+using UnityEngine;
 
 namespace Iterum.Physics;
 
@@ -51,4 +52,6 @@ public interface IDynamicObject : IPhysicsObject
 
     void AddForce(Vector3 force, ForceMode mode);
     void AddTorque(Vector3 torque, ForceMode mode);
+
+    APIBounds3 GetWorldBounds();
 }

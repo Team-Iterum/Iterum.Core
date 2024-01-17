@@ -52,6 +52,19 @@ public struct APITrans
     }
 }
 
+public struct APIBounds3
+{
+    public APIVec3 minimum;
+    public APIVec3 maximum;
+
+    public APIBounds3(Vector3 p1, Vector3 p2)
+    {
+        this.minimum = p1;
+        this.maximum = p2;
+    }
+}
+
+
 public struct APIDoubleVec3
 {
     public double x;

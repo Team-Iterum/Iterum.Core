@@ -89,6 +89,13 @@ public class DynamicObject : IDynamicObject
 
     public void AddForce(Vector3 force, ForceMode mode) => API.addRigidDynamicForce(scene.Ref, Ref, force, mode);
     public void AddTorque(Vector3 torque, ForceMode mode) => API.addRigidDynamicTorque(scene.Ref, Ref, torque, mode);
+    
+    public APIBounds3 GetWorldBounds()
+    {
+        return API.getWorldBounds(scene.Ref, Ref);
+    }
+
+    public void GetTorque(Vector3 torque, ForceMode mode) => API.addRigidDynamicTorque(scene.Ref, Ref, torque, mode);
 
     public bool DisabledSimulation
     {
