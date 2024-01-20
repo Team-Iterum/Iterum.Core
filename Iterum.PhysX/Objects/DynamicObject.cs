@@ -92,7 +92,7 @@ public class DynamicObject : IDynamicObject
     
     public APIBounds3 GetWorldBounds()
     {
-        return API.getWorldBounds(scene.Ref, Ref);
+        return API.getBounds(scene.Ref, Ref);
     }
 
     public void GetTorque(Vector3 torque, ForceMode mode) => API.addRigidDynamicTorque(scene.Ref, Ref, torque, mode);

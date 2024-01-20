@@ -145,5 +145,5 @@ public interface IPhysicsAPI
     void cleanupRaycastBuffer(long nRef);
     void cleanupOverlapBuffer(long nRef);
     
-    APIBounds3 getWorldBounds(long nRefScene, long nRef);
+    APIBounds3 getBounds(long nRefScene, long nRef);
 }
