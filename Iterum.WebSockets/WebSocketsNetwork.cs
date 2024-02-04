@@ -39,6 +39,7 @@ public sealed class WebSocketsNetwork : INetworkServer
         }
             
         private SemaphoreSlim sendSlim = new SemaphoreSlim(1, 1);
+        private SemaphoreSlim readSlim = new SemaphoreSlim(1, 1);
 
         public void WriteBytesAsync(byte[] packet)
         {
@@ -47,6 +48,14 @@ public sealed class WebSocketsNetwork : INetworkServer
             socket.WriteBytesAsync(packet, 0, packet.Length);
                 
             sendSlim.Release();
+        }
+        
+        public async Task<WebSocketMessageReadStream> ReadMessageAsync(CancellationToken socketCancellation)
+        {
+            await readSlim.WaitAsync(socketCancellation);
+            var result = await socket.ReadMessageAsync(socketCancellation).ConfigureAwait(false);
+            readSlim.Release();
+            return result;
         }
     }
     private Dictionary<int, WrapperWebSocket> sockets = new();
@@ -175,7 +184,8 @@ public sealed class WebSocketsNetwork : INetworkServer
                 try
                 {
                         
-                    WebSocketMessageReadStream message = await webSocket.ReadMessageAsync(socketCancellation).ConfigureAwait(false);
+                    WebSocketMessageReadStream message = await socket.ReadMessageAsync(socketCancellation).ConfigureAwait
+                        (false);
                     if (message == null)
                         break; // webSocket is disconnected
 
