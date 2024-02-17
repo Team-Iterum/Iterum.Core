@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -10,6 +11,8 @@ namespace Iterum.Logs
         public static event LogDelegate LogCallback;
         public static event Func<string, bool> BeforeLog;
 
+        public static HashSet<string> HideGroups = new();
+        
         public static string TimeStampFormat = "t"; // short
 
         public static Level Enabled = Level.Debug | Level.Info | Level.Success | Level.Warn | Level.Error |
@@ -40,7 +43,7 @@ namespace Iterum.Logs
         {
 
             if (!Enabled.HasFlagFast(level)) return;
-
+            if (HideGroups.Contains(group)) return;
             if (BeforeLog != null && !BeforeLog.Invoke(s)) return;
             
             var dateTime = DateTime.Now;
