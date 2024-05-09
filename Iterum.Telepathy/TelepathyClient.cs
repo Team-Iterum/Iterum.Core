@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using Telepathy;
 using Log = Iterum.Logs.Log;
@@ -18,6 +19,8 @@ namespace Iterum.Network
 
         public bool IsActive = false;
 
+        private string hostPort;
+
         public TelepathyClient()
         {
             Telepathy.Log.Info = s => Log.Info(LogGroup, s);
@@ -34,6 +37,9 @@ namespace Iterum.Network
         public void Connect(string host, int port)
         {
             IsActive = true;
+            hostPort = $"{host}:{port}";
+            
+            Log.Debug(LogGroup, $"Client connecting... {hostPort}", ConsoleColor.Magenta);
             
             Client = new Client(MaxMessageSize)
             {
@@ -46,8 +52,6 @@ namespace Iterum.Network
             _workerThread = new Thread(Update);
             _workerThread.IsBackground = true;
             _workerThread.Start();
-            
-            Log.Success(LogGroup, $"Started");
         }
 
         private void Update()
@@ -76,7 +80,7 @@ namespace Iterum.Network
             var conData = new ConnectionData();
             Disconnected?.Invoke(conData);
 
-            Log.Info(LogGroup, $"Client disconnected", ConsoleColor.Magenta);
+            Log.Info(LogGroup, $"Client disconnected {hostPort}", ConsoleColor.Magenta);
         }
 
         private void Client_OnData(ArraySegment<byte> data)
@@ -93,7 +97,7 @@ namespace Iterum.Network
 
             Connected?.Invoke(conData);
 
-            Log.Info(LogGroup, $"Client connected", ConsoleColor.Magenta);
+            Log.Info(LogGroup, $"Client connected {hostPort}", ConsoleColor.Magenta);
         }
 
         public void Disconnect()
@@ -103,12 +107,12 @@ namespace Iterum.Network
 
         public void Send<T>(T packet) where T : struct, ISerializablePacketSegment
         {
-            
+            Client.Send(packet.Serialize());
         }
 
         public void Send(byte[] packet)
         {
-            
+            Client.Send(packet);
         }
 
         public event Action<NetworkMessage> Received;
