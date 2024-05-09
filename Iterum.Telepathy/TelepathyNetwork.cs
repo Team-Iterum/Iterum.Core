@@ -11,7 +11,7 @@ namespace Iterum.Network
     {
         public int ServerFrequency { get; set; } = 60;
         public bool UseYield { get; set; } = false;
-        public bool IsReport { get; set; } = true;
+        public bool IsReport { get; set; } = false;
         public int MaxMessageSize { get; set; } = 64 * 1024;
         
         
@@ -40,12 +40,14 @@ namespace Iterum.Network
 
         public void StartServer(string host, int port)
         {
-            if (server != null && server.Active) return;
+            if (server is { Active: true }) return;
 
-            server = new Server(MaxMessageSize);
-            server.OnConnected = Server_Connected;
-            server.OnData = Server_Data;
-            server.OnDisconnected = Server_Disconnected;
+            server = new Server(MaxMessageSize)
+            {
+                OnConnected = Server_Connected,
+                OnData = Server_Data,
+                OnDisconnected = Server_Disconnected
+            };
             server.Start(port);
             
             stopwatch = Stopwatch.StartNew();
