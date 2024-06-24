@@ -15,5 +15,6 @@ namespace Iterum.Network
         
         void Send<T>(int con, T packet) where T : struct, ISerializablePacketSegment;
         void Send(int con, byte[] packet);
+        void Send(int con, ArraySegment<byte> packet);
     }
 }

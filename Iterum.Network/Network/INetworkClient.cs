@@ -14,4 +14,5 @@ public interface INetworkClient
         
     void Send<T>(T packet) where T : struct, ISerializablePacketSegment;
     void Send(byte[] packet);
+    void Send(ArraySegment<byte> packet);
 }
