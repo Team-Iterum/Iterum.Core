@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using Telepathy;
@@ -20,6 +21,8 @@ namespace Iterum.Network
         public bool IsActive = false;
 
         private string hostPort;
+
+        public string LogGroup { get; set; } = "TelepathyClient";
 
         public TelepathyClient()
         {
@@ -115,10 +118,13 @@ namespace Iterum.Network
             Client.Send(packet);
         }
 
+        public void Send(ArraySegment<byte> packet)
+        {
+            Client.Send(packet);
+        }
+
         public event Action<NetworkMessage> Received;
         public event Action<ConnectionData> Connected;
         public event Action<ConnectionData> Disconnected;
-        
-        private const string LogGroup = "TelepathyClient";
     }
 }

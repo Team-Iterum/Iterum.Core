@@ -22,7 +22,7 @@ namespace Iterum.Network
         private long messagesReceived = 0;
         private long dataReceived = 0;
 
-        private const string LogGroup = "TelepathyNetwork";
+        public string LogGroup { get; set; } = "TelepathyNetwork";
 
         public TelepathyNetwork()
         {
@@ -155,6 +155,11 @@ namespace Iterum.Network
         }
 
         public void Send(int conn, byte[] packet)
+        {
+            server.Send(conn, packet);
+        }
+        
+        public void Send(int conn, ArraySegment<byte> packet)
         {
             server.Send(conn, packet);
         }
