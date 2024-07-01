@@ -1,14 +1,13 @@
 ﻿using System;
-using Iterum.Things;
 using UnityEngine;
 using static Iterum.Physics.PhysXImpl.PhysicsAlias;
 
 namespace Iterum.Physics.PhysXImpl;
 
-public struct Buffer<T> : IDisposable
+public struct BufferId : IDisposable
 {
     public long Ref;
-    public T[] Things;
+    public ulong[] ThingIds;
     public long[] Refs;
     
     // supportData
@@ -20,10 +19,10 @@ public struct Buffer<T> : IDisposable
 
     public BufferType BufferType { get; }
     
-    public Buffer(long nRef, int max, BufferType bufferType)
+    public BufferId(long nRef, int max, BufferType bufferType)
     {
         Ref = nRef;
-        Things = new T[max];
+        ThingIds = new ulong[max];
         Refs = new long[max];
         Distances = new float[max];
         Positions = new Vector3[max];

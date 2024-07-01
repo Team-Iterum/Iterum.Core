@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using Iterum.Things;
 using Mono.DllMap.Extensions;
 using UnityEngine;
 using static Iterum.Physics.PhysXImpl.PhysicsAlias;
@@ -17,13 +15,7 @@ public class DynamicObject : IDynamicObject
 
     #region IPhysicsObject
 
-    public IThing Thing
-    {
-        get => UserData as IThing;
-        set => UserData = value;
-    }
-
-    public object UserData { get; set; }
+    public ulong ThingId { get; set; }
 
     public APITrans Transform
     {

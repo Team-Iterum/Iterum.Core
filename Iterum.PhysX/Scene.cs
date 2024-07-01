@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Iterum.Things;
 using UnityEngine;
 using static Iterum.Physics.PhysXImpl.PhysicsAlias;
 
@@ -140,7 +139,7 @@ internal class Scene
         
     #endregion
         
-    public int Raycast<T>(Buffer<T> buffer, Vector3 position,  Vector3 direction, float maxDist) where T : class, IThing
+    public int Raycast(BufferId buffer, Vector3 position,  Vector3 direction, float maxDist)
     {
         int count = API.sceneRaycast(Ref, buffer.Ref,
             position, direction, maxDist, (i, nRef, dist, pos, normal) =>
@@ -148,7 +147,7 @@ internal class Scene
                 var physicsObject = GetObject(nRef);
                 if (physicsObject != null)
                 {
-                    buffer.Things[i] = physicsObject.Thing as T;
+                    buffer.ThingIds[i] = physicsObject.ThingId;
                     buffer.Distances[i] = dist;
                     buffer.Positions[i] = pos;
                     buffer.Normals[i] = normal;
@@ -159,17 +158,17 @@ internal class Scene
         return count;
     }
         
-    public int SphereCast<T>(Buffer<T> buffer, IGeometry geometry, Vector3 position, SphereCastFilter filter) where T : class, IThing
+    public int SphereCast(BufferId buffer, IGeometry geometry, Vector3 position, SphereCastFilter filter)
     {
         
-        int count = API.sceneOverlap(Ref, buffer.Ref, buffer.Refs, (long)geometry.GetInternal(), position, (int)filter);
+        int count = API.sceneOverlap(Ref, buffer.Ref, buffer.Refs, geometry.GetInternal(), position, (int)filter);
         
         for (int i = 0; i < count; i++)
         {
             var physicsObject = GetObject(buffer.Refs[i]);
             if (physicsObject != null)
             {
-                buffer.Things[i] = physicsObject.Thing as T;
+                buffer.ThingIds[i] = physicsObject.ThingId;
             }
         }
             
@@ -180,7 +179,7 @@ internal class Scene
 
     public Vector4 ComputePenetration(IGeometry geo1, IGeometry geo2, APITrans t1, APITrans t2)
     {
-        return API.computePenetration((long)geo1.GetInternal(), (int)geo1.GeoType, (long)geo2.GetInternal(),
+        return API.computePenetration(geo1.GetInternal(), (int)geo1.GeoType, geo2.GetInternal(),
             (int)geo2.GeoType, t1, t2);
     }
 

@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using Iterum.Things;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable EventNeverSubscribedTo.Global
@@ -24,8 +23,8 @@ public struct ContactReport
     public int index;
     public int count;
         
-    public IThing obj0;
-    public IThing obj1;
+    public ulong thingId0;
+    public ulong thingId1;
         
     public Vector3 normal;
     public Vector3 position;

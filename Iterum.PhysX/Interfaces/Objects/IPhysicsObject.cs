@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using Iterum.Things;
 
 // ReSharper disable UnusedMember.Global
 
@@ -13,5 +12,5 @@ public interface IPhysicsObject
     Vector3 Position { get; set; }
     Quaternion Rotation { get; set; }
         
-    IThing Thing { get; set; }
+    ulong ThingId { get; set; }
 }

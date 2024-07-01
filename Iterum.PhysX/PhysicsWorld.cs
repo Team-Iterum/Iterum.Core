@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
-using Iterum.Things;
 using UnityEngine;
 
 [assembly: InternalsVisibleTo("AdvancedDLSupport")]
@@ -81,23 +80,24 @@ public sealed class PhysicsWorld
         return scene.ComputePenetration(geo1, geo2, t1, t2);
     }
 
-    public int Raycast<T>(Buffer<T> refBuffer, Vector3 position, Vector3 direction, float maxDist) where T : class, IThing
+    public int Raycast<T>(BufferId refBuffer, Vector3 position, Vector3 direction, float maxDist)
     {
 #if PHYSICS_DEBUG_LEVEL
             Console.WriteLine($"{LogGroup} Raycast. Position: {position} Direction: {direction}");
 #endif
             
-        int count = scene.Raycast<T>(refBuffer, position, direction, maxDist);
+        int count = scene.Raycast(refBuffer, position, direction, maxDist);
         return count;
     }
 
-    public int SphereCast<T>(Buffer<T> buffer, Vector3 position, IGeometry geometry, SphereCastFilter filter = SphereCastFilter.All) where T : class, IThing
+    public int SphereCast(BufferId buffer, Vector3 position, IGeometry geometry, SphereCastFilter filter = 
+            SphereCastFilter.All)
     {
 #if PHYSICS_DEBUG_LEVEL
             Console.WriteLine($"{LogGroup} SphereCast. Position: {position} Geometry: {geometry.GetInternalGeometry()}");
 #endif
             
-        int count = scene.SphereCast<T>(buffer, geometry, position, filter);
+        int count = scene.SphereCast(buffer, geometry, position, filter);
         return count;
     }
 
@@ -141,8 +141,8 @@ public sealed class PhysicsWorld
             
         ContactReport?.Invoke(this, new ContactReport
         {
-            obj0 = obj0.Thing,
-            obj1 = obj1.Thing,
+            thingId0 = obj0.ThingId,
+            thingId1 = obj1.ThingId,
                 
             isTrigger = true,
         });
@@ -159,8 +159,8 @@ public sealed class PhysicsWorld
             index = index,
             count = count,
                 
-            obj0 = obj0.Thing,
-            obj1 = obj1.Thing,
+            thingId0 = obj0.ThingId,
+            thingId1 = obj1.ThingId,
                 
             position = position,
                 

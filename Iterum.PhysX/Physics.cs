@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using AdvancedDLSupport;
-using Iterum.Things;
 using UnityEngine;
 
 namespace Iterum.Physics.PhysXImpl;
@@ -85,14 +84,14 @@ public class Physics : IPhysics
         return new CapsuleGeometry(radius, halfHeight);
     }
         
-    public Buffer<T> CreateOverlapBuffer<T>(int max) where T : class, IThing
+    public BufferId CreateOverlapBuffer(int max)
     {
-        return new Buffer<T>(API.createOverlapBuffer(max), max, BufferType.Sphere);
+        return new BufferId(API.createOverlapBuffer(max), max, BufferType.Sphere);
     }
         
-    public Buffer<T> CreateRaycastBuffer<T>(int max) where T : class, IThing
+    public BufferId CreateRaycastBuffer(int max)
     {
-        return new Buffer<T>(API.createRaycastBuffer(max), max, BufferType.Raycast);
+        return new BufferId(API.createRaycastBuffer(max), max, BufferType.Raycast);
     }
         
 

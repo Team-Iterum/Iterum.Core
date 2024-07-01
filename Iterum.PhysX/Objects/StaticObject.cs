@@ -1,5 +1,4 @@
-﻿using Iterum.Things;
-using UnityEngine;
+﻿using UnityEngine;
 using static Iterum.Physics.PhysXImpl.PhysicsAlias;
 
 namespace Iterum.Physics.PhysXImpl;
@@ -25,7 +24,7 @@ internal class StaticObject : IStaticObject
     }
     public bool IsDestroyed { get; private set; }
 
-    public IThing Thing { get; set; }
+    public ulong ThingId { get; set; }
 
     public void Destroy()
     {

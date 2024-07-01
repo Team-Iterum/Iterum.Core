@@ -1,5 +1,4 @@
-﻿using Iterum.Things;
-using Mono.DllMap.Extensions;
+﻿using Mono.DllMap.Extensions;
 using UnityEngine;
 using static Iterum.Physics.PhysXImpl.PhysicsAlias;
 
@@ -53,7 +52,7 @@ public class PhysicsCharacter : IPhysicsCharacter
     public Quaternion Rotation { get; set; }
     public bool IsDestroyed { get; private set; }
         
-    public IThing Thing { get; set; }
+    public ulong ThingId { get; set; }
 
     #endregion
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using Iterum.Things;
 using UnityEngine;
 using static Iterum.Physics.PhysXImpl.PhysicsAlias;
 
@@ -26,7 +25,7 @@ public class TerrainObject : IStaticObject
     }
     public bool IsDestroyed { get; private set; }
 
-    public IThing Thing { get; set; }
+    public ulong ThingId { get; set; }
 
     public void Destroy()
     {
