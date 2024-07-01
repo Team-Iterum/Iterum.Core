@@ -5,7 +5,7 @@ using static Iterum.Physics.PhysXImpl.PhysicsAlias;
 
 namespace Iterum.Physics.PhysXImpl;
 
-public struct Buffer<T> : IDisposable where T : IThing
+public struct Buffer<T> : IDisposable
 {
     public long Ref;
     public T[] Things;
