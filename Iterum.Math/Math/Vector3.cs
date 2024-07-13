@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using ProtoBuf;
 
 namespace UnityEngine;
@@ -7,8 +9,7 @@ namespace UnityEngine;
 /// <summary>
 ///   <para>Representation of 3D vectors and points.</para>
 /// </summary>
-[Serializable]
-[ProtoContract]
+[Serializable, ProtoContract, DataContract]
 public struct Vector3
 {
     public const float kEpsilon = 1E-05f;
@@ -17,19 +18,19 @@ public struct Vector3
     /// <summary>
     ///   <para>X component of the vector.</para>
     /// </summary>
-    [ProtoMember(1)]
+    [ProtoMember(1), DataMember, XmlAttribute]
     public float x;
 
     /// <summary>
     ///   <para>Y component of the vector.</para>
     /// </summary>
-    [ProtoMember(2)]
+    [ProtoMember(2), DataMember, XmlAttribute]
     public float y;
 
     /// <summary>
     ///   <para>Z component of the vector.</para>
     /// </summary>
-    [ProtoMember(3)]
+    [ProtoMember(3), DataMember, XmlAttribute]
     public float z;
 
     public float this[int index]

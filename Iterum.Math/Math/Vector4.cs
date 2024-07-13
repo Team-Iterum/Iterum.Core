@@ -1,24 +1,25 @@
 using System;
+using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using ProtoBuf;
 
 namespace UnityEngine;
 
-[ProtoContract]
-[Serializable]
+[ProtoContract, Serializable, DataContract]
 public struct Vector4
 {
     public const float kEpsilon = 1E-05f;
 
-    [ProtoMember(1)]
+    [ProtoMember(1), DataMember, XmlAttribute]
     public float x;
 
-    [ProtoMember(2)]
+    [ProtoMember(2), DataMember, XmlAttribute]
     public float y;
 
-    [ProtoMember(3)]
+    [ProtoMember(3), DataMember, XmlAttribute]
     public float z;
 
-    [ProtoMember(4)]
+    [ProtoMember(4), DataMember, XmlAttribute]
     public float w;
 
     public float this[int index]

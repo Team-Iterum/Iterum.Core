@@ -1,44 +1,45 @@
 using System;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using ProtoBuf;
 
 namespace UnityEngine;
 
-[ProtoContract]
-[Serializable]
+[Serializable, ProtoContract, DataContract]
 public struct Matrix4x4
 {
-    [ProtoMember(1)] public float m00;
+    [ProtoMember(1), DataMember, XmlAttribute] public float m00;
 
-    [ProtoMember(2)] public float m10;
+    [ProtoMember(2), DataMember, XmlAttribute] public float m10;
 
-    [ProtoMember(3)] public float m20;
+    [ProtoMember(3), DataMember, XmlAttribute] public float m20;
 
-    [ProtoMember(4)] public float m30;
+    [ProtoMember(4), DataMember, XmlAttribute] public float m30;
 
-    [ProtoMember(5)] public float m01;
+    [ProtoMember(5), DataMember, XmlAttribute] public float m01;
 
-    [ProtoMember(6)] public float m11;
+    [ProtoMember(6), DataMember, XmlAttribute] public float m11;
 
-    [ProtoMember(7)] public float m21;
+    [ProtoMember(7), DataMember, XmlAttribute] public float m21;
 
-    [ProtoMember(8)] public float m31;
+    [ProtoMember(8), DataMember, XmlAttribute] public float m31;
 
-    [ProtoMember(9)] public float m02;
+    [ProtoMember(9), DataMember, XmlAttribute] public float m02;
 
-    [ProtoMember(10)] public float m12;
+    [ProtoMember(10), DataMember, XmlAttribute] public float m12;
 
-    [ProtoMember(11)] public float m22;
+    [ProtoMember(11), DataMember, XmlAttribute] public float m22;
 
-    [ProtoMember(12)] public float m32;
+    [ProtoMember(12), DataMember, XmlAttribute] public float m32;
 
-    [ProtoMember(13)] public float m03;
+    [ProtoMember(13), DataMember, XmlAttribute] public float m03;
 
-    [ProtoMember(14)] public float m13;
+    [ProtoMember(14), DataMember, XmlAttribute] public float m13;
 
-    [ProtoMember(15)] public float m23;
+    [ProtoMember(15), DataMember, XmlAttribute] public float m23;
 
-    [ProtoMember(16)] public float m33;
+    [ProtoMember(16), DataMember, XmlAttribute] public float m33;
 
     public Matrix4x4 inverse => Matrix4x4.Inverse(this);
 

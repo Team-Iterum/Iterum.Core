@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace UnityEngine;
 
@@ -282,6 +283,7 @@ public static class Vector2ex
 
     public static string ToStringEx(this Vector2 vector)
     {
-        return string.Format("({0}, {1})", vector.x.ToString(), vector.y.ToString());
+        return string.Format("({0}, {1})", vector.x.ToString(CultureInfo.InvariantCulture),
+            vector.y.ToString(CultureInfo.InvariantCulture));
     }
 }

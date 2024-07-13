@@ -11,12 +11,13 @@
 
 using System;
 using System.ComponentModel;
+using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using ProtoBuf;
 
 namespace UnityEngine;
 
-[Serializable]
-[ProtoContract]
+[ProtoContract, Serializable, DataContract]
 public struct Quaternion : IEquatable<Quaternion>
 {
     private const float radToDeg = (float)(180.0 / Mathf.PI);
@@ -38,25 +39,25 @@ public struct Quaternion : IEquatable<Quaternion>
     /// <summary>
     ///   <para>X component of the Quaternion. Don't modify this directly unless you know quaternions inside out.</para>
     /// </summary>
-    [ProtoMember(1)]
+    [ProtoMember(1), DataMember, XmlAttribute]
     public float x;
 
     /// <summary>
     ///   <para>Y component of the Quaternion. Don't modify this directly unless you know quaternions inside out.</para>
     /// </summary>
-    [ProtoMember(2)]
+    [ProtoMember(2), DataMember, XmlAttribute]
     public float y;
 
     /// <summary>
     ///   <para>Z component of the Quaternion. Don't modify this directly unless you know quaternions inside out.</para>
     /// </summary>
-    [ProtoMember(3)]
+    [ProtoMember(3), DataMember, XmlAttribute]
     public float z;
 
     /// <summary>
     ///   <para>W component of the Quaternion. Don't modify this directly unless you know quaternions inside out.</para>
     /// </summary>
-    [ProtoMember(4)]
+    [ProtoMember(4), DataMember, XmlAttribute]
     public float w;
 
     public float this[int index]

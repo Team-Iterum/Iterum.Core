@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace UnityEngine;
 
@@ -427,6 +428,7 @@ public static class Vector3ex
     }
     public static string ToStringEx(this Vector3 vector)
     {
-        return string.Format("({0}, {1}, {2})", vector.x.ToString(), vector.y.ToString(), vector.z.ToString());
+        return string.Format("({0}, {1}, {2})", vector.x.ToString(CultureInfo.InvariantCulture),
+            vector.y.ToString(CultureInfo.InvariantCulture), vector.z.ToString(CultureInfo.InvariantCulture));
     }
 }
