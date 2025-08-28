@@ -204,6 +204,12 @@ public sealed class WebSocketsNetwork : INetworkServer
                     Log.Warn(LogGroup, ex.ToString());
                     break;
                 }
+                catch (WebSocketException ex) when (ex.InnerException is IOException ioException)
+                {
+                    Log.Warn(LogGroup, $"An error occurred while reading/writing echo message. SocketErrorCode: {ioException}");
+                    Log.Warn(LogGroup, ex.ToString());
+                    break;
+                }
                 catch (Exception readWriteError)
                 {
                     Log.Error(LogGroup, "An error occurred while reading/writing echo message.");
