@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -15,12 +15,17 @@ namespace Iterum.Network;
 
 public sealed class WebSocketsNetwork : INetworkServer
 {
+    private static long _bytesSent;
+    private static long _bytesReceived;
+    public static long BytesSent => Interlocked.Read(ref _bytesSent);
+    public static long BytesReceived => Interlocked.Read(ref _bytesReceived);
+
     private WebSocketListener server;
-        
+
     public WebSocketListener Server => server;
     public CancellationTokenSource CancellationTokenSource { get; private set; }
 
-    class WrapperWebSocket
+    class WrapperWebSocket : IDisposable
     {
         public WebSocket socket;
         public int con;
@@ -37,37 +42,63 @@ public sealed class WebSocketsNetwork : INetworkServer
         {
             token?.Cancel();
         }
-            
-        private SemaphoreSlim sendSlim = new SemaphoreSlim(1, 1);
-        private SemaphoreSlim readSlim = new SemaphoreSlim(1, 1);
 
-        public void WriteBytesAsync(byte[] packet)
+        private SemaphoreSlim sendSlim = new(1, 1);
+        private SemaphoreSlim readSlim = new(1, 1);
+
+        public async Task WriteBytesAsync(byte[] bytes)
         {
-            sendSlim.Wait();
-                
-            socket.WriteBytesAsync(packet, 0, packet.Length);
-                
-            sendSlim.Release();
+            bool acquired = false;
+            try
+            {
+                await sendSlim.WaitAsync();
+                acquired = true;
+
+                await using var writer = socket.CreateMessageWriter(WebSocketMessageType.Binary);
+                await writer.WriteAndCloseAsync(bytes, 0, bytes.Length, CancellationToken.None).ConfigureAwait(false);
+            }
+            finally
+            {
+                if (acquired)
+                    sendSlim.Release();
+            }
         }
-        
+
         public async Task<WebSocketMessageReadStream> ReadMessageAsync(CancellationToken socketCancellation)
         {
-            await readSlim.WaitAsync(socketCancellation);
-            var result = await socket.ReadMessageAsync(socketCancellation).ConfigureAwait(false);
-            readSlim.Release();
-            return result;
+            bool acquired = false;
+            try
+            {
+                await readSlim.WaitAsync(socketCancellation);
+                acquired = true;
+
+                return await socket.ReadMessageAsync(socketCancellation).ConfigureAwait(false);
+            }
+            finally
+            {
+                if (acquired)
+                    readSlim.Release();
+            }
+        }
+
+        public void Dispose()
+        {
+            token?.Dispose();
+            sendSlim?.Dispose();
+            readSlim?.Dispose();
         }
     }
+
     private Dictionary<int, WrapperWebSocket> sockets = new();
-        
+
     private int connCounter;
 
     private const string LogGroup = "WebSocketsNetwork";
 
     public void Stop()
     {
-        server.StopAsync().Wait();
-        CancellationTokenSource.Cancel();
+        server?.StopAsync().Wait();
+        CancellationTokenSource?.Cancel();
     }
 
     /// <summary>
@@ -84,17 +115,21 @@ public sealed class WebSocketsNetwork : INetworkServer
             {
                 PingTimeout = TimeSpan.FromSeconds(15),
                 NegotiationTimeout = TimeSpan.FromSeconds(15),
-                PingMode = PingMode.BandwidthSaving
-
+                PingMode = PingMode.LatencyControl
             };
+
+            options.Transports.ConfigureTcp(tcp =>
+            {
+                tcp.NoDelay = true;
+            });
             options.Standards.RegisterRfc6455();
             if (cert != null)
                 options.ConnectionExtensions.RegisterSecureConnection(cert);
-                
+
             server = new WebSocketListener(new IPEndPoint(IPAddress.Parse(host), port), options);
 
             server.StartAsync().Wait();
-                
+
             CancellationTokenSource = new CancellationTokenSource();
 
             Task.Run(AcceptWebSocketsAsync);
@@ -118,13 +153,13 @@ public sealed class WebSocketsNetwork : INetworkServer
         StartServer(host, port, null);
     }
 
-        
+
     private async Task AcceptWebSocketsAsync()
     {
         await Task.Yield();
 
         var globalCancellation = CancellationTokenSource.Token;
-            
+
         while (!globalCancellation.IsCancellationRequested)
         {
             try
@@ -135,11 +170,11 @@ public sealed class WebSocketsNetwork : INetworkServer
                     if (globalCancellation.IsCancellationRequested || !server.IsStarted)
                         break; // stopped
 
-                    continue; // retry
+                    continue; // retry immediately — AcceptWebSocketAsync is already blocking
                 }
 
                 Log.Debug(LogGroup, "WebSocket accepted");
-                    
+
 #pragma warning disable 4014
                 Task.Run(() => ClientIncomingMessagesAsync(webSocket), globalCancellation);
 #pragma warning restore 4014
@@ -151,7 +186,15 @@ public sealed class WebSocketsNetwork : INetworkServer
             }
             catch (WebSocketException acceptError)
             {
-                Log.Warn("An error occurred while accepting client.", acceptError);
+                // A single failed handshake must not kill the accept loop.
+                Log.Debug(LogGroup, $"Accept rejected ({acceptError.GetType().Name}): {acceptError.Message}");
+                await Task.Delay(100, globalCancellation).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(LogGroup, "Unexpected error while accepting client.");
+                Log.Exception(LogGroup, ex);
+                await Task.Delay(1000, globalCancellation).ConfigureAwait(false);
             }
         }
 
@@ -162,37 +205,49 @@ public sealed class WebSocketsNetwork : INetworkServer
     {
         var conn = Interlocked.Increment(ref connCounter);
 
+        var endpoint = webSocket.RemoteEndpoint as IPEndPoint;
+        // todo vtortola bug - TryGetValue returns the inverted result for `return header.IsEmpty`
+        if (!webSocket.HttpRequest.Headers.TryGetValue("X-Real-IP", out var realAddress))
+        {
+            if (IPAddress.TryParse(realAddress, out var address))
+            {
+                endpoint = new IPEndPoint(address, 0);
+            }
+        }
+
         var conData = new ConnectionData
         {
             conn = conn,
-            address = webSocket.RemoteEndpoint as IPEndPoint
+            address = endpoint
         };
 
         var socket = new WrapperWebSocket(webSocket, conData.conn);
         var socketCancellation = socket.token.Token;
-        sockets.Add(conData.conn, socket);
-        
+        sockets.TryAdd(conData.conn, socket);
+
         Connected?.Invoke(conData);
-            
-        Log.Info(LogGroup, $"Client connected - ID: {conData.conn.ToString()} IP: {webSocket.RemoteEndpoint}", ConsoleColor.Magenta);
-            
-            
+
+        Log.Info(LogGroup,
+            $"Client connected - ID: {conData.conn.ToString()} IP: {endpoint} X-Real-IP: {realAddress}",
+            ConsoleColor.Magenta);
+
+        var exceptionKind = DisconnectExceptionKind.None;
+
         try
         {
             while (webSocket.IsConnected && !socketCancellation.IsCancellationRequested)
             {
                 try
                 {
-                        
-                    WebSocketMessageReadStream message = await socket.ReadMessageAsync(socketCancellation).ConfigureAwait
-                        (false);
+                    await using var message = await socket.ReadMessageAsync(socketCancellation).ConfigureAwait(false);
                     if (message == null)
                         break; // webSocket is disconnected
 
                     await using var stream = new MemoryStream();
                     await message.CopyToAsync(stream, socketCancellation);
-                        
-                    Received?.Invoke(new NetworkMessage {conn = conData.conn, dataSegment = stream.GetBuffer()});
+                    Interlocked.Add(ref _bytesReceived, stream.Length);
+
+                    Received?.Invoke(new NetworkMessage {conn = conData.conn, dataSegment = stream.ToArray()});
                 }
                 catch (TaskCanceledException)
                 {
@@ -200,20 +255,21 @@ public sealed class WebSocketsNetwork : INetworkServer
                 }
                 catch (WebSocketException ex) when (ex.InnerException is SocketException socketException)
                 {
-                    Log.Warn(LogGroup, $"An error occurred while reading/writing echo message. SocketErrorCode: {socketException.SocketErrorCode}");
-                    Log.Warn(LogGroup, ex.ToString());
+                    Log.Debug(LogGroup, $"Client {conData.conn} dropped (SocketErrorCode: {socketException.SocketErrorCode})");
+                    exceptionKind = DisconnectExceptionKind.SocketDrop;
                     break;
                 }
                 catch (WebSocketException ex) when (ex.InnerException is IOException ioException)
                 {
-                    Log.Warn(LogGroup, $"An error occurred while reading/writing echo message. SocketErrorCode: {ioException}");
-                    Log.Warn(LogGroup, ex.ToString());
+                    Log.Debug(LogGroup, $"Client {conData.conn} I/O drop ({ioException.GetType().Name}: {ioException.Message})");
+                    exceptionKind = DisconnectExceptionKind.IoError;
                     break;
                 }
                 catch (Exception readWriteError)
                 {
                     Log.Error(LogGroup, "An error occurred while reading/writing echo message.");
                     Log.Exception(readWriteError);
+                    exceptionKind = DisconnectExceptionKind.Other;
                 }
             }
 
@@ -222,22 +278,27 @@ public sealed class WebSocketsNetwork : INetworkServer
         }
         finally
         {
-            // always dispose socket after use
+            // Null close reason = no close frame received, treat as 1006 abnormal.
+            int closeCode = webSocket.CloseReason is { } reason ? (int)reason : 1006;
+            var info = new DisconnectInfo(closeCode, exceptionKind);
+
             webSocket.Dispose();
-                
+            socket.Dispose();
+
+            DisconnectedDetailed?.Invoke(conData.conn, info);
             Disconnected?.Invoke(conData);
             sockets.Remove(conData.conn);
 
-            Log.Info(LogGroup, $"Client disconnected - ID: {conData.conn.ToString()}", ConsoleColor.Magenta);
-
+            Log.Info(LogGroup, $"Client disconnected - ID: {conData.conn.ToString()} CloseCode: {closeCode}", ConsoleColor.Magenta);
         }
     }
-        
+
     public void Disconnect(int conn)
     {
         try
         {
-            sockets[conn].Close();
+            if (sockets.TryGetValue(conn, out var socket))
+                socket.Close();
         }
         catch (Exception ex)
         {
@@ -255,9 +316,11 @@ public sealed class WebSocketsNetwork : INetworkServer
     {
         try
         {
-
-            if (sockets.ContainsKey(conn) && sockets[conn].socket.IsConnected)
-                sockets[conn].WriteBytesAsync(packet);
+            Interlocked.Add(ref _bytesSent, packet.Length);
+            if (sockets.TryGetValue(conn, out var socket) && socket.socket.IsConnected)
+                socket.WriteBytesAsync(packet).ContinueWith(t =>
+                    Log.Error(LogGroup, $"Send error (async) ID: {conn} - {t.Exception?.GetBaseException().Message}"),
+                    TaskContinuationOptions.OnlyOnFaulted);
         }
         catch (Exception ex)
         {
@@ -270,9 +333,11 @@ public sealed class WebSocketsNetwork : INetworkServer
     {
         try
         {
-
-            if (sockets.ContainsKey(conn) && sockets[conn].socket.IsConnected)
-                sockets[conn].WriteBytesAsync(packet.ToArray());
+            Interlocked.Add(ref _bytesSent, packet.Count);
+            if (sockets.TryGetValue(conn, out var socket) && socket.socket.IsConnected)
+                socket.WriteBytesAsync(packet.ToArray()).ContinueWith(t =>
+                    Log.Error(LogGroup, $"Send error (async) ID: {conn} - {t.Exception?.GetBaseException().Message}"),
+                    TaskContinuationOptions.OnlyOnFaulted);
         }
         catch (Exception ex)
         {
@@ -285,4 +350,5 @@ public sealed class WebSocketsNetwork : INetworkServer
     public event Func<ConnectionData, bool> Connecting;
     public event Action<ConnectionData> Connected;
     public event Action<ConnectionData> Disconnected;
+    public event Action<int, DisconnectInfo> DisconnectedDetailed;
 }
