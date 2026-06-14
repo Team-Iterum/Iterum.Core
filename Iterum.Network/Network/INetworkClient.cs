@@ -12,8 +12,7 @@ public interface INetworkClient
     void Connect(string host, int port);
     void Disconnect();
         
-    // Returns false when the transport rejected the message (frame too large, send queue full,
-    // not connected) so callers can avoid treating a dropped send as delivered.
+    // Returns false when the transport rejected the message (too large / queue full / not connected).
     bool Send<T>(T packet) where T : struct, ISerializablePacketSegment;
     bool Send(byte[] packet);
     bool Send(ArraySegment<byte> packet);

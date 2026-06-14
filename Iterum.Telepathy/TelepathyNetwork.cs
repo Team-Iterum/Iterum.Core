@@ -12,7 +12,8 @@ namespace Iterum.Network
         public int ServerFrequency { get; set; } = 60;
         public bool UseYield { get; set; } = false;
         public bool IsReport { get; set; } = false;
-        public int MaxMessageSize { get; set; } = 64 * 1024;
+        // Set before StartServer; the Telepathy Server is constructed with it.
+        public int MaxMessageSize { get; set; } = TelepathyClient.DefaultMaxMessageSize;
         
         
         private Server server;

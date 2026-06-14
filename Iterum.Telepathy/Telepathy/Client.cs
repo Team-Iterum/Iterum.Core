@@ -177,8 +177,7 @@ namespace Telepathy
             // let's reset connecting state no matter what.
             state.Connecting = false;
 
-            // Disconnect() may Interrupt() this thread while we're cleaning up —
-            // an exception escaping here would kill the whole process. swallow it.
+            // Disconnect() may Interrupt() us mid-cleanup; catch so it can't escape the thread.
             try
             {
                 // add 'Disconnected' event to receive pipe so that the caller

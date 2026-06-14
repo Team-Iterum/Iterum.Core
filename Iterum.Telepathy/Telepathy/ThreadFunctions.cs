@@ -175,9 +175,7 @@ namespace Telepathy
             }
             finally
             {
-                // clean up no matter what
-                // an Interrupt() may land while we're inside Close() — swallow it, an
-                // exception escaping the thread here would kill the whole process
+                // clean up no matter what. catch so an Interrupt landing mid-Close() can't escape the thread.
                 try
                 {
                     stream.Close();
@@ -265,9 +263,7 @@ namespace Telepathy
                 // which causes the ReceiveLoop to end and fire the Disconnected
                 // message. otherwise the connection would stay alive forever even
                 // though we can't send anymore.
-                // the receive thread Interrupt()s us on disconnect — if that lands
-                // while we're already inside Close(), the ThreadInterruptedException
-                // would escape the thread and kill the whole process. swallow it.
+                // catch so an Interrupt landing mid-Close() can't escape the thread.
                 try
                 {
                     stream.Close();
