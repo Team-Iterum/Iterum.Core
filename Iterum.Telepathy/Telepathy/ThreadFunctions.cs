@@ -176,15 +176,28 @@ namespace Telepathy
             finally
             {
                 // clean up no matter what
-                stream.Close();
-                client.Close();
+                // an Interrupt() may land while we're inside Close() — swallow it, an
+                // exception escaping the thread here would kill the whole process
+                try
+                {
+                    stream.Close();
+                    client.Close();
+                }
+                catch (Exception cleanupException)
+                {
+                    Log.Info("ReceiveLoop: cleanup close failed for connectionId=" + connectionId + " reason: " + cleanupException);
+                }
 
                 // add 'Disconnected' message after disconnecting properly.
                 // -> always AFTER closing the streams to avoid a race condition
                 //    where Disconnected -> Reconnect wouldn't work because
                 //    Connected is still true for a short moment before the stream
                 //    would be closed.
-                receivePipe.Enqueue(connectionId, EventType.Disconnected, default);
+                try { receivePipe.Enqueue(connectionId, EventType.Disconnected, default); }
+                catch (Exception enqueueException)
+                {
+                    Log.Info("ReceiveLoop: disconnect enqueue failed for connectionId=" + connectionId + " reason: " + enqueueException);
+                }
             }
         }
         // thread send function
@@ -252,8 +265,18 @@ namespace Telepathy
                 // which causes the ReceiveLoop to end and fire the Disconnected
                 // message. otherwise the connection would stay alive forever even
                 // though we can't send anymore.
-                stream.Close();
-                client.Close();
+                // the receive thread Interrupt()s us on disconnect — if that lands
+                // while we're already inside Close(), the ThreadInterruptedException
+                // would escape the thread and kill the whole process. swallow it.
+                try
+                {
+                    stream.Close();
+                    client.Close();
+                }
+                catch (Exception cleanupException)
+                {
+                    Log.Info("SendLoop: cleanup close failed for connectionId=" + connectionId + " reason: " + cleanupException);
+                }
             }
         }
     }

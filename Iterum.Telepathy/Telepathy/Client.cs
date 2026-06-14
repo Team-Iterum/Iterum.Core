@@ -173,26 +173,35 @@ namespace Telepathy
                 // something went wrong. probably important.
                 Log.Error("Client Recv Exception: " + exception);
             }
-            // add 'Disconnected' event to receive pipe so that the caller
-            // knows that the Connect failed. otherwise they will never know
-            state.receivePipe.Enqueue(0, EventType.Disconnected, default);
-            
-            // sendthread might be waiting on ManualResetEvent,
-            // so let's make sure to end it if the connection
-            // closed.
-            // otherwise the send thread would only end if it's
-            // actually sending data while the connection is
-            // closed.
-            sendThread?.Interrupt();
-
             // Connect might have failed. thread might have been closed.
             // let's reset connecting state no matter what.
             state.Connecting = false;
 
-            // if we got here then we are done. ReceiveLoop cleans up already,
-            // but we may never get there if connect fails. so let's clean up
-            // here too.
-            state.client?.Close();
+            // Disconnect() may Interrupt() this thread while we're cleaning up —
+            // an exception escaping here would kill the whole process. swallow it.
+            try
+            {
+                // add 'Disconnected' event to receive pipe so that the caller
+                // knows that the Connect failed. otherwise they will never know
+                state.receivePipe.Enqueue(0, EventType.Disconnected, default);
+
+                // sendthread might be waiting on ManualResetEvent,
+                // so let's make sure to end it if the connection
+                // closed.
+                // otherwise the send thread would only end if it's
+                // actually sending data while the connection is
+                // closed.
+                sendThread?.Interrupt();
+
+                // if we got here then we are done. ReceiveLoop cleans up already,
+                // but we may never get there if connect fails. so let's clean up
+                // here too.
+                state.client?.Close();
+            }
+            catch (Exception cleanupException)
+            {
+                Log.Info("Client Recv: cleanup after receive thread failed reason: " + cleanupException);
+            }
         }
 
         public void Connect(string ip, int port)

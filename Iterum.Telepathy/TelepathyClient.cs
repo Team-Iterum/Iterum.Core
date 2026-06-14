@@ -39,22 +39,33 @@ namespace Iterum.Network
 
         public void Connect(string host, int port)
         {
+            // re-entrant Connect would spawn a second worker thread ticking the same
+            // client — events get dispatched once per worker and old sockets leak
+            if (Client != null && (Client.Connecting || Client.Connected))
+            {
+                Log.Warn(LogGroup, $"Connect ignored — already connecting/connected {hostPort}");
+                return;
+            }
+
             IsActive = true;
             hostPort = $"{host}:{port}";
-            
+
             Log.Debug(LogGroup, $"Client connecting... {hostPort}", ConsoleColor.Magenta);
-            
-            Client = new Client(MaxMessageSize)
+
+            Client ??= new Client(MaxMessageSize)
             {
                 OnConnected = Client_OnConnected,
                 OnData = Client_OnData,
                 OnDisconnected = Client_OnDisconnected
             };
             Client.Connect(host, port);
-            
-            _workerThread = new Thread(Update);
-            _workerThread.IsBackground = true;
-            _workerThread.Start();
+
+            if (_workerThread == null || !_workerThread.IsAlive)
+            {
+                _workerThread = new Thread(Update);
+                _workerThread.IsBackground = true;
+                _workerThread.Start();
+            }
         }
 
         private void Update()
@@ -105,7 +116,7 @@ namespace Iterum.Network
 
         public void Disconnect()
         {
-            Client.Disconnect();
+            Client?.Disconnect();
         }
 
         public void Send<T>(T packet) where T : struct, ISerializablePacketSegment
