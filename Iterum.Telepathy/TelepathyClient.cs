@@ -16,7 +16,11 @@ namespace Iterum.Network
         public bool UseYield { get; set; } = false;
         public int ServerFrequency { get; set; } = 60;
 
-        public int MaxMessageSize { get; set; } = 64 * 1024;
+        // Telepathy's wire limit: a frame larger than this is rejected by Send. Exposed as a const
+        // so callers (e.g. delta chunking) can size against the same ceiling without duplicating it.
+        public const int DefaultMaxMessageSize = 64 * 1024;
+
+        public int MaxMessageSize { get; set; } = DefaultMaxMessageSize;
 
         public bool IsActive = false;
 
@@ -119,19 +123,19 @@ namespace Iterum.Network
             Client?.Disconnect();
         }
 
-        public void Send<T>(T packet) where T : struct, ISerializablePacketSegment
+        public bool Send<T>(T packet) where T : struct, ISerializablePacketSegment
         {
-            Client.Send(packet.Serialize());
+            return Client?.Send(packet.Serialize()) ?? false;
         }
 
-        public void Send(byte[] packet)
+        public bool Send(byte[] packet)
         {
-            Client.Send(packet);
+            return Client?.Send(packet) ?? false;
         }
 
-        public void Send(ArraySegment<byte> packet)
+        public bool Send(ArraySegment<byte> packet)
         {
-            Client.Send(packet);
+            return Client?.Send(packet) ?? false;
         }
 
         public event Action<NetworkMessage> Received;

@@ -12,7 +12,9 @@ public interface INetworkClient
     void Connect(string host, int port);
     void Disconnect();
         
-    void Send<T>(T packet) where T : struct, ISerializablePacketSegment;
-    void Send(byte[] packet);
-    void Send(ArraySegment<byte> packet);
+    // Returns false when the transport rejected the message (frame too large, send queue full,
+    // not connected) so callers can avoid treating a dropped send as delivered.
+    bool Send<T>(T packet) where T : struct, ISerializablePacketSegment;
+    bool Send(byte[] packet);
+    bool Send(ArraySegment<byte> packet);
 }
