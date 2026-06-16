@@ -98,7 +98,7 @@ namespace Telepathy
         // IMPORTANT: serializing in here will allow us to return the byte[]
         //            entries back to a pool later to completely avoid
         //            allocations!
-        public bool DequeueAndSerializeAll(ref byte[] payload, out int packetSize)
+        public bool DequeueAndSerializeAll(ref byte[] payload, out int packetSize, int maxBatchBytes)
         {
             // pool & queue usage always needs to be locked
             lock (this)
@@ -112,12 +112,21 @@ namespace Telepathy
                 // packet to avoid TCP overheads and improve performance.
                 //
                 // IMPORTANT: Mirror & DOTSNET already batch into MaxMessageSize
-                //            chunks, but we STILL pack all pending messages
-                //            into one large payload so we only give it to TCP
-                //            ONCE. This is HUGE for performance so we keep it!
-                packetSize = 0;
+                //            chunks, but we STILL pack pending messages into one
+                //            payload so we give it to TCP fewer times.
+                //
+                // Bound the batch to maxBatchBytes so a huge backlog drains over
+                // several writes instead of one giant blocking write that can't
+                // finish within SendTimeout. Always take at least one message.
+                int take = 0;
                 foreach (ArraySegment<byte> message in queue)
-                    packetSize += 4 + message.Count; // header + content
+                {
+                    int entry = 4 + message.Count; // header + content
+                    if (take > 0 && packetSize + entry > maxBatchBytes)
+                        break;
+                    packetSize += entry;
+                    take++;
+                }
 
                 // create payload buffer if not created yet or previous one is
                 // too small
@@ -125,9 +134,9 @@ namespace Telepathy
                 if (payload == null || payload.Length < packetSize)
                     payload = new byte[packetSize];
 
-                // dequeue all byte[] messages and serialize into the packet
+                // dequeue this batch and serialize into the packet
                 int position = 0;
-                while (queue.Count > 0)
+                for (int i = 0; i < take; i++)
                 {
                     // dequeue
                     ArraySegment<byte> message = queue.Dequeue();

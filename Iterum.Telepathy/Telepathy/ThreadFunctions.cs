@@ -201,7 +201,7 @@ namespace Telepathy
         // thread send function
         // note: we really do need one per connection, so that if one connection
         //       blocks, the rest will still continue to get sends
-        public static void SendLoop(int connectionId, TcpClient client, MagnificentSendPipe sendPipe, ManualResetEvent sendPending)
+        public static void SendLoop(int connectionId, TcpClient client, MagnificentSendPipe sendPipe, ManualResetEvent sendPending, int maxBatchBytes)
         {
             // get NetworkStream from client
             NetworkStream stream = client.GetStream();
@@ -225,16 +225,21 @@ namespace Telepathy
                     //    the next Send call.
                     sendPending.Reset(); // WaitOne() blocks until .Set() again
 
-                    // dequeue & serialize all
-                    // a locked{} TryDequeueAll is twice as fast as
-                    // ConcurrentQueue, see SafeQueue.cs!
-                    if (sendPipe.DequeueAndSerializeAll(ref payload, out int packetSize))
+                    // drain the whole pipe in bounded batches: a large backlog goes out over several
+                    // writes instead of one giant blocking write that can't finish within SendTimeout.
+                    bool sendFailed = false;
+                    while (sendPipe.DequeueAndSerializeAll(ref payload, out int packetSize, maxBatchBytes))
                     {
                         // send messages (blocking) or stop if stream is closed
                         if (!SendMessagesBlocking(stream, payload, packetSize))
+                        {
                             // break instead of return so stream close still happens!
+                            sendFailed = true;
                             break;
+                        }
                     }
+                    if (sendFailed)
+                        break;
 
                     // don't choke up the CPU: wait until queue not empty anymore
                     sendPending.WaitOne();

@@ -97,8 +97,8 @@ namespace Telepathy
         // Mirror/DOTSNET use MaxMessageSize batching, so for a 16kb max size:
         //   limit =  1,000 means  16 MB of memory/connection
         //   limit = 10,000 means 160 MB of memory/connection
-        public int SendQueueLimit = 10000;
-        public int ReceiveQueueLimit = 10000;
+        public int SendQueueLimit = 50000;
+        public int ReceiveQueueLimit = 50000;
 
         // all client state wrapped into an object that is passed to ReceiveThread
         // => we create a new one each time we connect to avoid data races with
@@ -120,7 +120,7 @@ namespace Telepathy
         // => pass ClientState object. a new one is created for each new thread!
         // => avoids data races where an old dieing thread might still modify
         //    the current thread's state :/
-        static void ReceiveThreadFunction(ClientConnectionState state, string ip, int port, int MaxMessageSize, bool NoDelay, int SendTimeout, int ReceiveTimeout, int ReceiveQueueLimit)
+        static void ReceiveThreadFunction(ClientConnectionState state, string ip, int port, int MaxMessageSize, bool NoDelay, int SendTimeout, int ReceiveTimeout, int ReceiveQueueLimit, int MaxSendBatchBytes)
 
         {
             Thread sendThread = null;
@@ -141,7 +141,7 @@ namespace Telepathy
 
                 // start send thread only after connected
                 // IMPORTANT: DO NOT SHARE STATE ACROSS MULTIPLE THREADS!
-                sendThread = new Thread(() => { ThreadFunctions.SendLoop(0, state.client, state.sendPipe, state.sendPending); });
+                sendThread = new Thread(() => { ThreadFunctions.SendLoop(0, state.client, state.sendPipe, state.sendPending, MaxSendBatchBytes); });
                 sendThread.IsBackground = true;
                 sendThread.Start();
 
@@ -244,7 +244,7 @@ namespace Telepathy
             // -> this way we don't async client.BeginConnect, which seems to
             //    fail sometimes if we connect too many clients too fast
             state.receiveThread = new Thread(() => {
-                ReceiveThreadFunction(state, ip, port, MaxMessageSize, NoDelay, SendTimeout, ReceiveTimeout, ReceiveQueueLimit);
+                ReceiveThreadFunction(state, ip, port, MaxMessageSize, NoDelay, SendTimeout, ReceiveTimeout, ReceiveQueueLimit, MaxSendBatchBytes);
             });
             state.receiveThread.IsBackground = true;
             state.receiveThread.Start();

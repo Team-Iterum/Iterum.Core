@@ -22,6 +22,11 @@ namespace Telepathy
         // we need a timeout (in milliseconds)
         public int SendTimeout = 5000;
 
+        // Cap bytes written per stream.Write so a large send backlog drains across several writes
+        // instead of one giant blocking write that can't finish within SendTimeout. Must be >= a
+        // single message (MaxMessageSize); a lone over-budget message is still sent on its own.
+        public int MaxSendBatchBytes = 2 * 1024 * 1024;
+
         // Default TCP receive time out can be huge (minutes).
         // That's way too much for games, let's make it configurable.
         // we need a timeout (in milliseconds)
