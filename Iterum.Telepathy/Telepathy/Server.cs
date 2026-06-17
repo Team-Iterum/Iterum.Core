@@ -29,8 +29,8 @@ namespace Telepathy
         // Mirror/DOTSNET use MaxMessageSize batching, so for a 16kb max size:
         //   limit =  1,000 means  16 MB of memory/connection
         //   limit = 10,000 means 160 MB of memory/connection
-        public int SendQueueLimit = 50000;
-        public int ReceiveQueueLimit = 50000;
+        public int SendQueueLimit = 10000;
+        public int ReceiveQueueLimit = 10000;
 
         // thread safe pipe for received messages
         // IMPORTANT: unfortunately using one pipe per connection is way slower
