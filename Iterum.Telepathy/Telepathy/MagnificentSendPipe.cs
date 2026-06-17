@@ -33,8 +33,8 @@ namespace Telepathy
         // constructor
         public MagnificentSendPipe(int MaxMessageSize)
         {
-            // initialize pool to create max message sized byte[]s each time
-            pool = new Pool<byte[]>(() => new byte[MaxMessageSize]);
+            // byte-budgeted capacity so a backlog spike can't pin pool buffers forever
+            pool = new Pool<byte[]>(() => new byte[MaxMessageSize], Pool.CapacityForBudget(MaxMessageSize));
         }
 
         // for statistics. don't call Count and assume that it's the same after

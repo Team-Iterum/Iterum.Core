@@ -54,8 +54,8 @@ namespace Telepathy
         // constructor
         public MagnificentReceivePipe(int MaxMessageSize)
         {
-            // initialize pool to create max message sized byte[]s each time
-            pool = new Pool<byte[]>(() => new byte[MaxMessageSize]);
+            // byte-budgeted capacity so a backlog spike can't pin pool buffers forever
+            pool = new Pool<byte[]>(() => new byte[MaxMessageSize], Pool.CapacityForBudget(MaxMessageSize));
         }
 
         // return amount of queued messages for this connectionId.
